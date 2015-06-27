@@ -15,22 +15,24 @@ import java.util.EnumSet;
 public class Board {
 
     private final Figure[][] board = new Figure[8][8];
-    private final EnumSet<Coord> enPassantAllowed = EnumSet.noneOf(Coord.class);
+    private final EnumSet<Coord> enPassantAllowed;
     private final boolean whiteCastlingEnabled;
     private final boolean blackCastlingEnabled;
 
     Board() {
         this.blackCastlingEnabled = true;
         this.whiteCastlingEnabled = true;
+        this.enPassantAllowed = EnumSet.noneOf(Coord.class);
         for (int i = 0; i < board.length; i++) {
             Arrays.fill(board[i], Figure.NONE);
         }
     }
 
-    Board(boolean whiteCastlingEnabled, boolean blackCastlingEnabled, Figure[][] board) {
+    Board(boolean whiteCastlingEnabled, boolean blackCastlingEnabled, Figure[][] board, EnumSet<Coord> enPassantAllowed) {
         // castling
         this.blackCastlingEnabled = blackCastlingEnabled;
         this.whiteCastlingEnabled = whiteCastlingEnabled;
+        this.enPassantAllowed = enPassantAllowed.clone();
         // figures
         for (int x = 0; x < board.length; x++) {
             for (int y = 0; y < board[x].length; y++) {
@@ -42,7 +44,7 @@ public class Board {
     Board allowEnPassant(Col col, Row row) {
         Figure figure = get(col, row);
         Preconditions.checkArgument((figure == Figure.WHITE_PAWN && row == Row._4) || (figure == Figure.BLACK_PAWN && row == Row._5));
-        Board nb = new Board(whiteCastlingEnabled, blackCastlingEnabled, board);
+        Board nb = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
         nb.enPassantAllowed.add(Coord.get(col, row));
         return nb;
     }
@@ -66,11 +68,11 @@ public class Board {
     }
 
     Board disableWhiteCastling() {
-        return new Board(false, blackCastlingEnabled, board);
+        return new Board(false, blackCastlingEnabled, board, enPassantAllowed);
     }
 
     Board disableBlackCastling() {
-        return new Board(whiteCastlingEnabled, false, board);
+        return new Board(whiteCastlingEnabled, false, board, enPassantAllowed);
     }
 
     public Figure get(Col col, Row row) {
@@ -84,7 +86,7 @@ public class Board {
         Preconditions.checkNotNull(row);
         Preconditions.checkNotNull(figure);
         Preconditions.checkArgument(get(col, row).equals(Figure.NONE));
-        Board clone = new Board(whiteCastlingEnabled, blackCastlingEnabled, board);
+        Board clone = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
         clone.board[col.ordinal()][row.ordinal()] = figure;
         return clone;
     }
@@ -93,7 +95,7 @@ public class Board {
         Preconditions.checkNotNull(col, "Null col");
         Preconditions.checkNotNull(row, "Null row");
         Preconditions.checkArgument(get(col, row) != Figure.NONE, "Unable to remove nonexisting figure");
-        Board clone = new Board(whiteCastlingEnabled, blackCastlingEnabled, board);
+        Board clone = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
         clone.board[col.ordinal()][row.ordinal()] = Figure.NONE;
         return clone;
     }
@@ -119,5 +121,20 @@ public class Board {
         result = 31 * result + (whiteCastlingEnabled ? 1 : 0);
         result = 31 * result + (blackCastlingEnabled ? 1 : 0);
         return result;
+    }
+
+    // TODO test this!
+    public Board mirror() {
+        return new Board(whiteCastlingEnabled, blackCastlingEnabled, mirrorBoard(board), enPassantAllowed);
+    }
+
+    private Figure[][] mirrorBoard(Figure[][] board) {
+        Figure[][] nb = new Figure[8][8];
+        for(Col c : Col.values()) {
+            for(Row r : Row.values()) {
+                
+            }
+        }
+        return nb;
     }
 }
