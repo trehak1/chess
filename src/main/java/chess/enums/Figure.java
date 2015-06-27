@@ -1,4 +1,4 @@
-package chess;
+package chess.enums;
 
 import com.google.common.base.Preconditions;
 

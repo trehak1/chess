@@ -1,7 +1,7 @@
-package chess;
+package chess.enums;
 
-import chess.Figure;
-import chess.Piece;
+import chess.enums.Figure;
+import chess.enums.Piece;
 import org.junit.Assert;
 import org.junit.Test;
 

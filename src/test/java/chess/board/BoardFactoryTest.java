@@ -1,6 +1,8 @@
 package chess.board;
 
-import chess.*;
+import chess.enums.Col;
+import chess.enums.Figure;
+import chess.enums.Row;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
