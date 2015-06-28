@@ -6,6 +6,8 @@ import chess.enums.Player;
 import chess.enums.Row;
 import chess.movements.Movement;
 
+import java.util.List;
+
 /**
  * Created by Tom on 28.6.2015.
  */
@@ -26,9 +28,11 @@ public abstract class PawnMovement {
 
     abstract Movement forwardByTwo();
 
-    abstract Movement captures();
+    abstract List<Movement> captures();
 
-    abstract Movement enPassants();
+    abstract Movement enPassantEast();
 
-    abstract Movement promotion();
+    abstract Movement enPassantWest();
+
+    abstract List<Movement> promotions();
 }

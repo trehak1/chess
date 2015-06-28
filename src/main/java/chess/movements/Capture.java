@@ -6,20 +6,17 @@ import chess.enums.Coord;
 /**
  * Created by Tom on 27.6.2015.
  */
-public class EnPassant extends Movement {
+public class Capture extends Movement {
 
     private final Coord from;
     private final Coord to;
 
-    public EnPassant(Coord from, Coord to, Board resultingBoard) {
+    public Capture(Coord from, Coord to, Board resultingBoard) {
         super(resultingBoard);
         this.from = from;
         this.to = to;
     }
 
-    public Coord getTargetPiece() {
-        return Coord.get(to.getCol(), from.getRow());
-    }
 
     public Coord getFrom() {
         return from;
@@ -28,4 +25,5 @@ public class EnPassant extends Movement {
     public Coord getTo() {
         return to;
     }
+
 }

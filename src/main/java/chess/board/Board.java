@@ -41,7 +41,7 @@ public class Board {
         }
     }
 
-    Board allowEnPassant(Col col, Row row) {
+    public Board allowEnPassant(Col col, Row row) {
         Figure figure = get(col, row);
         Preconditions.checkArgument((figure == Figure.WHITE_PAWN && row == Row._4) || (figure == Figure.BLACK_PAWN && row == Row._5));
         Board nb = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
@@ -81,7 +81,7 @@ public class Board {
         return board[col.ordinal()][row.ordinal()];
     }
 
-    Board set(Col col, Row row, Figure figure) {
+    public Board set(Col col, Row row, Figure figure) {
         Preconditions.checkNotNull(col);
         Preconditions.checkNotNull(row);
         Preconditions.checkNotNull(figure);
@@ -91,7 +91,7 @@ public class Board {
         return clone;
     }
 
-    Board remove(Col col, Row row) {
+    public Board remove(Col col, Row row) {
         Preconditions.checkNotNull(col, "Null col");
         Preconditions.checkNotNull(row, "Null row");
         Preconditions.checkArgument(get(col, row) != Figure.NONE, "Unable to remove nonexisting figure");
