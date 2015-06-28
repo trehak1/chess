@@ -18,7 +18,7 @@ public class BoardFactory {
 
         // whites
         // pawns
-        for (Col c : Col.values()) {
+        for (Col c : Col.validValues()) {
             board = board.set(c, Row._2, Figure.white(Piece.PAWN));
         }
         // rooks
@@ -37,7 +37,7 @@ public class BoardFactory {
 
         // blacks
         // pawns
-        for (Col c : Col.values()) {
+        for (Col c : Col.validValues()) {
             board = board.set(c, Row._7, Figure.black(Piece.PAWN));
         }
         // rooks

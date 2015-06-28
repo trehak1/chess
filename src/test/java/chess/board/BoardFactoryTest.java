@@ -21,7 +21,7 @@ public class BoardFactoryTest {
 
     @Test
     public void newGameBoardTest() {
-        for (Col c : Col.values()) {
+        for (Col c : Col.validValues()) {
             assertEquals(Figure.WHITE_PAWN, board.get(c, Row._2));
         }
         assertEquals(Figure.WHITE_ROOK, board.get(Col.A, Row._1));
@@ -34,7 +34,7 @@ public class BoardFactoryTest {
         assertEquals(Figure.WHITE_KING, board.get(Col.E, Row._1));
 
 
-        for (Col c : Col.values()) {
+        for (Col c : Col.validValues()) {
             assertEquals(Figure.BLACK_PAWN, board.get(c, Row._7));
         }
         assertEquals(Figure.BLACK_ROOK, board.get(Col.A, Row._8));

@@ -10,8 +10,8 @@ public class CoordTest {
 
     @Test
     public void testAllCoordsPresent() {
-        for (Col c : Col.values()) {
-            for (Row r : Row.values()) {
+        for (Col c : Col.validValues()) {
+            for (Row r : Row.validValues()) {
                 Coord coord = Coord.get(c, r);
                 Assert.assertNotNull(coord);
                 Assert.assertEquals(c, coord.getCol());

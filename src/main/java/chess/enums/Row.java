@@ -1,5 +1,7 @@
 package chess.enums;
 
+import java.util.EnumSet;
+
 /**
  * Created by Tom on 26.6.2015.
  */
@@ -19,6 +21,12 @@ public enum Row {
             return Row.values()[ordinal() + 1];
         }
         return INVALID;
+    }
+
+    public static EnumSet<Row> validValues() {
+        EnumSet<Row> set = EnumSet.allOf(Row.class);
+        set.remove(INVALID);
+        return set;
     }
 
     public boolean isValid() {
