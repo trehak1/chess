@@ -15,6 +15,10 @@ public class EnPassant implements Movement {
         this.to = to;
     }
 
+    public Coord getTargetPiece() {
+        return Coord.get(to.getCol(), from.getRow());
+    }
+
     public Coord getFrom() {
         return from;
     }

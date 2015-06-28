@@ -5,7 +5,7 @@ import chess.enums.Coord;
 /**
  * Created by Tom on 27.6.2015.
  */
-public class Move {
+public class Move implements Movement {
 
     private final Coord from;
     private final Coord to;

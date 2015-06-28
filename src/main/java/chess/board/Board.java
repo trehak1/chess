@@ -123,18 +123,4 @@ public class Board {
         return result;
     }
 
-    // TODO test this!
-    public Board mirror() {
-        return new Board(whiteCastlingEnabled, blackCastlingEnabled, mirrorBoard(board), enPassantAllowed);
-    }
-
-    private Figure[][] mirrorBoard(Figure[][] board) {
-        Figure[][] nb = new Figure[8][8];
-        for(Col c : Col.values()) {
-            for(Row r : Row.values()) {
-                
-            }
-        }
-        return nb;
-    }
 }
