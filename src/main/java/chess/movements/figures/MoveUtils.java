@@ -2,9 +2,6 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.*;
-import chess.movements.Capture;
-import chess.movements.Move;
-import chess.movements.Movement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +25,24 @@ public class MoveUtils {
         return Coord.get(col, row);
     }
 
+    public boolean isEmpty(Coord coord) {
+        return isEmpty(coord.getCol(), coord.getRow());
+    }
+
+    public boolean isEnemy(Coord coord) {
+        return isEnemy(coord.getCol(), coord.getRow());
+    }
+
     public boolean isEmpty(Col col, Row row) {
         return board.get(col, row) == Figure.NONE;
     }
 
     public boolean isEnemy(Col col, Row row) {
         return board.get(col, row) != Figure.NONE && board.get(col, row).getPlayer() != player;
+    }
+
+    public boolean isMine(Coord coord) {
+        return isMine(coord.getCol(), coord.getRow());
     }
 
     public boolean isMine(Col col, Row row) {
@@ -115,6 +124,5 @@ public class MoveUtils {
         return resultingBoard;
     }
 
-   
 
 }

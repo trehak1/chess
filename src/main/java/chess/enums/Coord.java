@@ -2,6 +2,8 @@ package chess.enums;
 
 import com.google.common.base.Preconditions;
 
+import java.util.EnumSet;
+
 /**
  * Created by Tom on 27.6.2015.
  */
@@ -14,7 +16,10 @@ public enum Coord {
     E1(Col.E, Row._1), E2(Col.E, Row._2), E3(Col.E, Row._3), E4(Col.E, Row._4), E5(Col.E, Row._5), E6(Col.E, Row._6), E7(Col.E, Row._7), E8(Col.E, Row._8),
     F1(Col.F, Row._1), F2(Col.F, Row._2), F3(Col.F, Row._3), F4(Col.F, Row._4), F5(Col.F, Row._5), F6(Col.F, Row._6), F7(Col.F, Row._7), F8(Col.F, Row._8),
     G1(Col.G, Row._1), G2(Col.G, Row._2), G3(Col.G, Row._3), G4(Col.G, Row._4), G5(Col.G, Row._5), G6(Col.G, Row._6), G7(Col.G, Row._7), G8(Col.G, Row._8),
-    H1(Col.H, Row._1), H2(Col.H, Row._2), H3(Col.H, Row._3), H4(Col.H, Row._4), H5(Col.H, Row._5), H6(Col.H, Row._6), H7(Col.H, Row._7), H8(Col.H, Row._8);
+    H1(Col.H, Row._1), H2(Col.H, Row._2), H3(Col.H, Row._3), H4(Col.H, Row._4), H5(Col.H, Row._5), H6(Col.H, Row._6), H7(Col.H, Row._7), H8(Col.H, Row._8),
+    INVALID(null, null);
+
+    private static final EnumSet<Coord> VALID_VALUES = EnumSet.complementOf(EnumSet.of(INVALID));
 
     private final Col col;
     private final Row row;
@@ -23,6 +28,39 @@ public enum Coord {
         this.col = col;
         this.row = row;
     }
+
+    public Coord east() {
+        return Coord.get(col.east(), row);
+    }
+
+    public Coord west() {
+        return Coord.get(col.west(), row);
+    }
+
+    public Coord north() {
+        return Coord.get(col, row.north());
+    }
+
+    public Coord south() {
+        return Coord.get(col, row.south());
+    }
+
+    public Coord northEast() {
+        return north().east();
+    }
+
+    public Coord northWest() {
+        return north().west();
+    }
+
+    public Coord southEast() {
+        return south().east();
+    }
+
+    public Coord southWest() {
+        return south().west();
+    }
+
 
     public Col getCol() {
         return col;
@@ -35,7 +73,10 @@ public enum Coord {
     public static Coord get(Col col, Row row) {
         Preconditions.checkNotNull(col);
         Preconditions.checkNotNull(row);
-        for (Coord c : Coord.values()) {
+        if (col == Col.INVALID || row == Row.INVALID) {
+            return INVALID;
+        }
+        for (Coord c : Coord.VALID_VALUES) {
             if (c.col == col && c.row == row) {
                 return c;
             }
