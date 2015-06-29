@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -21,7 +22,7 @@ class WhitePawnMovement extends PawnMovement {
     private static final EnumSet<Figure> PROMOTION_SET = EnumSet.of(Figure.WHITE_BISHOP, Figure.WHITE_KNIGHT, Figure.WHITE_QUEEN, Figure.WHITE_ROOK);
     private final Row startRow = Row._2;
     private final Row lastRow = Row._7;
-    private final Supplier<Row> directionMove = row::north;
+    private final Function<Row, Row> directionMove = (r) -> r.north();
 
 
     WhitePawnMovement(Col col, Row row, Board board) {
@@ -32,7 +33,7 @@ class WhitePawnMovement extends PawnMovement {
 
     @Override
     public Move forwardByOne() {
-        if (row == Row._7) {
+        if (row == lastRow) {
             return null;
         }
         Row targetRow = row.north();
