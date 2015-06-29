@@ -2,10 +2,7 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.*;
-import chess.movements.Capture;
-import chess.movements.Move;
-import chess.movements.Movement;
-import chess.movements.MovementProducer;
+import chess.movements.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +45,15 @@ public class KingMovements implements MovementProducer {
     private void moveTo(Coord targetCoords, List<Movement> movements, MoveUtils moveUtils) {
         if (targetCoords != Coord.INVALID) {
             if (moveUtils.isEmpty(targetCoords)) {
-                Move m = new Move(moveUtils.myCoords(), targetCoords, moveUtils.moveTo(targetCoords));
+                Move m = new Move(moveUtils.myCoords(), targetCoords, moveUtils.moveTo(targetCoords)
+                        .disableCastling(player, Castling.QUEEN_SIDE)
+                        .disableCastling(player, Castling.KING_SIDE));
                 movements.add(m);
                 return;
             } else if (moveUtils.isEnemy(targetCoords)) {
-                Capture c = new Capture(moveUtils.myCoords(), targetCoords, moveUtils.capture(targetCoords));
+                Capture c = new Capture(moveUtils.myCoords(), targetCoords, moveUtils.capture(targetCoords)
+                        .disableCastling(player, Castling.QUEEN_SIDE)
+                        .disableCastling(player, Castling.KING_SIDE));
                 movements.add(c);
                 return;
             }

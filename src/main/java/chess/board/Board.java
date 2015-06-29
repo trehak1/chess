@@ -1,9 +1,7 @@
 package chess.board;
 
-import chess.enums.Col;
-import chess.enums.Coord;
-import chess.enums.Figure;
-import chess.enums.Row;
+import chess.enums.*;
+import chess.movements.Castling;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
@@ -16,22 +14,22 @@ public class Board {
 
     private final Figure[][] board = new Figure[8][8];
     private final EnumSet<Coord> enPassantAllowed;
-    private final boolean whiteCastlingEnabled;
-    private final boolean blackCastlingEnabled;
+    private final EnumSet<Castling> whiteCastlingEnabled = EnumSet.allOf(Castling.class);
+    private final EnumSet<Castling> blackCastlingEnabled = EnumSet.allOf(Castling.class);
 
     Board() {
-        this.blackCastlingEnabled = true;
-        this.whiteCastlingEnabled = true;
         this.enPassantAllowed = EnumSet.noneOf(Coord.class);
         for (int i = 0; i < board.length; i++) {
             Arrays.fill(board[i], Figure.NONE);
         }
     }
 
-    Board(boolean whiteCastlingEnabled, boolean blackCastlingEnabled, Figure[][] board, EnumSet<Coord> enPassantAllowed) {
+    Board(EnumSet<Castling> whiteCastlings, EnumSet<Castling> blackCastlings, Figure[][] board, EnumSet<Coord> enPassantAllowed) {
         // castling
-        this.blackCastlingEnabled = blackCastlingEnabled;
-        this.whiteCastlingEnabled = whiteCastlingEnabled;
+        this.whiteCastlingEnabled.clear();
+        this.whiteCastlingEnabled.addAll(whiteCastlings);
+        this.blackCastlingEnabled.clear();
+        this.blackCastlingEnabled.addAll(blackCastlings);
         this.enPassantAllowed = enPassantAllowed.clone();
         // figures
         for (int x = 0; x < board.length; x++) {
@@ -59,21 +57,37 @@ public class Board {
         return enPassantAllowed.contains(Coord.get(col, row));
     }
 
-    public boolean isWhiteCastlingEnabled() {
-        return whiteCastlingEnabled;
+    public boolean isCastlingEnabled(Player player, Castling castling) {
+        Preconditions.checkNotNull(player);
+        Preconditions.checkNotNull(castling);
+        switch (player) {
+            case WHITE:
+                return whiteCastlingEnabled.contains(castling);
+            case BLACK:
+                return blackCastlingEnabled.contains(castling);
+            default:
+                throw new IllegalArgumentException("wtf");
+        }
     }
 
-    public boolean isBlackCastlingEnabled() {
-        return blackCastlingEnabled;
+    public Board disableCastling(Player player, Castling castling) {
+        Preconditions.checkNotNull(player);
+        switch (player) {
+            case WHITE:
+                EnumSet<Castling> whiteCastlings = whiteCastlingEnabled.clone();
+                whiteCastlings.remove(castling);
+                Board b = new Board(whiteCastlings, this.blackCastlingEnabled, board, enPassantAllowed);
+                return b;
+            case BLACK:
+                EnumSet<Castling> blackCastlings = blackCastlingEnabled.clone();
+                blackCastlings.remove(castling);
+                Board b1 = new Board(this.whiteCastlingEnabled, blackCastlings, board, enPassantAllowed);
+                return b1;
+            default:
+                throw new IllegalStateException("wtf");
+        }
     }
 
-    Board disableWhiteCastling() {
-        return new Board(false, blackCastlingEnabled, board, enPassantAllowed);
-    }
-
-    Board disableBlackCastling() {
-        return new Board(whiteCastlingEnabled, false, board, enPassantAllowed);
-    }
 
     public Figure get(Col col, Row row) {
         Preconditions.checkNotNull(col);
@@ -107,10 +121,12 @@ public class Board {
 
         Board board1 = (Board) o;
 
-        if (whiteCastlingEnabled != board1.whiteCastlingEnabled) return false;
-        if (blackCastlingEnabled != board1.blackCastlingEnabled) return false;
         if (!Arrays.deepEquals(board, board1.board)) return false;
-        return !(enPassantAllowed != null ? !enPassantAllowed.equals(board1.enPassantAllowed) : board1.enPassantAllowed != null);
+        if (enPassantAllowed != null ? !enPassantAllowed.equals(board1.enPassantAllowed) : board1.enPassantAllowed != null)
+            return false;
+        if (whiteCastlingEnabled != null ? !whiteCastlingEnabled.equals(board1.whiteCastlingEnabled) : board1.whiteCastlingEnabled != null)
+            return false;
+        return !(blackCastlingEnabled != null ? !blackCastlingEnabled.equals(board1.blackCastlingEnabled) : board1.blackCastlingEnabled != null);
 
     }
 
@@ -118,9 +134,8 @@ public class Board {
     public int hashCode() {
         int result = board != null ? Arrays.deepHashCode(board) : 0;
         result = 31 * result + (enPassantAllowed != null ? enPassantAllowed.hashCode() : 0);
-        result = 31 * result + (whiteCastlingEnabled ? 1 : 0);
-        result = 31 * result + (blackCastlingEnabled ? 1 : 0);
+        result = 31 * result + (whiteCastlingEnabled != null ? whiteCastlingEnabled.hashCode() : 0);
+        result = 31 * result + (blackCastlingEnabled != null ? blackCastlingEnabled.hashCode() : 0);
         return result;
     }
-
 }

@@ -3,7 +3,9 @@ package chess.board;
 
 import chess.enums.Col;
 import chess.enums.Figure;
+import chess.enums.Player;
 import chess.enums.Row;
+import chess.movements.Castling;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,20 +17,20 @@ public class BoardTest {
     @Test
     public void testWhiteCastlingImmutable() {
         Board orig = new BoardFactory().newGameBoard();
-        Board mod = orig.disableWhiteCastling();
+        Board mod = orig.disableCastling(Player.WHITE, Castling.KING_SIDE);
 
-        Assert.assertFalse(mod.isWhiteCastlingEnabled());
-        Assert.assertTrue(orig.isWhiteCastlingEnabled());
+        Assert.assertFalse(mod.isCastlingEnabled(Player.WHITE, Castling.KING_SIDE));
+        Assert.assertTrue(orig.isCastlingEnabled(Player.WHITE, Castling.KING_SIDE));
         Assert.assertNotSame(orig, mod);
     }
 
     @Test
     public void testBlackCastlingImmutable() {
         Board orig = new BoardFactory().newGameBoard();
-        Board mod = orig.disableBlackCastling();
+        Board mod = orig.disableCastling(Player.BLACK, Castling.KING_SIDE);
 
-        Assert.assertFalse(mod.isBlackCastlingEnabled());
-        Assert.assertTrue(orig.isBlackCastlingEnabled());
+        Assert.assertFalse(mod.isCastlingEnabled(Player.BLACK, Castling.KING_SIDE));
+        Assert.assertTrue(orig.isCastlingEnabled(Player.BLACK, Castling.KING_SIDE));
         Assert.assertNotSame(orig, mod);
     }
 

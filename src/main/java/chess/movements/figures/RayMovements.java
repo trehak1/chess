@@ -13,8 +13,8 @@ import java.util.List;
 
 public abstract class RayMovements implements MovementProducer {
 
-    private final Player player;
-    private final Piece piece;
+    protected final Player player;
+    protected final Piece piece;
 
     public RayMovements(Player player, Piece piece) {
         this.player = player;
