@@ -9,14 +9,10 @@ import chess.movements.MovementProducer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class KingMovements implements MovementProducer {
 
     private final Player player;
-    private MoveUtils moveUtils;
-    private Row row;
-    private Col col;
 
     public KingMovements(Player player) {
         this.player = player;
@@ -37,72 +33,30 @@ public class KingMovements implements MovementProducer {
     }
 
     private void createMoves(List<Movement> movements, Col c, Row r, Board board) {
-        moveUtils = new MoveUtils(board, c, r);
-        col = c;
-        row = r;
-        add(movements, this::getNorthWest);
-        add(movements, this::getNorthEast);
-        add(movements, this::getWest);
-        add(movements, this::getSouth);
-        add(movements, this::getSouthWest);
-        add(movements, this::getSouthEast);
-        add(movements, this::getNorth);
-        add(movements, this::getEast);
-        // TODO
+        MoveUtils moveUtils = new MoveUtils(board, c, r);
+        Coord my = moveUtils.myCoords();
+        moveTo(my.east(), movements, moveUtils);
+        moveTo(my.west(), movements, moveUtils);
+        moveTo(my.north(), movements, moveUtils);
+        moveTo(my.south(), movements, moveUtils);
+        moveTo(my.southEast(), movements, moveUtils);
+        moveTo(my.southWest(), movements, moveUtils);
+        moveTo(my.northEast(), movements, moveUtils);
+        moveTo(my.northWest(), movements, moveUtils);
     }
 
-    private Movement get(Row targetRow, Col targetCol) {
-        if (targetRow == Row.INVALID || targetCol == Col.INVALID) {
-            return null;
-        }
-        Coord from = Coord.get(this.col, this.row);
-        Coord to = Coord.get(targetCol, targetRow);
-        if (moveUtils.isEmpty(targetCol, targetRow)) {
-            Move m = new Move(from, to, moveUtils.moveTo(Coord.get(targetCol, targetRow)));
-            return m;
-        } else if (moveUtils.isEnemy(targetCol, targetRow)) {
-            Capture c = new Capture(from, to, moveUtils.capture(Coord.get(targetCol, targetRow)));
-            return c;
-        }
-        return null;
-    }
-
-    private Movement getSouth() {
-        return get(row.south(), col);
-    }
-
-    private Movement getWest() {
-        return get(row, col.west());
-    }
-
-    private Movement getEast() {
-        return get(row, col.east());
-    }
-
-    private Movement getNorth() {
-        return get(row.north(), col);
-    }
-
-    private Movement getNorthEast() {
-        return get(row.north(), col.east());
-    }
-
-    private Movement getNorthWest() {
-        return get(row.north(), col.west());
-    }
-
-    private Movement getSouthEast() {
-        return get(row.south(), col.east());
-    }
-
-    private Movement getSouthWest() {
-        return get(row.south(), col.west());
-    }
-
-    private void add(List<Movement> list, Supplier<Movement> supplier) {
-        Movement m = supplier.get();
-        if (m != null) {
-            list.add(m);
+    private void moveTo(Coord targetCoords, List<Movement> movements, MoveUtils moveUtils) {
+        if (targetCoords != Coord.INVALID) {
+            if (moveUtils.isEmpty(targetCoords)) {
+                Move m = new Move(moveUtils.myCoords(), targetCoords, moveUtils.moveTo(targetCoords));
+                movements.add(m);
+                return;
+            } else if (moveUtils.isEnemy(targetCoords)) {
+                Capture c = new Capture(moveUtils.myCoords(), targetCoords, moveUtils.capture(targetCoords));
+                movements.add(c);
+                return;
+            }
         }
     }
+
 }
