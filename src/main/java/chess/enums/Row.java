@@ -8,7 +8,7 @@ import java.util.EnumSet;
 public enum Row {
 
     _1, _2, _3, _4, _5, _6, _7, _8, INVALID;
-
+    
     public Row south() {
         if (ordinal() - 1 > -1) {
             return Row.values()[ordinal() - 1];

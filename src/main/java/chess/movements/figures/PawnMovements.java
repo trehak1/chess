@@ -36,18 +36,7 @@ public class PawnMovements implements MovementProducer {
     }
 
     private Collection<? extends Movement> movesFor(Col col, Row row, Board board) {
-        PawnMovement pawnMovement;
-        switch (player) {
-            case WHITE:
-                pawnMovement = new WhitePawnMovement(col, row, board);
-                break;
-            case BLACK:
-                pawnMovement = new BlackPawnMovement(col, row, board);
-                break;
-            default:
-                throw new IllegalArgumentException("wtf");
-        }
-
+        PawnMovement pawnMovement = PawnMovement.getFor(board, row, col);
         List<Movement> list = new ArrayList<>();
         add(list, pawnMovement::forwardByOne);
         add(list, pawnMovement::forwardByTwo);
