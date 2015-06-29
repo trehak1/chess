@@ -4,6 +4,7 @@ import chess.board.Board;
 import chess.board.BoardFactory;
 import chess.enums.Player;
 import chess.movements.figures.PawnMovements;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -14,11 +15,19 @@ import java.util.List;
 public class PawnMovementsTest {
 
     @Test
-    public void test() {
+    public void testWhites() {
         Board board = new BoardFactory().newGameBoard();
         PawnMovements pawnMovements = new PawnMovements(Player.WHITE);
         List<Movement> movements = pawnMovements.getMovements(board);
-        System.out.println(movements.size());
+        Assert.assertEquals(16, movements.size());
+    }
+
+    @Test
+    public void testBlacks() {
+        Board board = new BoardFactory().newGameBoard();
+        PawnMovements pawnMovements = new PawnMovements(Player.BLACK);
+        List<Movement> movements = pawnMovements.getMovements(board);
+        Assert.assertEquals(16, movements.size());
     }
 
 }

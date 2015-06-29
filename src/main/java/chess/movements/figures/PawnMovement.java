@@ -68,9 +68,7 @@ public class PawnMovement {
         }
         Row targetRow = directionMove.apply(row);
         if (moveUtils.isEmpty(col, targetRow)) {
-            Board resultingBoard = board.remove(col, row);
-            resultingBoard = resultingBoard.set(col, targetRow, myFigure);
-            return new Move(Coord.get(col, row), Coord.get(col, targetRow), resultingBoard);
+            return new Move(Coord.get(col, row), Coord.get(col, targetRow), moveUtils.moveTo(Coord.get(col, targetRow)));
         }
         return null;
     }
@@ -84,10 +82,7 @@ public class PawnMovement {
         }
         Row targetRow = directionMove.apply(directionMove.apply(row));
         if (moveUtils.isEmpty(col, targetRow)) {
-            Board resultingBoard = board.remove(col, row);
-            resultingBoard = resultingBoard.set(col, targetRow, myFigure);
-            resultingBoard = resultingBoard.allowEnPassant(col, targetRow);
-            return new Move(Coord.get(col, row), Coord.get(col, targetRow), resultingBoard);
+            return new Move(Coord.get(col, row), Coord.get(col, targetRow), moveUtils.moveTo(Coord.get(col, targetRow)));
         }
         return null;
     }
@@ -136,10 +131,7 @@ public class PawnMovement {
     private Capture capture(Col targetCol, Row targetRow) {
         if (targetCol.isValid() && targetRow.isValid()) {
             if (moveUtils.isEnemy(targetCol, targetRow)) {
-                Board resultingBoard = board.remove(col, row);
-                resultingBoard = resultingBoard.remove(targetCol, targetRow);
-                resultingBoard = resultingBoard.set(targetCol, targetRow, myFigure);
-                return new Capture(Coord.get(col, row), Coord.get(targetCol, targetRow), resultingBoard);
+                return new Capture(Coord.get(col, row), Coord.get(targetCol, targetRow), moveUtils.capture(Coord.get(targetCol, targetRow)));
             }
         }
         return null;

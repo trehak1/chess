@@ -5,7 +5,6 @@ import chess.enums.*;
 import chess.movements.Capture;
 import chess.movements.Move;
 import chess.movements.Movement;
-import chess.movements.MovementProducer;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
@@ -34,10 +33,14 @@ public class KnightMovement {
 
     public List<Movement> getMoves() {
         List<Movement> movementList = new ArrayList<>();
-        add(movementList, this::getNorthWest);
-        add(movementList, this::getNorthEast);
-        add(movementList, this::getSouthWest);
-        add(movementList, this::getSouthEast);
+        add(movementList, this::getNorthNorthWest);
+        add(movementList, this::getNorthNorthEast);
+        add(movementList, this::getSouthSouthWest);
+        add(movementList, this::getSouthSouthEast);
+        add(movementList, this::getNorthWestWest);
+        add(movementList, this::getNorthEastEast);
+        add(movementList, this::getSouthWestWest);
+        add(movementList, this::getSouthEastEast);
         return movementList;
     }
 
@@ -48,34 +51,45 @@ public class KnightMovement {
         Coord from = Coord.get(this.col, this.row);
         Coord to = Coord.get(targetCol, targetRow);
         if (moveUtils.isEmpty(targetCol, targetRow)) {
-            Board resultingBoard = board.remove(col, row);
-            resultingBoard = resultingBoard.set(targetCol, targetRow, figure);
-            Move m = new Move(from, to, resultingBoard);
+            Move m = new Move(from, to, moveUtils.moveTo(Coord.get(targetCol, targetRow)));
             return m;
         } else if (moveUtils.isEnemy(targetCol, targetRow)) {
-            Board resultingBoard = board.remove(col, row);
-            resultingBoard = resultingBoard.remove(targetCol,targetRow);
-            resultingBoard = resultingBoard.set(targetCol, targetRow, figure);
-            Capture c = new Capture(from, to, resultingBoard);
+            Capture c = new Capture(from, to, moveUtils.capture(Coord.get(targetCol, targetRow)));
             return c;
         }
         return null;
     }
 
-    private Movement getSouthEast() {
+    private Movement getSouthSouthEast() {
         return get(row.south().south(), col.east());
     }
 
-    private Movement getSouthWest() {
+    private Movement getSouthSouthWest() {
         return get(row.south().south(), col.west());
     }
 
-    private Movement getNorthEast() {
+    private Movement getSouthEastEast() {
+        return get(row.south(), col.east().east());
+    }
+
+    private Movement getSouthWestWest() {
+        return get(row.south(), col.west().west());
+    }
+
+    private Movement getNorthNorthEast() {
         return get(row.north().north(), col.east());
     }
 
-    private Movement getNorthWest() {
+    private Movement getNorthNorthWest() {
         return get(row.north().north(), col.west());
+    }
+
+    private Movement getNorthEastEast() {
+        return get(row.north(), col.east().east());
+    }
+
+    private Movement getNorthWestWest() {
+        return get(row.north(), col.west().west());
     }
 
     private void add(List<Movement> list, Supplier<Movement> supplier) {
@@ -84,5 +98,5 @@ public class KnightMovement {
             list.add(m);
         }
     }
-    
+
 }

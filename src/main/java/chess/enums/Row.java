@@ -1,6 +1,7 @@
 package chess.enums;
 
 import java.util.EnumSet;
+import java.util.function.Function;
 
 /**
  * Created by Tom on 26.6.2015.
@@ -8,7 +9,10 @@ import java.util.EnumSet;
 public enum Row {
 
     _1, _2, _3, _4, _5, _6, _7, _8, INVALID;
-    
+
+    public static final Function<Row, Row> SOUTH = (r) -> r.south();
+    public static final Function<Row, Row> NORTH = (r) -> r.north();
+
     public Row south() {
         if (ordinal() - 1 > -1) {
             return Row.values()[ordinal() - 1];
