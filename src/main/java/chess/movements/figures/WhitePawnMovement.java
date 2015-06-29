@@ -12,7 +12,6 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Created by Tom on 28.6.2015.
@@ -23,6 +22,7 @@ class WhitePawnMovement extends PawnMovement {
     private final Row startRow = Row._2;
     private final Row lastRow = Row._7;
     private final Function<Row, Row> directionMove = (r) -> r.north();
+    private final Figure myFigure = Figure.WHITE_PAWN;
 
 
     WhitePawnMovement(Col col, Row row, Board board) {
@@ -36,10 +36,10 @@ class WhitePawnMovement extends PawnMovement {
         if (row == lastRow) {
             return null;
         }
-        Row targetRow = row.north();
+        Row targetRow = directionMove.apply(row);
         if (isEmpty(col, targetRow)) {
             Board resultingBoard = board.remove(col, row);
-            resultingBoard = resultingBoard.set(col, targetRow, Figure.WHITE_PAWN);
+            resultingBoard = resultingBoard.set(col, targetRow, myFigure);
             return new Move(Coord.get(col, row), Coord.get(col, targetRow), resultingBoard);
         }
         return null;
@@ -47,17 +47,18 @@ class WhitePawnMovement extends PawnMovement {
 
     @Override
     public Move forwardByTwo() {
-        if (row != Row._2) {
+        if (row != startRow) {
             return null;
         }
-        if (!isEmpty(col, row.north())) {
+        if (!isEmpty(col, directionMove.apply(row))) {
             return null;
         }
-        if (isEmpty(col, row.north().north())) {
+        Row targetRow = directionMove.apply(directionMove.apply(row));
+        if (isEmpty(col, targetRow)) {
             Board resultingBoard = board.remove(col, row);
-            resultingBoard = resultingBoard.set(col, row.north().north(), Figure.WHITE_PAWN);
-            resultingBoard = resultingBoard.allowEnPassant(col, row.north().north());
-            return new Move(Coord.get(col, row), Coord.get(col, row.north().north()), resultingBoard);
+            resultingBoard = resultingBoard.set(col, targetRow, myFigure);
+            resultingBoard = resultingBoard.allowEnPassant(col, targetRow);
+            return new Move(Coord.get(col, row), Coord.get(col, targetRow), resultingBoard);
         }
         return null;
     }
@@ -76,7 +77,7 @@ class WhitePawnMovement extends PawnMovement {
         Iterator<Capture> it = moves.iterator();
         while (it.hasNext()) {
             Capture m = it.next();
-            if (m.getTo().getRow().ordinal() == 7) {
+            if (directionMove.apply(m.getFrom().getRow()) == lastRow) {
                 // remove this capture
                 retList.remove(m);
                 // add as new with promotion
@@ -93,13 +94,13 @@ class WhitePawnMovement extends PawnMovement {
 
     public Capture captureEast() {
         Col targetCol = col.east();
-        Row targetRow = row.north();
+        Row targetRow = directionMove.apply(row);
         return capture(targetCol, targetRow);
     }
 
     public Capture captureWest() {
         Col targetCol = col.west();
-        Row targetRow = row.north();
+        Row targetRow = directionMove.apply(row);
         return capture(targetCol, targetRow);
     }
 
@@ -108,7 +109,7 @@ class WhitePawnMovement extends PawnMovement {
             if (isEnemy(targetCol, targetRow)) {
                 Board resultingBoard = board.remove(col, row);
                 resultingBoard = resultingBoard.remove(targetCol, targetRow);
-                resultingBoard = resultingBoard.set(targetCol, targetRow, Figure.WHITE_PAWN);
+                resultingBoard = resultingBoard.set(targetCol, targetRow, myFigure);
                 return new Capture(Coord.get(col, row), Coord.get(targetCol, targetRow), resultingBoard);
             }
         }
@@ -117,7 +118,7 @@ class WhitePawnMovement extends PawnMovement {
 
     @Override
     public EnPassant enPassantWest() {
-        Row targetRow = row.north();
+        Row targetRow = directionMove.apply(row);
         Col targetCol = col.west();
         return enPassant(targetCol, targetRow);
     }
@@ -125,7 +126,7 @@ class WhitePawnMovement extends PawnMovement {
 
     @Override
     public EnPassant enPassantEast() {
-        Row targetRow = row.north();
+        Row targetRow = directionMove.apply(row);
         Col targetCol = col.east();
         return enPassant(targetCol, targetRow);
     }
@@ -136,7 +137,7 @@ class WhitePawnMovement extends PawnMovement {
                 if (board.isEnPassantAllowed(targetCol, targetRow.south())) {
                     Board resultingBoard = board.remove(col, row);
                     resultingBoard = resultingBoard.remove(targetCol, targetRow.south());
-                    resultingBoard = resultingBoard.set(targetCol, targetRow, Figure.WHITE_PAWN);
+                    resultingBoard = resultingBoard.set(targetCol, targetRow, myFigure);
                     return new EnPassant(Coord.get(col, row), Coord.get(targetCol, targetRow), resultingBoard);
                 }
             }
@@ -146,7 +147,8 @@ class WhitePawnMovement extends PawnMovement {
 
     @Override
     public List<Movement> promotions() {
-        if (row == Row._7) {
+        if (row == lastRow) {
+            Row targetRow = directionMove.apply(row);
             if (isEmpty(col, row.north())) {
                 List<Movement> promotions = new ArrayList<>();
                 Board resultingBoard = board.remove(col, row);
