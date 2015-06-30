@@ -96,14 +96,8 @@ public class BoardSerializer {
     private void writeEnPassantsToUtf8(Board board, StringBuilder sb) {
         // write en passants:
         sb.append("enpassants: ");
-        Coord firstEnPassant = null;
-        for (Coord c : board.enPassantAllowed) {
-            if (firstEnPassant == null) {
-                firstEnPassant = c;
-            } else {
-                sb.append(", ");
-            }
-            sb.append(c.name());
+        if(board.getEnPassantAllowed() != null) {
+            sb.append(board.getEnPassantAllowed().name());
         }
         sb.append("\n");
     }
