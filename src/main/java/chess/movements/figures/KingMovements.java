@@ -44,13 +44,11 @@ public class KingMovements implements MovementProducer {
                         .disableCastling(player, Castling.QUEEN_SIDE)
                         .disableCastling(player, Castling.KING_SIDE));
                 movements.add(m);
-                return;
             } else if (moveUtils.isEnemy(targetCoords)) {
                 Capture c = new Capture(moveUtils.myCoords(), targetCoords, moveUtils.capture(targetCoords)
                         .disableCastling(player, Castling.QUEEN_SIDE)
                         .disableCastling(player, Castling.KING_SIDE));
                 movements.add(c);
-                return;
             }
         }
     }
