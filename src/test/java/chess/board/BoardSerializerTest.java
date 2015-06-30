@@ -6,13 +6,24 @@ import org.junit.Test;
 public class BoardSerializerTest {
     
     @Test
-    public void testSerializingNewGameBoard() {
+    public void testJsonSerializingNewGameBoard() {
         BoardFactory boardFactory = new BoardFactory();
         Board board = boardFactory.newGameBoard();
         BoardSerializer boardSerializer = new BoardSerializer();
-        String boardSerialized = boardSerializer.serialize(board);
+        String boardSerialized = boardSerializer.serializeIntoJson(board);
 
-        Board boardDeserialized = boardSerializer.deserialize(boardSerialized);
+        Board boardDeserialized = boardSerializer.deserializeFromJson(boardSerialized);
+        Assert.assertEquals(board, boardDeserialized);
+    }
+    
+    @Test
+    public void testUtf8SerializationNewGameBoard() {
+        BoardFactory boardFactory = new BoardFactory();
+        Board board = boardFactory.newGameBoard();
+        BoardSerializer boardSerializer = new BoardSerializer();
+        String boardSerialized = boardSerializer.serializeIntoUtf8(board);
+
+        Board boardDeserialized = boardSerializer.deserializeFromUtf8(boardSerialized);
         Assert.assertEquals(board, boardDeserialized);
     }
 }
