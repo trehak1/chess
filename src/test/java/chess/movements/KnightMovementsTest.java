@@ -15,33 +15,28 @@ public class KnightMovementsTest {
 
     @Test
     public void testCornerKnight() {
-        Board board = boardLoader.loadBoard("cornerKnight.txt");
-        KnightMovements knightMovements = new KnightMovements(Player.WHITE);
-        List<Movement> movements = knightMovements.getMovements(board);
-        Assert.assertEquals(2, movements.size());
+        testNumbersOfPossibleMovements("cornerKnight.txt", 2);
     }
 
     @Test
     public void testAlmostCornerKnight() {
-        Board board = boardLoader.loadBoard("almostCornerKnight.txt");
-        KnightMovements knightMovements = new KnightMovements(Player.WHITE);
-        List<Movement> movements = knightMovements.getMovements(board);
-        Assert.assertEquals(3, movements.size());
+        testNumbersOfPossibleMovements("almostCornerKnight.txt", 3);
     }
 
     @Test
     public void testMiddleKnight() {
-        Board board = boardLoader.loadBoard("middleKnight.txt");
-        KnightMovements knightMovements = new KnightMovements(Player.WHITE);
-        List<Movement> movements = knightMovements.getMovements(board);
-        Assert.assertEquals(8, movements.size());
+        testNumbersOfPossibleMovements("middleKnight.txt", 8);
     }
 
     @Test
     public void testSideKnight() {
-        Board board = boardLoader.loadBoard("sideKnight.txt");
+        testNumbersOfPossibleMovements("sideKnight.txt", 4);
+    }
+    
+    private void testNumbersOfPossibleMovements(String fileName, int number) {
+        Board board = boardLoader.loadBoard(fileName);
         KnightMovements knightMovements = new KnightMovements(Player.WHITE);
         List<Movement> movements = knightMovements.getMovements(board);
-        Assert.assertEquals(4, movements.size());
+        Assert.assertEquals(number, movements.size());
     }
 }
