@@ -1,8 +1,10 @@
 package chess.board;
 
-import org.apache.commons.io.IOUtils;
+import com.google.common.io.ByteStreams;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class BoardLoader {
 
@@ -16,8 +18,11 @@ public class BoardLoader {
 
     public Board loadBoard(String fileName) {
         try {
-            String s = IOUtils.toString(classLoader.getResourceAsStream(fileName));
-            return boardSerializer.deserializeFromUtf8(s);
+            try(InputStream stream = classLoader.getResourceAsStream(fileName)) {
+                byte[] bytes = ByteStreams.toByteArray(stream);
+                String s = new String(bytes, StandardCharsets.UTF_8);
+                return boardSerializer.deserializeFromUtf8(s);
+            }
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
