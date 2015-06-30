@@ -24,12 +24,11 @@ public abstract class RayMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> moves = new ArrayList<>();
-        for (Col c : Col.validValues()) {
-            for (Row r : Row.validValues()) {
-                Figure f = board.get(c, r);
-                if (f != Figure.NONE && f.getPlayer() == player && f.getPiece() == piece) {
-                    moves.addAll(createMoves(board, c, r));
-                }
+        List<Coord> coords = MoveUtils.locateAll(Figure.get(player, piece), board);
+        for (Coord c : coords) {
+            Figure f = board.get(c);
+            if (f != Figure.NONE && f.getPlayer() == player && f.getPiece() == piece) {
+                moves.addAll(createMoves(board, c.getCol(), c.getRow()));
             }
         }
         return moves;

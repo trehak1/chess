@@ -47,8 +47,18 @@ public class Board {
         return nb;
     }
 
+    public Board allowEnPassant(Coord coord) {
+        Preconditions.checkNotNull(coord);
+        return allowEnPassant(coord.getCol(), coord.getRow());
+    }
+
     public EnumSet<Coord> getEnPassantAllowed() {
         return enPassantAllowed.clone();
+    }
+
+    public boolean isEnPassantAllowed(Coord coord) {
+        Preconditions.checkNotNull(coord);
+        return isEnPassantAllowed(coord.getCol(), coord.getRow());
     }
 
     public boolean isEnPassantAllowed(Col col, Row row) {
@@ -72,6 +82,7 @@ public class Board {
 
     public Board disableCastling(Player player, Castling castling) {
         Preconditions.checkNotNull(player);
+        Preconditions.checkNotNull(castling);
         switch (player) {
             case WHITE:
                 EnumSet<Castling> whiteCastlings = whiteCastlingEnabled.clone();
@@ -88,11 +99,20 @@ public class Board {
         }
     }
 
+    public Figure get(Coord coord) {
+        Preconditions.checkNotNull(coord);
+        return get(coord.getCol(), coord.getRow());
+    }
 
     public Figure get(Col col, Row row) {
         Preconditions.checkNotNull(col);
         Preconditions.checkNotNull(col);
         return board[col.ordinal()][row.ordinal()];
+    }
+
+    public Board set(Coord coord, Figure figure) {
+        Preconditions.checkNotNull(coord);
+        return set(coord.getCol(), coord.getRow(), figure);
     }
 
     public Board set(Col col, Row row, Figure figure) {
@@ -103,6 +123,11 @@ public class Board {
         Board clone = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
         clone.board[col.ordinal()][row.ordinal()] = figure;
         return clone;
+    }
+
+    public Board remove(Coord coord) {
+        Preconditions.checkNotNull(coord);
+        return remove(coord.getCol(), coord.getRow());
     }
 
     public Board remove(Col col, Row row) {
@@ -138,4 +163,6 @@ public class Board {
         result = 31 * result + (blackCastlingEnabled != null ? blackCastlingEnabled.hashCode() : 0);
         return result;
     }
+
+
 }

@@ -17,9 +17,9 @@ public enum Coord {
     F1(Col.F, Row._1), F2(Col.F, Row._2), F3(Col.F, Row._3), F4(Col.F, Row._4), F5(Col.F, Row._5), F6(Col.F, Row._6), F7(Col.F, Row._7), F8(Col.F, Row._8),
     G1(Col.G, Row._1), G2(Col.G, Row._2), G3(Col.G, Row._3), G4(Col.G, Row._4), G5(Col.G, Row._5), G6(Col.G, Row._6), G7(Col.G, Row._7), G8(Col.G, Row._8),
     H1(Col.H, Row._1), H2(Col.H, Row._2), H3(Col.H, Row._3), H4(Col.H, Row._4), H5(Col.H, Row._5), H6(Col.H, Row._6), H7(Col.H, Row._7), H8(Col.H, Row._8),
-    INVALID(null, null);
+    INVALID(Col.INVALID, Row.INVALID);
 
-    private static final EnumSet<Coord> VALID_VALUES = EnumSet.complementOf(EnumSet.of(INVALID));
+    public static final EnumSet<Coord> VALID_VALUES = EnumSet.complementOf(EnumSet.of(INVALID));
 
     private final Col col;
     private final Row row;
@@ -27,6 +27,10 @@ public enum Coord {
     Coord(Col col, Row row) {
         this.col = col;
         this.row = row;
+    }
+
+    public boolean isValid() {
+        return this != INVALID;
     }
 
     public Coord east() {

@@ -1,7 +1,10 @@
 package chess.movements.figures;
 
 import chess.board.Board;
-import chess.enums.*;
+import chess.enums.Coord;
+import chess.enums.Figure;
+import chess.enums.Piece;
+import chess.enums.Player;
 import chess.movements.Movement;
 import chess.movements.MovementProducer;
 
@@ -19,14 +22,10 @@ public class KnightMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> movements = new ArrayList<>();
-        for (Col col : Col.validValues()) {
-            for (Row row : Row.validValues()) {
-                Figure f = board.get(col, row);
-                if (f.getPiece() == Piece.KNIGHT && f.getPlayer() == player) {
-                    movements.addAll(new KnightMovement(col, row, board).getMoves());
-                }
-            }
+        for (Coord c : MoveUtils.locateAll(Figure.get(player, Piece.KNIGHT), board)) {
+            movements.addAll(new KnightMovement(c.getCol(), c.getRow(), board).getMoves());
         }
+
         return movements;
     }
 }

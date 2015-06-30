@@ -2,6 +2,7 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.*;
+import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,10 @@ public class MoveUtils {
     private final Col col;
     private final Row row;
     private final Player player;
+
+    public MoveUtils(Board board, Coord coord) {
+        this(board, coord.getCol(), coord.getRow());
+    }
 
     public MoveUtils(Board board, Col col, Row row) {
         this.board = board;
@@ -34,10 +39,14 @@ public class MoveUtils {
     }
 
     public boolean isEmpty(Col col, Row row) {
+        Preconditions.checkArgument(col.isValid());
+        Preconditions.checkArgument(row.isValid());
         return board.get(col, row) == Figure.NONE;
     }
 
     public boolean isEnemy(Col col, Row row) {
+        Preconditions.checkArgument(col.isValid());
+        Preconditions.checkArgument(row.isValid());
         return board.get(col, row) != Figure.NONE && board.get(col, row).getPlayer() != player;
     }
 
@@ -46,6 +55,8 @@ public class MoveUtils {
     }
 
     public boolean isMine(Col col, Row row) {
+        Preconditions.checkArgument(col.isValid());
+        Preconditions.checkArgument(row.isValid());
         return board.get(col, row) != Figure.NONE && board.get(col, row).getPlayer() == player;
     }
 
@@ -91,10 +102,12 @@ public class MoveUtils {
         Row currentRow = rowModifyFunction.apply(row);
         Col currentCol = colModifyFunction.apply(col);
         // while on valid coords, go
-        while (currentRow != Row.INVALID || currentCol != Col.INVALID) {
+        while (currentRow != Row.INVALID && currentCol != Col.INVALID) {
             // if enemy or ally, add field and end iteration
-            if (isEnemy(currentCol, currentRow) || isMine(currentCol, currentRow)) {
+            if (isEnemy(currentCol, currentRow)) {
                 coords.add(Coord.get(currentCol, currentRow));
+                break;
+            } else if (isMine(currentCol, currentRow)) {
                 break;
             } else if (isEmpty(currentCol, currentRow)) {
                 // if is empty, add coord and move to next one
@@ -124,5 +137,29 @@ public class MoveUtils {
         return resultingBoard;
     }
 
+
+    public static Coord locateKing(Player player, Board board) {
+        Preconditions.checkNotNull(player);
+        Preconditions.checkNotNull(board);
+        for (Coord c : Coord.VALID_VALUES) {
+            Figure f = board.get(c);
+            if (f != Figure.NONE && f.getPlayer() == player && f.getPiece() == Piece.KING) {
+                return c;
+            }
+        }
+        throw new IllegalStateException("wtf no king for " + player);
+    }
+
+    public static List<Coord> locateAll(Figure figure, Board board) {
+        Preconditions.checkNotNull(figure);
+        List<Coord> coords = new ArrayList<>();
+        for (Coord c : Coord.VALID_VALUES) {
+            Figure f = board.get(c);
+            if (f == figure) {
+                coords.add(c);
+            }
+        }
+        return coords;
+    }
 
 }

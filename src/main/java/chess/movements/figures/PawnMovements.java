@@ -24,13 +24,9 @@ public class PawnMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> movements = new ArrayList<>();
-        for (Col col : Col.validValues()) {
-            for (Row row : Row.validValues()) {
-                Figure f = board.get(col, row);
-                if (f.getPiece() == Piece.PAWN && f.getPlayer() == player) {
-                    movements.addAll(movesFor(col, row, board));
-                }
-            }
+        List<Coord> pawnCoords = MoveUtils.locateAll(Figure.get(player, Piece.PAWN), board);
+        for (Coord c : pawnCoords) {
+            movements.addAll(movesFor(c.getCol(), c.getRow(), board));
         }
         return movements;
     }

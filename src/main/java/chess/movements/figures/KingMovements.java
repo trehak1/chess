@@ -1,11 +1,13 @@
 package chess.movements.figures;
 
 import chess.board.Board;
-import chess.enums.*;
+import chess.enums.Coord;
+import chess.enums.Player;
 import chess.movements.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class KingMovements implements MovementProducer {
 
@@ -18,28 +20,21 @@ public class KingMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> movements = new ArrayList<>();
-        for (Col c : Col.validValues()) {
-            for (Row r : Row.validValues()) {
-                Figure f = board.get(c, r);
-                if (f != Figure.NONE && f.getPiece() == Piece.KING && f.getPlayer() == player) {
-                    createMoves(movements, c, r, board);
-                }
-            }
-        }
+        Coord kingCoords = MoveUtils.locateKing(player, board);
+        createMoves(movements, kingCoords, board);
         return movements;
     }
 
-    private void createMoves(List<Movement> movements, Col c, Row r, Board board) {
-        MoveUtils moveUtils = new MoveUtils(board, c, r);
-        Coord my = moveUtils.myCoords();
-        moveTo(my.east(), movements, moveUtils);
-        moveTo(my.west(), movements, moveUtils);
-        moveTo(my.north(), movements, moveUtils);
-        moveTo(my.south(), movements, moveUtils);
-        moveTo(my.southEast(), movements, moveUtils);
-        moveTo(my.southWest(), movements, moveUtils);
-        moveTo(my.northEast(), movements, moveUtils);
-        moveTo(my.northWest(), movements, moveUtils);
+    private void createMoves(List<Movement> movements, Coord kingCoords, Board board) {
+        MoveUtils moveUtils = new MoveUtils(board, kingCoords);
+        moveTo(kingCoords.east(), movements, moveUtils);
+        moveTo(kingCoords.west(), movements, moveUtils);
+        moveTo(kingCoords.north(), movements, moveUtils);
+        moveTo(kingCoords.south(), movements, moveUtils);
+        moveTo(kingCoords.southEast(), movements, moveUtils);
+        moveTo(kingCoords.southWest(), movements, moveUtils);
+        moveTo(kingCoords.northEast(), movements, moveUtils);
+        moveTo(kingCoords.northWest(), movements, moveUtils);
     }
 
     private void moveTo(Coord targetCoords, List<Movement> movements, MoveUtils moveUtils) {

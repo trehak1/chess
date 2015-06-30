@@ -66,9 +66,10 @@ public class PawnMovement {
         if (row == lastRow) {
             return null;
         }
-        Row targetRow = directionMove.apply(row);
-        if (moveUtils.isEmpty(col, targetRow)) {
-            return new Move(Coord.get(col, row), Coord.get(col, targetRow), moveUtils.moveTo(Coord.get(col, targetRow)));
+        Coord from = moveUtils.myCoords();
+        Coord target = Coord.get(col, directionMove.apply(row));
+        if (moveUtils.isEmpty(target)) {
+            return new Move(from, target, moveUtils.moveTo(target));
         }
         return null;
     }
@@ -80,9 +81,13 @@ public class PawnMovement {
         if (!moveUtils.isEmpty(col, directionMove.apply(row))) {
             return null;
         }
-        Row targetRow = directionMove.apply(directionMove.apply(row));
-        if (moveUtils.isEmpty(col, targetRow)) {
-            return new Move(Coord.get(col, row), Coord.get(col, targetRow), moveUtils.moveTo(Coord.get(col, targetRow)));
+        Coord from = moveUtils.myCoords();
+        Coord intermediate = Coord.get(col, directionMove.apply(row));
+        Coord target = Coord.get(intermediate.getCol(), directionMove.apply(intermediate.getRow()));
+        if (moveUtils.isEmpty(intermediate)) {
+            if (moveUtils.isEmpty(target)) {
+                return new Move(from, target, moveUtils.moveTo(target).allowEnPassant(target));
+            }
         }
         return null;
     }
