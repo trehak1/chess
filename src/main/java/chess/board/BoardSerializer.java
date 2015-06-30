@@ -29,7 +29,9 @@ public class BoardSerializer {
 
     /**
      * Serializes the board into matrix 8x8 of chess pieces using UTF-8 symbols.
+     * Board also has coordinates on the left side an in the bottom.
      * The A1 position is in the bottom-left corner.
+     * Selializes enPassants and castlings.
      * @param board
      * @return
      */
@@ -109,7 +111,7 @@ public class BoardSerializer {
             if (c == Col.INVALID) {
                 continue;
             }
-            sb.append(c.name());
+            sb.append(c.name() + " ");
         }
         sb.append("\n");
     }
@@ -128,7 +130,7 @@ public class BoardSerializer {
 
     private Board readWhiteCastlingsFromUtf8(Board board, String line) {
         // read white castlings
-        String[] whiteCastlings = line.replace("white castlings: ", "").split(", ");
+        String[] whiteCastlings = line.replace("white castlings: ", "").replaceAll("[\n\r]", "").split(", ");
         for (String wc : whiteCastlings) {
             if (wc.equals("")) {
                 continue;
@@ -152,7 +154,7 @@ public class BoardSerializer {
 
     private Board readEnPassantsFromUtf8(Board board, String line) {
         // read enpassants
-        String[] enpassants = line.replace("enpassants: ", "").split(", ");
+        String[] enpassants = line.replace("enpassants: ", "").replaceAll("[\n\r]", "").split(", ");
         for (String e : enpassants) {
             if (e.equals("")) {
                 continue;
@@ -167,7 +169,7 @@ public class BoardSerializer {
         Row r = Row._8;
         for (int l = 0; l < 8; l++) {
             String line = lines[l];
-            Preconditions.checkArgument(line.replace("\n", "").length() == 10);
+            Preconditions.checkArgument(line.replaceAll("[\n\r]", "").length() == 10);
             Col c = Col.A;
             for (int i = 0; i < 8; i++) {
                 board = board.set(c, r, Figure.fromUtf8Char(line.charAt(i + 2)));//first 2 characters are number of row and " "
@@ -175,7 +177,6 @@ public class BoardSerializer {
             }
             r = r.south();
         }
-        // skip 9th line
         return board;
     }
 }

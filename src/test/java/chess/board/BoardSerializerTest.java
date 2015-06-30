@@ -14,6 +14,7 @@ public class BoardSerializerTest {
 
         Board boardDeserialized = boardSerializer.deserializeFromJson(boardSerialized);
         Assert.assertEquals(board, boardDeserialized);
+        System.out.println(boardSerialized);
     }
     
     @Test
@@ -25,5 +26,6 @@ public class BoardSerializerTest {
 
         Board boardDeserialized = boardSerializer.deserializeFromUtf8(boardSerialized);
         Assert.assertEquals(board, boardDeserialized);
+        System.out.println(boardSerialized);
     }
 }
