@@ -4,7 +4,6 @@ import chess.board.Board;
 import chess.enums.Col;
 import chess.enums.Coord;
 import chess.enums.Player;
-import chess.enums.Row;
 import chess.movements.Castling;
 import chess.movements.CastlingMove;
 import chess.movements.Movement;
@@ -59,7 +58,7 @@ public class CastlingMoves implements MovementProducer {
         resultingBoard = rookUtils.moveTo(toBeEmpty.get(0));
         resultingBoard = resultingBoard.disableCastling(player, Castling.KING_SIDE)
                 .disableCastling(player, Castling.QUEEN_SIDE);
-        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE);
+        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE, MoveUtils.locateKing(player, board));
         return castlingMove;
     }
 
@@ -80,7 +79,7 @@ public class CastlingMoves implements MovementProducer {
         resultingBoard = rookUtils.moveTo(toBeEmpty.get(2));
         resultingBoard = resultingBoard.disableCastling(player, Castling.KING_SIDE)
                 .disableCastling(player, Castling.QUEEN_SIDE);
-        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE);
+        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE, MoveUtils.locateKing(player, board));
         return castlingMove;
     }
 }

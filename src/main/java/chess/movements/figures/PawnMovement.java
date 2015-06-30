@@ -178,7 +178,7 @@ public class PawnMovement {
                 Board resultingBoard = board.remove(col, row);
                 for (Figure f : PROMOTION_SET) {
                     resultingBoard.set(col, targetRow, f);
-                    promotions.add(new Promotion(Coord.get(col, row), Coord.get(col, targetRow), resultingBoard));
+                    promotions.add(new Promotion(Coord.get(col, row), Coord.get(col, targetRow), f, resultingBoard));
                 }
                 return promotions;
             }

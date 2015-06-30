@@ -1,4 +1,4 @@
-package chess.session;
+package chess.game;
 
 import chess.board.Board;
 import chess.board.BoardFactory;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Session {
+public class Game {
 
     private final String id;
     private final List<Movement> movements = new ArrayList<>();
@@ -22,7 +22,7 @@ public class Session {
         return BaseEncoding.base16().lowerCase().encode(bytes);
     }
 
-    public Session(String id) {
+    public Game(String id) {
         this.id = id;
     }
 
