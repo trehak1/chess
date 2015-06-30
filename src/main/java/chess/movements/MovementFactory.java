@@ -1,10 +1,7 @@
 package chess.movements;
 
 import chess.board.Board;
-import chess.enums.Coord;
-import chess.enums.Figure;
-import chess.enums.Piece;
-import chess.enums.Player;
+import chess.enums.*;
 import chess.movements.figures.*;
 import com.google.common.base.Preconditions;
 
@@ -49,7 +46,7 @@ public class MovementFactory {
         }
         return list;
     }
-    
+
     public List<Movement> getMoves(Board board) {
         List<Movement> pseudoLegalMoves = getPseudoLegalMoves(board);
         return filterOutIllegalMoves(pseudoLegalMoves);
@@ -60,9 +57,10 @@ public class MovementFactory {
         while (it.hasNext()) {
             Movement m = it.next();
             Board nextBoard = m.getResultingBoard();
-            if (isInCheck(nextBoard)) {
+            Coord kingCoord = MoveUtils.locateKing(player, nextBoard);
+            if (isEndangered(nextBoard, kingCoord)) {
                 it.remove();
-            } else if ((m instanceof CastlingMove) && castlingFieldsInCheck((CastlingMove) m, nextBoard)) {
+            } else if ((m instanceof CastlingMove) && castlingFieldEndangered((CastlingMove) m, nextBoard)) {
                 it.remove();
             }
         }
@@ -70,20 +68,28 @@ public class MovementFactory {
     }
 
     // check if any of castling field of interest is in check
-    private boolean castlingFieldsInCheck(CastlingMove m, Board nextBoard) {
-        // TODO complete - only fields used by king are to be checked
-        return false;
+    private boolean castlingFieldEndangered(CastlingMove m, Board nextBoard) {
+        Castling castling = m.getType();
+        switch (castling) {
+            case QUEEN_SIDE:
+                return isEndangered(nextBoard, Coord.get(Col.C, player.getStartingRow()))
+                        || isEndangered(nextBoard, Coord.get(Col.D, player.getStartingRow()))
+                        || isEndangered(nextBoard, Coord.get(Col.E, player.getStartingRow()));
+            case KING_SIDE:
+                return isEndangered(nextBoard, Coord.get(Col.F, player.getStartingRow()))
+                        || isEndangered(nextBoard, Coord.get(Col.G, player.getStartingRow()))
+                        || isEndangered(nextBoard, Coord.get(Col.E, player.getStartingRow()));
+            default:
+                throw new IllegalStateException("wtf");
+        }
     }
 
-    // check if king is in check
-    private boolean isInCheck(Board nextBoard) {
-        // king coords
-        Coord kingCoord = MoveUtils.locateKing(player, nextBoard);
-        // move factory for enemy
+    // check if field is endangered
+    private boolean isEndangered(Board nextBoard, Coord coordsToCheck) {
         MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
         List<Movement> enemyPossibleMoves = enemyFactory.getPseudoLegalMoves(nextBoard);
         for (Movement enemyMove : enemyPossibleMoves) {
-            if (enemyMove.getResultingBoard().get(kingCoord) != Figure.get(player, Piece.KING)) {
+            if (enemyMove.getResultingBoard().get(coordsToCheck) != Figure.get(player, Piece.KING)) {
                 return true;
             }
         }
