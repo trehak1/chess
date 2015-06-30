@@ -1,42 +1,39 @@
 package chess.movements;
 
-import chess.board.Board;
-import chess.board.BoardLoader;
 import chess.enums.Player;
 import chess.movements.figures.KnightMovements;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
+public class KnightMovementsTest extends MovementsTest {
 
-public class KnightMovementsTest {
-    
-    BoardLoader boardLoader = new BoardLoader();
+    private KnightMovements knightMovements = new KnightMovements(Player.WHITE);
 
     @Test
     public void testCornerKnight() {
-        testNumbersOfPossibleMovements("cornerKnight.txt", 2);
+        testNumbersOfPossibleMovements("knight/cornerKnight.txt", 2);
     }
 
     @Test
     public void testAlmostCornerKnight() {
-        testNumbersOfPossibleMovements("almostCornerKnight.txt", 3);
+        testNumbersOfPossibleMovements("knight/almostCornerKnight.txt", 3);
     }
 
     @Test
     public void testMiddleKnight() {
-        testNumbersOfPossibleMovements("middleKnight.txt", 8);
+        testNumbersOfPossibleMovements("knight/middleKnight.txt", 8);
     }
 
     @Test
     public void testSideKnight() {
-        testNumbersOfPossibleMovements("sideKnight.txt", 4);
+        testNumbersOfPossibleMovements("knight/sideKnight.txt", 4);
+    }
+
+    @Test
+    public void testBlockedKnight() {
+        testNumbersOfPossibleMovements("knight/blockedKnight.txt", 0);
     }
     
     private void testNumbersOfPossibleMovements(String fileName, int number) {
-        Board board = boardLoader.loadBoard(fileName);
-        KnightMovements knightMovements = new KnightMovements(Player.WHITE);
-        List<Movement> movements = knightMovements.getMovements(board);
-        Assert.assertEquals(number, movements.size());
+        testNumbersOfPossibleMovements(fileName, knightMovements, number);
     }
 }

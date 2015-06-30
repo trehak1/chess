@@ -33,6 +33,7 @@ public class BoardSerializer {
         figureCharacterMap.put(Figure.BLACK_BISHOP, '♝');
         figureCharacterMap.put(Figure.BLACK_QUEEN, '♛');
         figureCharacterMap.put(Figure.BLACK_KING, '♚');
+        figureCharacterMap.put(Figure.NONE, '░');
         figureCharacters = ImmutableBiMap.copyOf(figureCharacterMap);
     }
     
