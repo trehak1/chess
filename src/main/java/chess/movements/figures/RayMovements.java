@@ -26,10 +26,7 @@ public abstract class RayMovements implements MovementProducer {
         List<Movement> moves = new ArrayList<>();
         List<Coord> coords = MoveUtils.locateAll(Figure.get(player, piece), board);
         for (Coord c : coords) {
-            Figure f = board.get(c);
-            if (f != Figure.NONE && f.getPlayer() == player && f.getPiece() == piece) {
-                moves.addAll(createMoves(board, c.getCol(), c.getRow()));
-            }
+            moves.addAll(createMoves(board, c.getCol(), c.getRow()));
         }
         return moves;
     }

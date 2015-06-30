@@ -5,6 +5,26 @@ package chess.enums;
  */
 public enum Player {
 
-    WHITE, BLACK
+    WHITE(Row._1), BLACK(Row._8);
+
+    private final Row startingRow;
+
+    Player(Row startingRow) {
+        this.startingRow = startingRow;
+    }
+
+    public Row getStartingRow() {
+        return startingRow;
+    }
+
+    public Player enemy() {
+        if (this == WHITE) {
+            return BLACK;
+        } else if (this == BLACK) {
+            return WHITE;
+        } else {
+            throw new IllegalStateException("wtf");
+        }
+    }
 
 }

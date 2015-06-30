@@ -112,8 +112,8 @@ public class MoveUtils {
             } else if (isEmpty(currentCol, currentRow)) {
                 // if is empty, add coord and move to next one
                 coords.add(Coord.get(currentCol, currentRow));
-                currentRow = rowModifyFunction.apply(row);
-                currentCol = colModifyFunction.apply(col);
+                currentRow = rowModifyFunction.apply(currentRow);
+                currentCol = colModifyFunction.apply(currentCol);
             } else {
                 throw new IllegalArgumentException("wtf");
             }

@@ -9,6 +9,9 @@ import chess.movements.Castling;
 import chess.movements.CastlingMove;
 import chess.movements.Movement;
 import chess.movements.MovementProducer;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ public class CastlingMoves implements MovementProducer {
     private final Player player;
 
     public CastlingMoves(Player player) {
+        Preconditions.checkNotNull(player);
         this.player = player;
     }
 
@@ -42,29 +46,17 @@ public class CastlingMoves implements MovementProducer {
         if (!board.isCastlingEnabled(player, Castling.KING_SIDE)) {
             return null;
         }
-        Coord[] empty = new Coord[2];
-        Row row;
-        switch (player) {
-            case WHITE:
-                empty[0] = Coord.F1;
-                empty[1] = Coord.G1;
-                row = Row._1;
-                break;
-            case BLACK:
-                empty[0] = Coord.F8;
-                empty[1] = Coord.G8;
-                row = Row._8;
-                break;
-            default:
-                throw new IllegalArgumentException("wtf");
+        List<Coord> toBeEmpty = Lists.newArrayList();
+        for (Col c : Castling.KING_SIDE.getCols()) {
+            toBeEmpty.add(Coord.get(c, player.getStartingRow()));
         }
         MoveUtils kingUtils = new MoveUtils(board, MoveUtils.locateKing(player, board));
-        if (!kingUtils.isEmpty(empty[0]) || !kingUtils.isEmpty(empty[1])) {
+        if (Iterables.any(toBeEmpty, (coord) -> !kingUtils.isEmpty(coord))) {
             return null;
         }
-        Board resultingBoard = kingUtils.moveTo(empty[1]);
-        MoveUtils rookUtils = new MoveUtils(resultingBoard, Coord.get(Col.H, row));
-        resultingBoard = rookUtils.moveTo(empty[0]);
+        Board resultingBoard = kingUtils.moveTo(toBeEmpty.get(1));
+        MoveUtils rookUtils = new MoveUtils(resultingBoard, Coord.get(Col.H, player.getStartingRow()));
+        resultingBoard = rookUtils.moveTo(toBeEmpty.get(0));
         resultingBoard = resultingBoard.disableCastling(player, Castling.KING_SIDE)
                 .disableCastling(player, Castling.QUEEN_SIDE);
         CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE);
@@ -75,31 +67,17 @@ public class CastlingMoves implements MovementProducer {
         if (!board.isCastlingEnabled(player, Castling.QUEEN_SIDE)) {
             return null;
         }
-        Coord[] empty = new Coord[3];
-        Row row;
-        switch (player) {
-            case WHITE:
-                empty[0] = Coord.B1;
-                empty[1] = Coord.C1;
-                empty[2] = Coord.D1;
-                row = Row._1;
-                break;
-            case BLACK:
-                empty[0] = Coord.B8;
-                empty[1] = Coord.C8;
-                empty[2] = Coord.D8;
-                row = Row._8;
-                break;
-            default:
-                throw new IllegalArgumentException("wtf");
+        List<Coord> toBeEmpty = Lists.newArrayList();
+        for (Col c : Castling.QUEEN_SIDE.getCols()) {
+            toBeEmpty.add(Coord.get(c, player.getStartingRow()));
         }
         MoveUtils kingUtils = new MoveUtils(board, MoveUtils.locateKing(player, board));
-        if (!kingUtils.isEmpty(empty[0]) || !kingUtils.isEmpty(empty[1]) || !kingUtils.isEmpty(empty[2])) {
+        if (Iterables.any(toBeEmpty, (coord) -> !kingUtils.isEmpty(coord))) {
             return null;
         }
-        Board resultingBoard = kingUtils.moveTo(empty[1]);
-        MoveUtils rookUtils = new MoveUtils(resultingBoard, Coord.get(Col.A, row));
-        resultingBoard = rookUtils.moveTo(empty[2]);
+        Board resultingBoard = kingUtils.moveTo(toBeEmpty.get(1));
+        MoveUtils rookUtils = new MoveUtils(resultingBoard, Coord.get(Col.A, player.getStartingRow()));
+        resultingBoard = rookUtils.moveTo(toBeEmpty.get(2));
         resultingBoard = resultingBoard.disableCastling(player, Castling.KING_SIDE)
                 .disableCastling(player, Castling.QUEEN_SIDE);
         CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE);

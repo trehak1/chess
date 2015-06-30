@@ -3,9 +3,9 @@ package chess.board;
 import chess.enums.Col;
 import chess.enums.Figure;
 import chess.enums.Row;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.sun.tools.javac.util.Assert;
 
 import java.util.Arrays;
 
@@ -53,10 +53,10 @@ public class BoardSerializer {
     public Board deserializeFromUtf8(String s) {
         Board board = new Board();
         String[] lines = s.split("\n");
-        Assert.check(lines.length == 8);
+        Preconditions.checkArgument(lines.length == 8);
         Row r = Row._8;
         for (String line : lines) {
-            Assert.check(line.replace("\n", "").length() == 8);
+            Preconditions.checkArgument(line.replace("\n", "").length() == 8);
             Col c = Col.A;
             for (int i = 0; i < 8; i++) {
                 board = board.set(c, r, Figure.fromUtf8Char(line.charAt(i)));
