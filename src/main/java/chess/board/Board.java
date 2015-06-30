@@ -13,24 +13,24 @@ import java.util.EnumSet;
 public class Board {
 
     private final Figure[][] board = new Figure[8][8];
-    final EnumSet<Coord> enPassantAllowed;
+    final Coord enPassantAllowed;
     final EnumSet<Castling> whiteCastlingEnabled = EnumSet.allOf(Castling.class);
     final EnumSet<Castling> blackCastlingEnabled = EnumSet.allOf(Castling.class);
 
     Board() {
-        this.enPassantAllowed = EnumSet.noneOf(Coord.class);
+        this.enPassantAllowed = null;
         for (int i = 0; i < board.length; i++) {
             Arrays.fill(board[i], Figure.NONE);
         }
     }
 
-    Board(EnumSet<Castling> whiteCastlings, EnumSet<Castling> blackCastlings, Figure[][] board, EnumSet<Coord> enPassantAllowed) {
+    Board(EnumSet<Castling> whiteCastlings, EnumSet<Castling> blackCastlings, Figure[][] board, Coord enPassantAllowed) {
         // castling
         this.whiteCastlingEnabled.clear();
         this.whiteCastlingEnabled.addAll(whiteCastlings);
         this.blackCastlingEnabled.clear();
         this.blackCastlingEnabled.addAll(blackCastlings);
-        this.enPassantAllowed = enPassantAllowed.clone();
+        this.enPassantAllowed = enPassantAllowed;
         // figures
         for (int x = 0; x < board.length; x++) {
             for (int y = 0; y < board[x].length; y++) {
@@ -42,8 +42,7 @@ public class Board {
     public Board allowEnPassant(Col col, Row row) {
         Figure figure = get(col, row);
         Preconditions.checkArgument((figure == Figure.WHITE_PAWN && row == Row._4) || (figure == Figure.BLACK_PAWN && row == Row._5));
-        Board nb = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
-        nb.enPassantAllowed.add(Coord.get(col, row));
+        Board nb = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, Coord.get(col, row));
         return nb;
     }
 
@@ -52,8 +51,8 @@ public class Board {
         return allowEnPassant(coord.getCol(), coord.getRow());
     }
 
-    public EnumSet<Coord> getEnPassantAllowed() {
-        return enPassantAllowed.clone();
+    public Coord getEnPassantAllowed() {
+        return enPassantAllowed;
     }
 
     public boolean isEnPassantAllowed(Coord coord) {
@@ -64,7 +63,7 @@ public class Board {
     public boolean isEnPassantAllowed(Col col, Row row) {
         Preconditions.checkNotNull(col);
         Preconditions.checkNotNull(col);
-        return enPassantAllowed.contains(Coord.get(col, row));
+        return enPassantAllowed == Coord.get(col, row);
     }
 
     public boolean isCastlingEnabled(Player player, Castling castling) {
@@ -147,8 +146,7 @@ public class Board {
         Board board1 = (Board) o;
 
         if (!Arrays.deepEquals(board, board1.board)) return false;
-        if (enPassantAllowed != null ? !enPassantAllowed.equals(board1.enPassantAllowed) : board1.enPassantAllowed != null)
-            return false;
+        if (enPassantAllowed != board1.enPassantAllowed) return false;
         if (whiteCastlingEnabled != null ? !whiteCastlingEnabled.equals(board1.whiteCastlingEnabled) : board1.whiteCastlingEnabled != null)
             return false;
         return !(blackCastlingEnabled != null ? !blackCastlingEnabled.equals(board1.blackCastlingEnabled) : board1.blackCastlingEnabled != null);
@@ -163,6 +161,4 @@ public class Board {
         result = 31 * result + (blackCastlingEnabled != null ? blackCastlingEnabled.hashCode() : 0);
         return result;
     }
-
-
 }
