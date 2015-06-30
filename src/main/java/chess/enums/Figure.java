@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 public enum Figure {
 
 
-    NONE(null, null, ' '),
+    NONE(null, null, '.'),
     WHITE_PAWN(Player.WHITE, Piece.PAWN, '♙'),
     WHITE_ROOK(Player.WHITE, Piece.ROOK, '♖'),
     WHITE_KNIGHT(Player.WHITE, Piece.KNIGHT, '♘'),

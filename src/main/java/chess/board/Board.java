@@ -13,9 +13,9 @@ import java.util.EnumSet;
 public class Board {
 
     private final Figure[][] board = new Figure[8][8];
-    private final EnumSet<Coord> enPassantAllowed;
-    private final EnumSet<Castling> whiteCastlingEnabled = EnumSet.allOf(Castling.class);
-    private final EnumSet<Castling> blackCastlingEnabled = EnumSet.allOf(Castling.class);
+    final EnumSet<Coord> enPassantAllowed;
+    final EnumSet<Castling> whiteCastlingEnabled = EnumSet.allOf(Castling.class);
+    final EnumSet<Castling> blackCastlingEnabled = EnumSet.allOf(Castling.class);
 
     Board() {
         this.enPassantAllowed = EnumSet.noneOf(Coord.class);
