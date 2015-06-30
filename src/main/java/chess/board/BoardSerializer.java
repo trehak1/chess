@@ -4,17 +4,36 @@ import chess.enums.Col;
 import chess.enums.Coord;
 import chess.enums.Figure;
 import chess.enums.Row;
-import com.google.common.base.Preconditions;
 import chess.movements.Castling;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BoardSerializer {
     
+    BiMap<Figure, Character> figureCharacters;
+    
     public BoardSerializer() {
-        
+        Map<Figure, Character> figureCharacterMap = new HashMap<>();
+        figureCharacterMap.put(Figure.WHITE_PAWN, '♙');
+        figureCharacterMap.put(Figure.WHITE_ROOK, '♖');
+        figureCharacterMap.put(Figure.WHITE_KNIGHT, '♘');
+        figureCharacterMap.put(Figure.WHITE_BISHOP, '♗');
+        figureCharacterMap.put(Figure.WHITE_QUEEN, '♕');
+        figureCharacterMap.put(Figure.WHITE_KING, '♔');
+        figureCharacterMap.put(Figure.BLACK_PAWN, '♟');
+        figureCharacterMap.put(Figure.BLACK_ROOK, '♜');
+        figureCharacterMap.put(Figure.BLACK_KNIGHT, '♞');
+        figureCharacterMap.put(Figure.BLACK_BISHOP, '♝');
+        figureCharacterMap.put(Figure.BLACK_QUEEN, '♛');
+        figureCharacterMap.put(Figure.BLACK_KING, '♚');
+        figureCharacters = ImmutableBiMap.copyOf(figureCharacterMap);
     }
     
     public String serializeIntoJson(Board board) {
@@ -101,7 +120,7 @@ public class BoardSerializer {
                     continue;
                 }
                 Figure figure = board.get(c, r);
-                sb.append(figure.getUtf8Char());
+                sb.append(figureCharacters.get(figure));
             }
             sb.append('\n');
         }
@@ -172,7 +191,7 @@ public class BoardSerializer {
             Preconditions.checkArgument(line.replaceAll("[\n\r]", "").length() == 10);
             Col c = Col.A;
             for (int i = 0; i < 8; i++) {
-                board = board.set(c, r, Figure.fromUtf8Char(line.charAt(i + 2)));//first 2 characters are number of row and " "
+                board = board.set(c, r, figureCharacters.inverse().get(line.charAt(i + 2)));//first 2 characters are number of row and " "
                 c = c.east();
             }
             r = r.south();
