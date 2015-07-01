@@ -9,14 +9,10 @@ import chess.enums.Figure;
  */
 public class Promotion extends Movement {
 
-    private final Coord from;
-    private final Coord to;
     private final Figure promotedTo;
 
     public Promotion(Coord from, Coord to, Figure f, Board resultingBoard) {
-        super(resultingBoard);
-        this.from = from;
-        this.to = to;
+        super(resultingBoard, from, to);
         this.promotedTo = f;
     }
 
@@ -24,11 +20,4 @@ public class Promotion extends Movement {
         return promotedTo;
     }
 
-    public Coord getFrom() {
-        return from;
-    }
-
-    public Coord getTo() {
-        return to;
-    }
 }

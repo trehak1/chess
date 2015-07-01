@@ -8,24 +8,12 @@ import chess.enums.Coord;
  */
 public class EnPassant extends Movement {
 
-    private final Coord from;
-    private final Coord to;
-
     public EnPassant(Coord from, Coord to, Board resultingBoard) {
-        super(resultingBoard);
-        this.from = from;
-        this.to = to;
+        super(resultingBoard, from, to);
     }
 
     public Coord getTargetPiece() {
         return Coord.get(to.getCol(), from.getRow());
     }
 
-    public Coord getFrom() {
-        return from;
-    }
-
-    public Coord getTo() {
-        return to;
-    }
 }

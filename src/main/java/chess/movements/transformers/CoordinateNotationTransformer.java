@@ -26,9 +26,9 @@ public class CoordinateNotationTransformer implements NotationTransformer {
         if (movement instanceof CastlingMove) {
             CastlingMove cm = (CastlingMove) movement;
             if (cm.getType() == Castling.KING_SIDE) {
-                return notation(cm.getOriginalKingCoord(), cm.getOriginalKingCoord().east().east());
+                return notation(cm.getFrom(), cm.getTo());
             } else if (cm.getType() == Castling.QUEEN_SIDE) {
-                return notation(cm.getOriginalKingCoord(), cm.getOriginalKingCoord().west().west());
+                return notation(cm.getFrom(), cm.getTo());
             } else {
                 throw new IllegalStateException("wtf");
             }
@@ -83,5 +83,15 @@ public class CoordinateNotationTransformer implements NotationTransformer {
             }
         }
         return null;
+    }
+
+    @Override
+    public Coord coordFromNotation(String notation) {
+        return Coord.valueOf(notation);
+    }
+
+    @Override
+    public String coordToNotation(Coord coord) {
+        return coord.name();
     }
 }

@@ -58,7 +58,7 @@ public class CastlingMoves implements MovementProducer {
         resultingBoard = rookUtils.moveTo(toBeEmpty.get(0));
         resultingBoard = resultingBoard.disableCastling(player, Castling.KING_SIDE)
                 .disableCastling(player, Castling.QUEEN_SIDE);
-        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE, MoveUtils.locateKing(player, board));
+        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE, MoveUtils.locateKing(player, board), toBeEmpty.get(1));
         return castlingMove;
     }
 
@@ -79,7 +79,7 @@ public class CastlingMoves implements MovementProducer {
         resultingBoard = rookUtils.moveTo(toBeEmpty.get(2));
         resultingBoard = resultingBoard.disableCastling(player, Castling.KING_SIDE)
                 .disableCastling(player, Castling.QUEEN_SIDE);
-        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE, MoveUtils.locateKing(player, board));
+        CastlingMove castlingMove = new CastlingMove(resultingBoard, Castling.KING_SIDE, MoveUtils.locateKing(player, board), toBeEmpty.get(1));
         return castlingMove;
     }
 }

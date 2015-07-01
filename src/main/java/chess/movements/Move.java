@@ -8,21 +8,8 @@ import chess.enums.Coord;
  */
 public class Move extends Movement {
 
-    private final Coord from;
-    private final Coord to;
-
     public Move(Coord from, Coord to, Board resultingBoard) {
-        super(resultingBoard);
-        this.from = from;
-        this.to = to;
-    }
-
-    public Coord getFrom() {
-        return from;
-    }
-
-    public Coord getTo() {
-        return to;
+        super(resultingBoard, from, to);
     }
 
 }

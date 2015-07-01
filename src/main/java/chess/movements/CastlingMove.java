@@ -9,16 +9,10 @@ import chess.enums.Coord;
 public class CastlingMove extends Movement {
 
     private final Castling type;
-    private final Coord originalKingCoord;
 
-    public CastlingMove(Board resultingBoard, Castling type, Coord originalKingCoord) {
-        super(resultingBoard);
-        this.originalKingCoord = originalKingCoord;
+    public CastlingMove(Board resultingBoard, Castling type, Coord originalKingCoord, Coord newKingCoord) {
+        super(resultingBoard, originalKingCoord, newKingCoord);
         this.type = type;
-    }
-
-    public Coord getOriginalKingCoord() {
-        return originalKingCoord;
     }
 
     public Castling getType() {

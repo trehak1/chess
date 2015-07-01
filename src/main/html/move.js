@@ -31,5 +31,9 @@ function processCoord(coord) {
         });
         
         move.clear();
+    } else {
+        $.get("http://localhost:3333/chess/game/moves/" + gameId + "/" + coord, function (data) {
+            
+        });
     }
 }
