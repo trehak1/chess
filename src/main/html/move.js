@@ -22,18 +22,21 @@ var move = {
 
 function processCoord(coord) {
     move.addCoord(coord);
+    var gameId = $("#game-id").html();
     if (move.isFull()) {
-        var gameId = $("#game-id").html();
         var movement = move.from + "-" + move.to;
 
         $.get("http://localhost:3333/chess/game/move/" + gameId + "/" + movement, function (data) {
-            drawCanvas(data);
+            checkboard.board = data.currentBoard.board;
+            checkboard.possibleMoves = null;
+            checkboard.drawCanvas();
         });
         
         move.clear();
     } else {
         $.get("http://localhost:3333/chess/game/moves/" + gameId + "/" + coord, function (data) {
-            
+            checkboard.possibleMoves = data;
+            checkboard.drawCanvas();
         });
     }
 }

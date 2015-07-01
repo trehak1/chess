@@ -1,43 +1,17 @@
-var canvasSize = 400;
-var fieldSize = canvasSize/8;
+var checkboard = {
+    canvasSize: 400,
+    fieldSize: 50,//checkboard.canvasSize / 8,
+    canvas: null,
+    context2D: null,
+    board: null,
+    possibleMoves: null,
 
-function translatePixels(x) {
-    return Math.floor(x/fieldSize);
-}
+    translatePixels: function(x) {
+        return Math.floor(x / checkboard.fieldSize);
+    },
 
-function drawCanvas(game) {
-    var canvas = document.getElementById("checkerboard");
-    var context2D = canvas.getContext("2d");
-    var board = game.currentBoard.board;
-
-    for (var row = 0; row < 8; row++) {
-        for (var column = 0; column < 8; column++) {
-            // coordinates of the top-left corner
-            var x = column * fieldSize;
-            var y = row * fieldSize;
-            var fill;
-
-            if (row % 2 == 1) {
-                if (column % 2 == 0) {
-                    fill = "black";
-                }  else {
-                    fill = "white";
-                }
-            } else {
-                if (column % 2 == 0) {
-                    fill = "white";
-                }
-                else {
-                    fill = "black";
-                }
-            }
-            context2D.fillStyle = fill;
-            context2D.fillRect(x, y, 50, 50);
-        }
-    }
-
-    var figure = function (f) {
-        switch(f) {
+    figure: function(f) {
+        switch (f) {
             case "WHITE_PAWN":
                 return "♙";
             case "BLACK_PAWN":
@@ -67,42 +41,85 @@ function drawCanvas(game) {
             default :
                 return "?";
         }
-    };
+    },
 
-    for (var x = 0; x < 8; x++) {
-        var col = board[x];
-        for (var y = 7; y > -1; y--) {
-            var tx = x*fieldSize;
-            var ty = (7-y)*fieldSize + fieldSize - 10;
+    drawCanvas: function() {
+        checkboard.drawSquares();
+        checkboard.drawPieces();
+    },
 
-            var stroke;
+    drawSquares: function() {
+        for (var row = 0; row < 8; row++) {
+            for (var column = 0; column < 8; column++) {
+                // coordinates of the top-left corner
+                var x = column * checkboard.fieldSize;
+                var y = row * checkboard.fieldSize;
+                var fill;
 
-            if (x % 2 == 1) {
-                if (y % 2 == 0) {
-                    stroke = "black";
-                }  else {
-                    stroke = "white";
+                if (row % 2 == 1) {
+                    if (column % 2 == 0) {
+                        fill = "black";
+                    } else {
+                        fill = "white";
+                    }
+                } else {
+                    if (column % 2 == 0) {
+                        fill = "white";
+                    }
+                    else {
+                        fill = "black";
+                    }
                 }
-            } else {
-                if (y % 2 == 0) {
-                    stroke = "white";
+                if (checkboard.possibleMoves != null) {
+                    for (var i = 0; i < checkboard.possibleMoves.length; i++) {
+                        if (coordTranslator.translateRowCol(row, column) == checkboard.possibleMoves[i]) {
+                            fill = "red";
+                            break;
+                        }
+                    };
                 }
-                else {
-                    stroke = "black";
-                }
+                
+                checkboard.context2D.fillStyle = fill;
+                checkboard.context2D.fillRect(x, y, 50, 50);
             }
-            
-            context2D.font="50px Arial";
-            context2D.strokeStyle = stroke;
-            context2D.strokeText(figure(col[y]), tx, ty);
-            
-            var fill = "white";
-            if (col[y].lastIndexOf("BLACK", 0) == 0) {
-                fill = "black"
+        }
+    },
+    
+    drawPieces: function() {
+        for (var x = 0; x < 8; x++) {
+            var col = checkboard.board[x];
+            for (var y = 7; y > -1; y--) {
+                var tx = x * checkboard.fieldSize;
+                var ty = (7 - y) * checkboard.fieldSize + checkboard.fieldSize - 10;
+
+                var stroke;
+
+                if (x % 2 == 1) {
+                    if (y % 2 == 0) {
+                        stroke = "black";
+                    } else {
+                        stroke = "white";
+                    }
+                } else {
+                    if (y % 2 == 0) {
+                        stroke = "white";
+                    }
+                    else {
+                        stroke = "black";
+                    }
+                }
+
+                checkboard.context2D.font = "50px Arial";
+                checkboard.context2D.strokeStyle = stroke;
+                checkboard.context2D.strokeText(checkboard.figure(col[y]), tx, ty);
+
+                var fill = "white";
+                if (col[y].lastIndexOf("BLACK", 0) == 0) {
+                    fill = "black"
+                }
+                checkboard.context2D.fillStyle = fill;
+                checkboard.context2D.fillText(checkboard.figure(col[y]), tx, ty);
             }
-            context2D.fillStyle = fill;
-            context2D.fillText(figure(col[y]), tx, ty);
         }
     }
-
 }

@@ -18,17 +18,20 @@ Game ID : <span id="game-id"></span><br/>
 
     <script>
         $(document).ready(function () {
+            checkboard.canvas = document.getElementById("checkerboard");
+            checkboard.context2D = checkboard.canvas.getContext("2d");
             $("#new-game").click(function () {
                 $.get("http://localhost:3333/chess/game/new", function (data) {
                     $("#game-id").html(data.id);
-                    drawCanvas(data);
+                    checkboard.board = data.currentBoard.board;
+                    checkboard.drawCanvas();
                 });
             });
 
             $("#checkerboard").click(function (e) { //Relative ( to its parent) mouse position 
                 var posX = e.pageX - $(this).position().left;
                 var posY = e.pageY - $(this).position().top;
-                var coord = coordTranslator.translateRowCol(translatePixels(posY), translatePixels(posX));
+                var coord = coordTranslator.translateRowCol(checkboard.translatePixels(posY), checkboard.translatePixels(posX));
                 processCoord(coord);
             });
 
