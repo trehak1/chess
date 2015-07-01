@@ -104,8 +104,33 @@ function drawCanvas(game) {
         for (var y = 7; y > -1; y--) {
             var tx = x*fieldSize;
             var ty = (7-y)*fieldSize + fieldSize - 10;
+
+            var stroke;
+
+            if (x % 2 == 1) {
+                if (y % 2 == 0) {
+                    stroke = "black";
+                }  else {
+                    stroke = "white";
+                }
+            } else {
+                if (y % 2 == 0) {
+                    stroke = "white";
+                }
+                else {
+                    stroke = "black";
+                }
+            }
+            
             context2D.font="50px Arial";
-            context2D.fillStyle = "grey";
+            context2D.strokeStyle = stroke;
+            context2D.strokeText(figure(col[y]), tx, ty);
+            
+            var fill = "white";
+            if (col[y].lastIndexOf("BLACK", 0) == 0) {
+                fill = "black"
+            }
+            context2D.fillStyle = fill;
             context2D.fillText(figure(col[y]), tx, ty);
         }
     }
