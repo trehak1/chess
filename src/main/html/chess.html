@@ -14,17 +14,25 @@ Game ID : <span id="game-id"></span><br/>
 
 <canvas id="checkerboard" width="400" height="400" style="border: 1px solid black">
 
-<script>
-    $(document).ready(function() {
-        $("#new-game").click(function() {
-            $.get( "http://localhost:3333/chess/game/new", function( data ) {
-                $("#game-id").html(data.id);
-                drawCanvas(data);
+    <script>
+        $(document).ready(function () {
+            $("#new-game").click(function () {
+                $.get("http://localhost:3333/chess/game/new", function (data) {
+                    $("#game-id").html(data.id);
+                    drawCanvas(data);
+                });
             });
-        });
-    });
 
-</script>
+            $("#checkerboard").click(function (e) { //Relative ( to its parent) mouse position 
+                var posX = e.pageX - $(this).position().left;
+                var posY = e.pageY - $(this).position().top;
+                var coord = translateRowCol(translatePixels(posY), translatePixels(posX));
+                alert(coord);
+            });
+
+        });
+
+    </script>
 
 </body>
 </html>

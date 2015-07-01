@@ -42,7 +42,12 @@ public class MovementFactory {
     private List<Movement> getPseudoLegalMoves(Board board) {
         List<Movement> list = new ArrayList<>();
         for (MovementProducer producer : producers) {
-            list.addAll(producer.getMovements(board));
+            try {
+                list.addAll(producer.getMovements(board));
+            } catch (Exception e) {
+                System.err.println("Exception in "+producer);
+                e.printStackTrace();
+            }
         }
         return list;
     }

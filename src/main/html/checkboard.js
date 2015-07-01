@@ -2,7 +2,7 @@ var canvasSize = 400;
 var fieldSize = canvasSize/8;
 
 function translatePixels(x) {
-    return x/fieldSize;
+    return Math.floor(x/fieldSize);
 }
 
 function translateRowCol(row,col) {
@@ -31,8 +31,7 @@ function translateRowCol(row,col) {
         }
     }
 
-    var translated = translateRow(row)+"-"+translateCol(col);
-
+    return translateCol(col)+translateRow(row);
 }
 
 function drawCanvas(game) {
