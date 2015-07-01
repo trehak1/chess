@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="./checkboard.js"></script>
+</head>
+<body>
+
+Game ID : <span id="game-id"></span><br/>
+<a href="#" id="new-game">new game</a>
+
+<br/>
+
+<canvas id="checkerboard" width="400" height="400" style="border: 1px solid black">
+
+<script>
+    $(document).ready(function() {
+        $("#new-game").click(function() {
+            $.get( "http://localhost:3333/chess/game/new", function( data ) {
+                $("#game-id").html(data.id);
+                drawCanvas(data);
+            });
+        });
+    });
+
+</script>
+
+</body>
+</html>

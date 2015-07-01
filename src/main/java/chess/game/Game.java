@@ -26,8 +26,13 @@ public class Game {
         this.id = id;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public int getMovesWithoutCaptureOrPawnAdvanceInRow() {
-        throw new UnsupportedOperationException("not yet implemented");
+        //throw new UnsupportedOperationException("not yet implemented");
+        return 0;
     }
 
     public Board getCurrentBoard() {

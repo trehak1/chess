@@ -138,6 +138,24 @@ public class Board {
         return clone;
     }
 
+    public Figure[][] getBoard() {
+        Figure[][] copy = new Figure[board.length][board[0].length];
+        for (int i = 0; i < copy.length; i++) {
+            for (int x = 0; x < copy[i].length; x++) {
+                copy[i][x] = board[i][x];
+            }
+        }
+        return copy;
+    }
+
+    public EnumSet<Castling> getWhiteCastlingEnabled() {
+        return whiteCastlingEnabled.clone();
+    }
+
+    public EnumSet<Castling> getBlackCastlingEnabled() {
+        return blackCastlingEnabled.clone();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
