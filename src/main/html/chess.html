@@ -5,6 +5,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="./checkboard.js"></script>
     <script src="./move.js"></script>
+    <script src="./coordTranslator.js"></script>
 </head>
 <body>
 
@@ -27,7 +28,7 @@ Game ID : <span id="game-id"></span><br/>
             $("#checkerboard").click(function (e) { //Relative ( to its parent) mouse position 
                 var posX = e.pageX - $(this).position().left;
                 var posY = e.pageY - $(this).position().top;
-                var coord = translateRowCol(translatePixels(posY), translatePixels(posX));
+                var coord = coordTranslator.translateRowCol(translatePixels(posY), translatePixels(posX));
                 processCoord(coord);
             });
 
