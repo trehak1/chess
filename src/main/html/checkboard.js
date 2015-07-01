@@ -99,13 +99,14 @@ function drawCanvas(game) {
         }
     };
 
-    for(var x =0; x < 8; x++) {
+    for (var x = 0; x < 8; x++) {
         var col = board[x];
-        for(var y = 7; y > -1; y--) {
+        for (var y = 7; y > -1; y--) {
             var tx = x*fieldSize;
-            var ty = (7-y)*fieldSize + fieldSize;
-            context2D.font="20px Arial";
-            context2D.fillText(figure(col[y]),tx,ty);
+            var ty = (7-y)*fieldSize + fieldSize - 10;
+            context2D.font="50px Arial";
+            context2D.fillStyle = "grey";
+            context2D.fillText(figure(col[y]), tx, ty);
         }
     }
 
