@@ -29,4 +29,21 @@ public abstract class Movement {
     public Coord getTo() {
         return to;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Castling m = (Castling) o;
+
+        return m.from == from && m.to == to;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = from.hashCode();
+        result = 31 * result + to.hashCode();
+        return result;
+    }
 }

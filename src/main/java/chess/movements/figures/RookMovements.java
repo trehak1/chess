@@ -45,17 +45,17 @@ public class RookMovements extends RayMovements implements MovementProducer {
         switch (player) {
             case WHITE:
                 if (from == Coord.A1) {
-                    return board.disableCastling(player, Castling.QUEEN_SIDE);
+                    return board.disableCastling(player, CastlingType.QUEEN_SIDE);
                 } else if (from == Coord.A8) {
-                    return board.disableCastling(player, Castling.KING_SIDE);
+                    return board.disableCastling(player, CastlingType.KING_SIDE);
                 } else {
                     return board;
                 }
             case BLACK:
                 if (from == Coord.H1) {
-                    return board.disableCastling(player, Castling.QUEEN_SIDE);
+                    return board.disableCastling(player, CastlingType.QUEEN_SIDE);
                 } else if (from == Coord.H8) {
-                    return board.disableCastling(player, Castling.KING_SIDE);
+                    return board.disableCastling(player, CastlingType.KING_SIDE);
                 } else {
                     return board;
                 }

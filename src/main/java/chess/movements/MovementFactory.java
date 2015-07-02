@@ -31,7 +31,7 @@ public class MovementFactory {
     private MovementFactory(Player player) {
         this.player = player;
         producers.add(new BishopMovements(player));
-        producers.add(new CastlingMoves(player));
+        producers.add(new CastlingMovements(player));
         producers.add(new KingMovements(player));
         producers.add(new KnightMovements(player));
         producers.add(new PawnMovements(player));
@@ -65,7 +65,7 @@ public class MovementFactory {
             Coord kingCoord = MoveUtils.locateKing(player, nextBoard);
             if (isEndangered(nextBoard, kingCoord)) {
                 it.remove();
-            } else if ((m instanceof CastlingMove) && castlingFieldEndangered((CastlingMove) m, nextBoard)) {
+            } else if ((m instanceof Castling) && castlingFieldEndangered((Castling) m, nextBoard)) {
                 it.remove();
             }
         }
@@ -73,9 +73,9 @@ public class MovementFactory {
     }
 
     // check if any of castling field of interest is in check
-    private boolean castlingFieldEndangered(CastlingMove m, Board nextBoard) {
-        Castling castling = m.getType();
-        switch (castling) {
+    private boolean castlingFieldEndangered(Castling m, Board nextBoard) {
+        CastlingType castlingType = m.getType();
+        switch (castlingType) {
             case QUEEN_SIDE:
                 return isEndangered(nextBoard, Coord.get(Col.C, player.getStartingRow()))
                         || isEndangered(nextBoard, Coord.get(Col.D, player.getStartingRow()))

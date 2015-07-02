@@ -12,8 +12,4 @@ public class EnPassant extends Movement {
         super(resultingBoard, from, to);
     }
 
-    public Coord getTargetPiece() {
-        return Coord.get(to.getCol(), from.getRow());
-    }
-
 }

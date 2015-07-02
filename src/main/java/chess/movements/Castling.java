@@ -1,24 +1,39 @@
 package chess.movements;
 
-import chess.enums.Col;
-import com.google.common.collect.Lists;
-
-import java.util.List;
+import chess.board.Board;
+import chess.enums.CastlingType;
+import chess.enums.Coord;
 
 /**
  * Created by Tom on 29.6.2015.
  */
-public enum Castling {
+public class Castling extends Movement {
 
-    QUEEN_SIDE(Col.B, Col.C, Col.D), KING_SIDE(Col.F, Col.G);
+    private final CastlingType type;
 
-    private final List<Col> cols;
-
-    Castling(Col... cols) {
-        this.cols = Lists.newArrayList(cols);
+    public Castling(Board resultingBoard, CastlingType type, Coord originalKingCoord, Coord newKingCoord) {
+        super(resultingBoard, originalKingCoord, newKingCoord);
+        this.type = type;
     }
 
-    public List<Col> getCols() {
-        return Lists.newArrayList(cols);
+    public CastlingType getType() {
+        return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Castling m = (Castling) o;
+
+        return super.equals(o) && m.type == type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
     }
 }

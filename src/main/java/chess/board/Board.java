@@ -3,7 +3,6 @@ package chess.board;
 import chess.enums.*;
 import chess.movements.Castling;
 import com.google.common.base.Preconditions;
-import javassist.expr.Cast;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -67,7 +66,7 @@ public class Board {
         return enPassantAllowed == Coord.get(col, row);
     }
 
-    private int castlingIndex(Player player, Castling castling) {
+    private int castlingIndex(Player player, CastlingType castlingType) {
 		int s;
 		switch (player) {
 			case WHITE:
@@ -79,7 +78,7 @@ public class Board {
 			default:
 				throw new IllegalArgumentException("wtf");
 		}
-		switch (castling) {
+		switch (castlingType) {
 			case KING_SIDE:
 				return s;
 			case QUEEN_SIDE:
@@ -89,16 +88,16 @@ public class Board {
 		}
 	} 
 	
-    public boolean isCastlingEnabled(Player player, Castling castling) {
+    public boolean isCastlingEnabled(Player player, CastlingType castlingType) {
         Preconditions.checkNotNull(player);
-        Preconditions.checkNotNull(castling);
-      	return castlings[castlingIndex(player,castling)];
+        Preconditions.checkNotNull(castlingType);
+      	return castlings[castlingIndex(player, castlingType)];
     }
 
-    public Board disableCastling(Player player, Castling castling) {
+    public Board disableCastling(Player player, CastlingType castlingType) {
         Preconditions.checkNotNull(player);
-        Preconditions.checkNotNull(castling);
-		int index = castlingIndex(player, castling);
+        Preconditions.checkNotNull(castlingType);
+		int index = castlingIndex(player, castlingType);
 		boolean[] copy = Arrays.copyOf(castlings, castlings.length);
 		copy[index] = false;
 		return new Board(copy, board, enPassantAllowed);
@@ -179,20 +178,20 @@ public class Board {
         return new Board(castlings,board,null);
     }
 
-	public EnumSet<Castling> getCastlingsEnabled(Player player) {
+	public EnumSet<CastlingType> getCastlingsEnabled(Player player) {
 		Preconditions.checkNotNull(player);
-		EnumSet<Castling> res = EnumSet.noneOf(Castling.class);
-		if(isCastlingEnabled(player,Castling.QUEEN_SIDE)) {
-			res.add(Castling.QUEEN_SIDE);
+		EnumSet<CastlingType> res = EnumSet.noneOf(CastlingType.class);
+		if(isCastlingEnabled(player, CastlingType.QUEEN_SIDE)) {
+			res.add(CastlingType.QUEEN_SIDE);
 		}
-		if(isCastlingEnabled(player,Castling.KING_SIDE)) {
-			res.add(Castling.KING_SIDE);
+		if(isCastlingEnabled(player, CastlingType.KING_SIDE)) {
+			res.add(CastlingType.KING_SIDE);
 		}
 		return res;
 	}
 
-	Board enableCastling(Player player, Castling castling) {
-		int index = castlingIndex(player, castling);
+	Board enableCastling(Player player, CastlingType castlingType) {
+		int index = castlingIndex(player, castlingType);
 		boolean[] copy = Arrays.copyOf(castlings, castlings.length);
 		copy[index] = true;
 		return new Board(copy,board,enPassantAllowed);

@@ -1,13 +1,13 @@
 package chess.movements;
 
 import chess.enums.Player;
-import chess.movements.figures.CastlingMoves;
+import chess.movements.figures.CastlingMovements;
 import org.junit.Test;
 
 public class CastlingMovementsTest extends MovementsTest {
 
-    private CastlingMoves castlingMovementsWhite = new CastlingMoves(Player.WHITE);
-    private CastlingMoves castlingMovementsBlack = new CastlingMoves(Player.BLACK);
+    private CastlingMovements castlingMovementsWhite = new CastlingMovements(Player.WHITE);
+    private CastlingMovements castlingMovementsBlack = new CastlingMovements(Player.BLACK);
 
     @Test
     public void testCastling() {

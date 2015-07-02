@@ -1,6 +1,7 @@
 package chess.movements.figures;
 
 import chess.board.Board;
+import chess.enums.CastlingType;
 import chess.enums.Coord;
 import chess.enums.Player;
 import chess.movements.*;
@@ -41,14 +42,14 @@ public class KingMovements implements MovementProducer {
         if (targetCoords != Coord.INVALID) {
             if (moveUtils.isEmpty(targetCoords)) {
                 Move m = new Move(moveUtils.myCoords(), targetCoords, moveUtils.moveTo(targetCoords)
-                        .disableCastling(player, Castling.QUEEN_SIDE)
-                        .disableCastling(player, Castling.KING_SIDE)
+                        .disableCastling(player, CastlingType.QUEEN_SIDE)
+                        .disableCastling(player, CastlingType.KING_SIDE)
                         .clearEnPassant());
                 movements.add(m);
             } else if (moveUtils.isEnemy(targetCoords)) {
                 Capture c = new Capture(moveUtils.myCoords(), targetCoords, moveUtils.capture(targetCoords)
-                        .disableCastling(player, Castling.QUEEN_SIDE)
-                        .disableCastling(player, Castling.KING_SIDE)
+                        .disableCastling(player, CastlingType.QUEEN_SIDE)
+                        .disableCastling(player, CastlingType.KING_SIDE)
                         .clearEnPassant());
                 movements.add(c);
             }

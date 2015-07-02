@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Created by Tom on 28.6.2015.
  */
-public class PawnMovement {
+class PawnMovement {
 
 	private static final EnumSet<Figure> PROMOTION_SET = EnumSet.of(Figure.WHITE_BISHOP, Figure.WHITE_KNIGHT, Figure.WHITE_QUEEN, Figure.WHITE_ROOK);
 

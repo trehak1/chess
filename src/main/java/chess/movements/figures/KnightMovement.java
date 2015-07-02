@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KnightMovement {
+class KnightMovement {
 
     private final Col col;
     private final Row row;

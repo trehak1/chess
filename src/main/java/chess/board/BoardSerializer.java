@@ -1,7 +1,6 @@
 package chess.board;
 
 import chess.enums.*;
-import chess.movements.Castling;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -64,10 +63,10 @@ public class BoardSerializer {
     private void writeBlackCastlingsToUtf8(Board board, StringBuilder sb) {
         // write black castlings enabled:
         sb.append("black castlings: ");
-        Castling firstBlackCastling = null;
-        for (Castling c : board.getCastlingsEnabled(Player.BLACK)) {
-            if (firstBlackCastling == null) {
-                firstBlackCastling = c;
+        CastlingType firstBlackCastlingType = null;
+        for (CastlingType c : board.getCastlingsEnabled(Player.BLACK)) {
+            if (firstBlackCastlingType == null) {
+                firstBlackCastlingType = c;
             } else {
                 sb.append(", ");
             }
@@ -78,10 +77,10 @@ public class BoardSerializer {
     private void writeWhiteCastlingsToUtf8(Board board, StringBuilder sb) {
         // write white castlings enabled:
         sb.append("white castlings: ");
-        Castling firstWhiteCastling = null;
-        for (Castling c : board.getCastlingsEnabled(Player.WHITE)) {
-            if (firstWhiteCastling == null) {
-                firstWhiteCastling = c;
+        CastlingType firstWhiteCastlingType = null;
+        for (CastlingType c : board.getCastlingsEnabled(Player.WHITE)) {
+            if (firstWhiteCastlingType == null) {
+                firstWhiteCastlingType = c;
             } else {
                 sb.append(", ");
             }
@@ -141,28 +140,28 @@ public class BoardSerializer {
 
     private Board readWhiteCastlingsFromUtf8(Board board, String line) {
         // read white castlings
-        board = board.disableCastling(Player.WHITE,Castling.QUEEN_SIDE);
-        board = board.disableCastling(Player.WHITE,Castling.KING_SIDE);
+        board = board.disableCastling(Player.WHITE, CastlingType.QUEEN_SIDE);
+        board = board.disableCastling(Player.WHITE, CastlingType.KING_SIDE);
         String[] whiteCastlings = line.replace("white castlings: ", "").replaceAll("[\n\r]", "").split(", ");
         for (String wc : whiteCastlings) {
             if (wc.equals("")) {
                 continue;
             }
-            board = board.enableCastling(Player.WHITE, Castling.valueOf(wc));
+            board = board.enableCastling(Player.WHITE, CastlingType.valueOf(wc));
         }
         return board;
     }
 
     private Board readBlackCastlingsFromUtf8(Board board, String line) {
         // read black castlings
-        board = board.disableCastling(Player.BLACK,Castling.QUEEN_SIDE);
-        board = board.disableCastling(Player.BLACK,Castling.KING_SIDE);
+        board = board.disableCastling(Player.BLACK, CastlingType.QUEEN_SIDE);
+        board = board.disableCastling(Player.BLACK, CastlingType.KING_SIDE);
         String[] blackCastlings = line.replace("black castlings: ", "").split(", ");
         for (String bc : blackCastlings) {
             if (bc.equals("")) {
                 continue;
             }
-            board = board.enableCastling(Player.BLACK, Castling.valueOf(bc));
+            board = board.enableCastling(Player.BLACK, CastlingType.valueOf(bc));
         }
         return board;
     }

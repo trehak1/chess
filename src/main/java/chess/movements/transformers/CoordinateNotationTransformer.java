@@ -1,6 +1,7 @@
 package chess.movements.transformers;
 
 import chess.board.Board;
+import chess.enums.CastlingType;
 import chess.enums.Coord;
 import chess.enums.Piece;
 import chess.enums.Player;
@@ -23,11 +24,11 @@ public class CoordinateNotationTransformer implements NotationTransformer {
 
     @Override
     public String toNotation(Movement movement) {
-        if (movement instanceof CastlingMove) {
-            CastlingMove cm = (CastlingMove) movement;
-            if (cm.getType() == Castling.KING_SIDE) {
+        if (movement instanceof Castling) {
+            Castling cm = (Castling) movement;
+            if (cm.getType() == CastlingType.KING_SIDE) {
                 return notation(cm.getFrom(), cm.getTo());
-            } else if (cm.getType() == Castling.QUEEN_SIDE) {
+            } else if (cm.getType() == CastlingType.QUEEN_SIDE) {
                 return notation(cm.getFrom(), cm.getTo());
             } else {
                 throw new IllegalStateException("wtf");
