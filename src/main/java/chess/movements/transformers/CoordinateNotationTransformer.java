@@ -41,6 +41,9 @@ public class CoordinateNotationTransformer implements NotationTransformer {
         } else if (movement instanceof Promotion) {
             Promotion p = (Promotion) movement;
             return notation(p.getFrom(), p.getTo(), p.getPromotedTo().getPiece());
+        } else if(movement instanceof EnPassant) {
+            EnPassant ep = (EnPassant)movement;
+            return notation(ep.getFrom(), ep.getTo());
         } else {
             throw new IllegalArgumentException("wtf " + movement.getClass());
         }

@@ -42,7 +42,7 @@ public class Board {
 
     public Board allowEnPassant(Col col, Row row) {
         Figure figure = get(col, row);
-        Preconditions.checkArgument((figure == Figure.WHITE_PAWN && row == Row._4) || (figure == Figure.BLACK_PAWN && row == Row._5));
+        Preconditions.checkArgument((figure == Figure.WHITE_PAWN && row == Row._4) || (figure == Figure.BLACK_PAWN && row == Row._5),"No pawn on requested coords");
         Board nb = new Board(castlings, board, Coord.get(col, row));
         return nb;
     }

@@ -49,7 +49,7 @@ public class Perft {
 
 	public static void main(String[] args) throws InterruptedException {
 		Perft perft = new Perft();
-		long res = perft.perft(6);
+		long res = perft.perft(5);
 		System.out.println(res);
 	}
 

@@ -141,6 +141,8 @@ public class BoardSerializer {
 
     private Board readWhiteCastlingsFromUtf8(Board board, String line) {
         // read white castlings
+        board = board.disableCastling(Player.WHITE,Castling.QUEEN_SIDE);
+        board = board.disableCastling(Player.WHITE,Castling.KING_SIDE);
         String[] whiteCastlings = line.replace("white castlings: ", "").replaceAll("[\n\r]", "").split(", ");
         for (String wc : whiteCastlings) {
             if (wc.equals("")) {
@@ -153,6 +155,8 @@ public class BoardSerializer {
 
     private Board readBlackCastlingsFromUtf8(Board board, String line) {
         // read black castlings
+        board = board.disableCastling(Player.BLACK,Castling.QUEEN_SIDE);
+        board = board.disableCastling(Player.BLACK,Castling.KING_SIDE);
         String[] blackCastlings = line.replace("black castlings: ", "").split(", ");
         for (String bc : blackCastlings) {
             if (bc.equals("")) {

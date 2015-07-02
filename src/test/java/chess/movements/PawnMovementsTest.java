@@ -2,8 +2,11 @@ package chess.movements;
 
 import chess.board.Board;
 import chess.board.BoardFactory;
+import chess.board.BoardLoader;
+import chess.enums.Coord;
 import chess.enums.Player;
 import chess.movements.figures.PawnMovements;
+import chess.movements.transformers.CoordinateNotationTransformer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,6 +38,20 @@ public class PawnMovementsTest extends MovementsTest {
     @Test
     public void testEnPassant() {
         testNumbersOfPossibleMovements("pawn/enPassant.txt", 2);
+    }
+
+    @Test
+    public void testEnPassant2() {
+        testNumbersOfPossibleMovements("pawn/enPassant2.txt", 2);
+    }
+    
+    @Test
+    public void testEp() {
+        Board board = new BoardLoader().loadBoard("pawn/enPassant2.txt");
+        MovementFactory factory = MovementFactory.getFor(Player.WHITE);
+        CoordinateNotationTransformer transformer = new CoordinateNotationTransformer(board, Player.WHITE);
+        Movement m = transformer.fromNotation("H5-G6");
+        Assert.assertEquals(EnPassant.class,m.getClass());
     }
 
     @Test
