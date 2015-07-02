@@ -1,9 +1,6 @@
 package chess.board;
 
-import chess.enums.Col;
-import chess.enums.Coord;
-import chess.enums.Figure;
-import chess.enums.Row;
+import chess.enums.*;
 import chess.movements.Castling;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -68,7 +65,7 @@ public class BoardSerializer {
         // write black castlings enabled:
         sb.append("black castlings: ");
         Castling firstBlackCastling = null;
-        for (Castling c : board.blackCastlingEnabled) {
+        for (Castling c : board.getCastlingsEnabled(Player.BLACK)) {
             if (firstBlackCastling == null) {
                 firstBlackCastling = c;
             } else {
@@ -82,7 +79,7 @@ public class BoardSerializer {
         // write white castlings enabled:
         sb.append("white castlings: ");
         Castling firstWhiteCastling = null;
-        for (Castling c : board.whiteCastlingEnabled) {
+        for (Castling c : board.getCastlingsEnabled(Player.WHITE)) {
             if (firstWhiteCastling == null) {
                 firstWhiteCastling = c;
             } else {
@@ -149,7 +146,7 @@ public class BoardSerializer {
             if (wc.equals("")) {
                 continue;
             }
-            board.whiteCastlingEnabled.add(Castling.valueOf(wc));
+            board = board.enableCastling(Player.WHITE, Castling.valueOf(wc));
         }
         return board;
     }
@@ -161,7 +158,7 @@ public class BoardSerializer {
             if (bc.equals("")) {
                 continue;
             }
-            board.blackCastlingEnabled.add(Castling.valueOf(bc));
+            board = board.enableCastling(Player.BLACK, Castling.valueOf(bc));
         }
         return board;
     }

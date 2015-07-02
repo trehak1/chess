@@ -3,6 +3,7 @@ package chess.board;
 import chess.enums.*;
 import chess.movements.Castling;
 import com.google.common.base.Preconditions;
+import javassist.expr.Cast;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -12,37 +13,37 @@ import java.util.EnumSet;
  */
 public class Board {
 
-    private final Figure[][] board = new Figure[8][8];
+    final Figure[][] board = new Figure[8][8];
     final Coord enPassantAllowed;
-    final EnumSet<Castling> whiteCastlingEnabled = EnumSet.allOf(Castling.class);
-    final EnumSet<Castling> blackCastlingEnabled = EnumSet.allOf(Castling.class);
+    // white king, white queen, black king, black queen
+    final boolean[] castlings;
 
     Board() {
+        this.castlings = new boolean[]{true,true,true,true};
         this.enPassantAllowed = null;
         for (int i = 0; i < board.length; i++) {
             Arrays.fill(board[i], Figure.NONE);
         }
     }
 
-    Board(EnumSet<Castling> whiteCastlings, EnumSet<Castling> blackCastlings, Figure[][] board, Coord enPassantAllowed) {
+    Board(boolean[] castlings, Figure[][] board, Coord enPassantAllowed) {
         // castling
-        this.whiteCastlingEnabled.clear();
-        this.whiteCastlingEnabled.addAll(whiteCastlings);
-        this.blackCastlingEnabled.clear();
-        this.blackCastlingEnabled.addAll(blackCastlings);
+        this.castlings = Arrays.copyOf(castlings,castlings.length);
         this.enPassantAllowed = enPassantAllowed;
+        copyFigures(board);
+    }
+
+    private void copyFigures(Figure[][] board) {
         // figures
         for (int x = 0; x < board.length; x++) {
-            for (int y = 0; y < board[x].length; y++) {
-                this.board[x][y] = board[x][y];
-            }
+            System.arraycopy(board[x],0,this.board[x],0,board[x].length);
         }
     }
 
     public Board allowEnPassant(Col col, Row row) {
         Figure figure = get(col, row);
         Preconditions.checkArgument((figure == Figure.WHITE_PAWN && row == Row._4) || (figure == Figure.BLACK_PAWN && row == Row._5));
-        Board nb = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, Coord.get(col, row));
+        Board nb = new Board(castlings, board, Coord.get(col, row));
         return nb;
     }
 
@@ -66,36 +67,41 @@ public class Board {
         return enPassantAllowed == Coord.get(col, row);
     }
 
+    private int castlingIndex(Player player, Castling castling) {
+		int s;
+		switch (player) {
+			case WHITE:
+				s = 0;
+				break;
+			case BLACK:
+				s = 2;
+				break;
+			default:
+				throw new IllegalArgumentException("wtf");
+		}
+		switch (castling) {
+			case KING_SIDE:
+				return s;
+			case QUEEN_SIDE:
+				return s+1;
+			default:
+				throw new IllegalArgumentException("wtf");
+		}
+	} 
+	
     public boolean isCastlingEnabled(Player player, Castling castling) {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(castling);
-        switch (player) {
-            case WHITE:
-                return whiteCastlingEnabled.contains(castling);
-            case BLACK:
-                return blackCastlingEnabled.contains(castling);
-            default:
-                throw new IllegalArgumentException("wtf");
-        }
+      	return castlings[castlingIndex(player,castling)];
     }
 
     public Board disableCastling(Player player, Castling castling) {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(castling);
-        switch (player) {
-            case WHITE:
-                EnumSet<Castling> whiteCastlings = whiteCastlingEnabled.clone();
-                whiteCastlings.remove(castling);
-                Board b = new Board(whiteCastlings, this.blackCastlingEnabled, board, enPassantAllowed);
-                return b;
-            case BLACK:
-                EnumSet<Castling> blackCastlings = blackCastlingEnabled.clone();
-                blackCastlings.remove(castling);
-                Board b1 = new Board(this.whiteCastlingEnabled, blackCastlings, board, enPassantAllowed);
-                return b1;
-            default:
-                throw new IllegalStateException("wtf");
-        }
+		int index = castlingIndex(player, castling);
+		boolean[] copy = Arrays.copyOf(castlings, castlings.length);
+		copy[index] = false;
+		return new Board(copy, board, enPassantAllowed);
     }
 
     public Figure get(Coord coord) {
@@ -119,7 +125,7 @@ public class Board {
         Preconditions.checkNotNull(row);
         Preconditions.checkNotNull(figure);
         Preconditions.checkArgument(get(col, row).equals(Figure.NONE));
-        Board clone = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
+        Board clone = new Board(castlings, board, enPassantAllowed);
         clone.board[col.ordinal()][row.ordinal()] = figure;
         return clone;
     }
@@ -133,7 +139,7 @@ public class Board {
         Preconditions.checkNotNull(col, "Null col");
         Preconditions.checkNotNull(row, "Null row");
         Preconditions.checkArgument(get(col, row) != Figure.NONE, "Unable to remove nonexisting figure");
-        Board clone = new Board(whiteCastlingEnabled, blackCastlingEnabled, board, enPassantAllowed);
+        Board clone = new Board(castlings, board, enPassantAllowed);
         clone.board[col.ordinal()][row.ordinal()] = Figure.NONE;
         return clone;
     }
@@ -148,39 +154,47 @@ public class Board {
         return copy;
     }
 
-    public EnumSet<Castling> getWhiteCastlingEnabled() {
-        return whiteCastlingEnabled.clone();
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Board board1 = (Board) o;
+
+		if (!Arrays.deepEquals(board, board1.board)) return false;
+		if (enPassantAllowed != board1.enPassantAllowed) return false;
+		return Arrays.equals(castlings, board1.castlings);
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = board != null ? Arrays.deepHashCode(board) : 0;
+		result = 31 * result + (enPassantAllowed != null ? enPassantAllowed.hashCode() : 0);
+		result = 31 * result + (castlings != null ? Arrays.hashCode(castlings) : 0);
+		return result;
+	}
+
+	public Board clearEnPassant() {
+        return new Board(castlings,board,null);
     }
 
-    public EnumSet<Castling> getBlackCastlingEnabled() {
-        return blackCastlingEnabled.clone();
-    }
+	public EnumSet<Castling> getCastlingsEnabled(Player player) {
+		Preconditions.checkNotNull(player);
+		EnumSet<Castling> res = EnumSet.noneOf(Castling.class);
+		if(isCastlingEnabled(player,Castling.QUEEN_SIDE)) {
+			res.add(Castling.QUEEN_SIDE);
+		}
+		if(isCastlingEnabled(player,Castling.KING_SIDE)) {
+			res.add(Castling.KING_SIDE);
+		}
+		return res;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Board board1 = (Board) o;
-
-        if (!Arrays.deepEquals(board, board1.board)) return false;
-        if (enPassantAllowed != board1.enPassantAllowed) return false;
-        if (whiteCastlingEnabled != null ? !whiteCastlingEnabled.equals(board1.whiteCastlingEnabled) : board1.whiteCastlingEnabled != null)
-            return false;
-        return !(blackCastlingEnabled != null ? !blackCastlingEnabled.equals(board1.blackCastlingEnabled) : board1.blackCastlingEnabled != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = board != null ? Arrays.deepHashCode(board) : 0;
-        result = 31 * result + (enPassantAllowed != null ? enPassantAllowed.hashCode() : 0);
-        result = 31 * result + (whiteCastlingEnabled != null ? whiteCastlingEnabled.hashCode() : 0);
-        result = 31 * result + (blackCastlingEnabled != null ? blackCastlingEnabled.hashCode() : 0);
-        return result;
-    }
-
-    public Board clearEnPassant() {
-        return new Board(whiteCastlingEnabled,blackCastlingEnabled,board,null);
-    }
+	Board enableCastling(Player player, Castling castling) {
+		int index = castlingIndex(player, castling);
+		boolean[] copy = Arrays.copyOf(castlings, castlings.length);
+		copy[index] = true;
+		return new Board(copy,board,enPassantAllowed);
+	}
 }
