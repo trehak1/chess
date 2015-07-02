@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Assert;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -23,13 +24,15 @@ public class Perft {
 		Board newGame = new BoardFactory().newGameBoard();
 		Player player = Player.WHITE;
 		final List<Board> boards = Lists.newArrayList(newGame);
+		Date start = new Date();
+		System.out.println("Start: "+start);
 		for (int i = 0; i < iterations; i++) {
 			Set<Movement> allMoves = getAllMoves(boards, player);
 			Assert.assertEquals(PERFT[i], allMoves.size());
 			boards.clear();
 			allMoves.forEach((m) -> boards.add(m.getResultingBoard()));
 			player = player.enemy();
-			System.out.println("iteration: " + (i+1) + ", boards: " + allMoves.size());
+			System.out.println("iteration: " + (i+1) + ", boards: " + allMoves.size()+", completed on "+new Date());
 			if (i == iterations - 1) {
 				return allMoves.size();
 			}
@@ -46,7 +49,7 @@ public class Perft {
 
 	public static void main(String[] args) throws InterruptedException {
 		Perft perft = new Perft();
-		long res = perft.perft(5);
+		long res = perft.perft(6);
 		System.out.println(res);
 	}
 
