@@ -24,6 +24,7 @@ Game ID : <span id="game-id"></span><br/>
                 $.get("http://localhost:3333/chess/game/new", function (data) {
                     $("#game-id").html(data.id);
                     checkboard.board = data.currentBoard.board;
+                    checkboard.possibleMoves = null;
                     checkboard.drawCanvas();
                 });
             });
