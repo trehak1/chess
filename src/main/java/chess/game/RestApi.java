@@ -35,7 +35,7 @@ public class RestApi {
 
     public static void main(String[] args) {
         try {
-            System.out.println("\"Hello World\" Jersey Example App");
+            System.out.println("Chess REST API starting");
 
             final ResourceConfig resourceConfig = new ResourceConfig(RestApi.class);
             resourceConfig.register((ContainerResponseFilter) (requestContext, responseContext) -> {
