@@ -6,26 +6,30 @@ import chess.enums.Player;
 import chess.movements.Movement;
 import chess.movements.MovementFactory;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.Assert;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Perft {
 
 	private static final long[] PERFT = new long[]{20, 400, 8902, 197281, 4865609, 119060324, 3195901860L, 84998978956L, 2439530234167L, 69352859712417L};
+	private final ExecutorService ex = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
 	public long perft(int iterations) throws InterruptedException {
 		Board newGame = new BoardFactory().newGameBoard();
 		Player player = Player.WHITE;
-		List<Board> boards = Lists.newArrayList(newGame);
+		final List<Board> boards = Lists.newArrayList(newGame);
 		for (int i = 0; i < iterations; i++) {
-			List<Movement> allMoves = getAllMoves(boards, player);
+			Set<Movement> allMoves = getAllMoves(boards, player);
 			Assert.assertEquals(PERFT[i], allMoves.size());
-			boards = Lists.transform(allMoves, (m) -> m.getResultingBoard());
+			boards.clear();
+			allMoves.forEach((m) -> boards.add(m.getResultingBoard()));
 			player = player.enemy();
-			System.out.println("iteration: "+i+", boards: "+allMoves.size());
+			System.out.println("iteration: " + (i+1) + ", boards: " + allMoves.size());
 			if (i == iterations - 1) {
 				return allMoves.size();
 			}
@@ -33,13 +37,10 @@ public class Perft {
 		return -1;
 	}
 
-	private List<Movement> getAllMoves(List<Board> boards, Player player) throws InterruptedException {
-		List<Movement> moves = new ArrayList<>();
+	private Set<Movement> getAllMoves(List<Board> boards, Player player) throws InterruptedException {
+		Set<Movement> moves = Sets.newConcurrentHashSet();
 		MovementFactory factory = MovementFactory.getFor(player);
-		for (Board b : boards) {
-//			Thread.sleep(1);
-			moves.addAll(factory.getMoves(b));
-		}
+		boards.parallelStream().forEach((b) -> moves.addAll(factory.getMoves(b)));
 		return moves;
 	}
 
