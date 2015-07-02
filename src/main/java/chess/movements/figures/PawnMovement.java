@@ -69,7 +69,7 @@ public class PawnMovement {
         Coord from = moveUtils.myCoords();
         Coord target = Coord.get(col, directionMove.apply(row));
         if (moveUtils.isEmpty(target)) {
-            return new Move(from, target, moveUtils.moveTo(target));
+            return new Move(from, target, moveUtils.moveTo(target).clearEnPassant());
         }
         return null;
     }
@@ -113,6 +113,7 @@ public class PawnMovement {
                 for (Figure f : PROMOTION_SET) {
                     Board resultingBoard = board.remove(m.getTo().getCol(), m.getTo().getRow());
                     resultingBoard = resultingBoard.set(m.getTo().getCol(), m.getTo().getRow(), f);
+                    resultingBoard = resultingBoard.clearEnPassant();
                     Capture c = new Capture(m.getFrom(), m.getTo(), resultingBoard);
                     retList.add(c);
                 }
@@ -136,12 +137,11 @@ public class PawnMovement {
     private Capture capture(Col targetCol, Row targetRow) {
         if (targetCol.isValid() && targetRow.isValid()) {
             if (moveUtils.isEnemy(targetCol, targetRow)) {
-                return new Capture(Coord.get(col, row), Coord.get(targetCol, targetRow), moveUtils.capture(Coord.get(targetCol, targetRow)));
+                return new Capture(Coord.get(col, row), Coord.get(targetCol, targetRow), moveUtils.capture(Coord.get(targetCol, targetRow)).clearEnPassant());
             }
         }
         return null;
     }
-
 
     public EnPassant enPassantWest() {
         Row targetRow = directionMove.apply(row);
@@ -162,7 +162,7 @@ public class PawnMovement {
                 if (board.isEnPassantAllowed(targetCol, row)) {
                     Board resultingBoard = board.remove(col, row);
                     resultingBoard = resultingBoard.remove(targetCol, row);
-                    resultingBoard = resultingBoard.set(targetCol, targetRow, myFigure);
+                    resultingBoard = resultingBoard.set(targetCol, targetRow, myFigure).clearEnPassant();
                     return new EnPassant(Coord.get(col, row), Coord.get(targetCol, targetRow), resultingBoard);
                 }
             }
@@ -175,7 +175,7 @@ public class PawnMovement {
             Row targetRow = directionMove.apply(row);
             if (moveUtils.isEmpty(col, targetRow)) {
                 List<Movement> promotions = new ArrayList<>();
-                Board resultingBoard = board.remove(col, row);
+                Board resultingBoard = board.remove(col, row).clearEnPassant();
                 for (Figure f : PROMOTION_SET) {
                     resultingBoard.set(col, targetRow, f);
                     promotions.add(new Promotion(Coord.get(col, row), Coord.get(col, targetRow), f, resultingBoard));

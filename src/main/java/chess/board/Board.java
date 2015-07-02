@@ -179,4 +179,8 @@ public class Board {
         result = 31 * result + (blackCastlingEnabled != null ? blackCastlingEnabled.hashCode() : 0);
         return result;
     }
+
+    public Board clearEnPassant() {
+        return new Board(whiteCastlingEnabled,blackCastlingEnabled,board,null);
+    }
 }

@@ -42,12 +42,14 @@ public class KingMovements implements MovementProducer {
             if (moveUtils.isEmpty(targetCoords)) {
                 Move m = new Move(moveUtils.myCoords(), targetCoords, moveUtils.moveTo(targetCoords)
                         .disableCastling(player, Castling.QUEEN_SIDE)
-                        .disableCastling(player, Castling.KING_SIDE));
+                        .disableCastling(player, Castling.KING_SIDE)
+                        .clearEnPassant());
                 movements.add(m);
             } else if (moveUtils.isEnemy(targetCoords)) {
                 Capture c = new Capture(moveUtils.myCoords(), targetCoords, moveUtils.capture(targetCoords)
                         .disableCastling(player, Castling.QUEEN_SIDE)
-                        .disableCastling(player, Castling.KING_SIDE));
+                        .disableCastling(player, Castling.KING_SIDE)
+                        .clearEnPassant());
                 movements.add(c);
             }
         }

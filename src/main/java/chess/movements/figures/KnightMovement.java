@@ -50,10 +50,10 @@ public class KnightMovement {
         }
         Coord from = moveUtils.myCoords();
         if (moveUtils.isEmpty(target)) {
-            Move m = new Move(from, target, moveUtils.moveTo(target));
+            Move m = new Move(from, target, moveUtils.moveTo(target).clearEnPassant());
             return m;
         } else if (moveUtils.isEnemy(target)) {
-            Capture c = new Capture(from, target, moveUtils.capture(target));
+            Capture c = new Capture(from, target, moveUtils.capture(target).clearEnPassant());
             return c;
         }
         return null;
