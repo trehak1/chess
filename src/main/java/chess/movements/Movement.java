@@ -35,7 +35,7 @@ public abstract class Movement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Castling m = (Castling) o;
+        Movement m = (Movement) o;
 
         return m.from == from && m.to == to;
     }
