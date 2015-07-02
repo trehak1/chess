@@ -94,7 +94,8 @@ public class MovementFactory {
         MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
         List<Movement> enemyPossibleMoves = enemyFactory.getPseudoLegalMoves(nextBoard);
         for (Movement enemyMove : enemyPossibleMoves) {
-            if (enemyMove.getResultingBoard().get(coordsToCheck) != Figure.get(player, Piece.KING)) {
+            Figure f = enemyMove.getResultingBoard().get(coordsToCheck);
+            if (f != Figure.NONE && f.getPlayer()==player.enemy()) {
                 return true;
             }
         }
