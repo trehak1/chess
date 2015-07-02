@@ -7,6 +7,7 @@ import chess.board.BoardSerializer;
 import chess.enums.CastlingType;
 import chess.enums.Coord;
 import chess.enums.Player;
+import com.google.common.collect.Iterables;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,7 +42,7 @@ public class MovementFactoryTest {
         List<Movement> moves = movementFactory.getMoves(board);
         
         Castling cm = new Castling(board, CastlingType.KING_SIDE, Coord.E1, Coord.G1);
-        if (moves.contains(cm)) {
+        if (Iterables.any(moves,(m)->cm.sameCoordsAndTypeAs(m))) {
             return;
         }
         throw new IllegalStateException("castling move not found in moves");
