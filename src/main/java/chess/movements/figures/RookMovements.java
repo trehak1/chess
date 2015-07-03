@@ -2,7 +2,10 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.*;
-import chess.movements.*;
+import chess.movements.Movement;
+import chess.movements.MovementEffect;
+import chess.movements.MovementProducer;
+import chess.movements.MovementType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,52 +21,37 @@ public class RookMovements extends RayMovements implements MovementProducer {
     protected Collection<Movement> createMoves(Board board, Col c, Row r) {
         MoveUtils moveUtils = new MoveUtils(board, c, r);
         List<Movement> l = new ArrayList<>();
-        processRayList(l, moveUtils.getRayNorth(), moveUtils);
-        processRayList(l, moveUtils.getRayWest(), moveUtils);
-        processRayList(l, moveUtils.getRayEast(), moveUtils);
-        processRayList(l, moveUtils.getRaySouth(), moveUtils);
-        return addCastlingChangeInformation(l);
+        processRayList(l, moveUtils.getRayNorth(), moveUtils, board);
+        processRayList(l, moveUtils.getRayWest(), moveUtils, board);
+        processRayList(l, moveUtils.getRayEast(), moveUtils, board);
+        processRayList(l, moveUtils.getRaySouth(), moveUtils, board);
+        return addCastlingChangeInformation(board, l);
     }
 
-    private Collection<Movement> addCastlingChangeInformation(List<Movement> l) {
+    private Collection<Movement> addCastlingChangeInformation(Board board, List<Movement> l) {
+        if (!board.getCastlingRights().isCastlingEnabled(player, CastlingType.KING_SIDE) && !board.getCastlingRights().isCastlingEnabled(player, CastlingType.QUEEN_SIDE)) {
+            // no castling was enabled, no need to disable anything
+            return l;
+        }
+
         List<Movement> modified = new ArrayList<>();
         for (Movement m : l) {
-            CastlingType ct = m.getFrom().getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
-            if (m instanceof Move) {
-                Move move = (Move) m;
-                modified.add(new Move(move.getFrom(), move.getTo(), modify(move.getFrom(), move.getResultingBoard().disableCastling(player,ct))));
-            } else if (m instanceof Capture) {
-                Capture c = (Capture) m;
-                modified.add(new Capture(c.getFrom(), c.getTo(), modify(c.getFrom(), c.getResultingBoard().disableCastling(player, ct))));
+            MovementEffect me;
+            if (m.getFrom() == Coord.get(Col.A, player.getStartingRow()) && board.getCastlingRights().isCastlingEnabled(player, CastlingType.QUEEN_SIDE)) {
+                me = new MovementEffect().disableCastling(CastlingType.QUEEN_SIDE, player);
+            } else if (m.getFrom() == Coord.get(Col.H, player.getStartingRow()) && board.getCastlingRights().isCastlingEnabled(player, CastlingType.KING_SIDE)) {
+                me = new MovementEffect().disableCastling(CastlingType.KING_SIDE, player);
             } else {
+                me = MovementEffect.NONE;
+            }
+
+            if (m.getType() != MovementType.MOVE && m.getType() != MovementType.CAPTURE) {
                 throw new IllegalArgumentException("wtf");
             }
+            Movement movement = new Movement(m.getType(), m.getFrom(), m.getTo(), me);
+            modified.add(movement);
         }
         return modified;
     }
-
-    private Board modify(Coord from, Board board) {
-        switch (player) {
-            case WHITE:
-                if (from == Coord.A1) {
-                    return board.disableCastling(player, CastlingType.QUEEN_SIDE);
-                } else if (from == Coord.A8) {
-                    return board.disableCastling(player, CastlingType.KING_SIDE);
-                } else {
-                    return board;
-                }
-            case BLACK:
-                if (from == Coord.H1) {
-                    return board.disableCastling(player, CastlingType.QUEEN_SIDE);
-                } else if (from == Coord.H8) {
-                    return board.disableCastling(player, CastlingType.KING_SIDE);
-                } else {
-                    return board;
-                }
-            default:
-                throw new IllegalStateException("wtf");
-        }
-    }
-
 
 }

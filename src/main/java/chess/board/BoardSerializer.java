@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BoardSerializer {
-    
+
     BiMap<Figure, Character> figureCharacters;
-    
+
     public BoardSerializer() {
         Map<Figure, Character> figureCharacterMap = new HashMap<>();
         figureCharacterMap.put(Figure.WHITE_PAWN, '♙');
@@ -32,12 +32,12 @@ public class BoardSerializer {
         figureCharacterMap.put(Figure.NONE, '░');
         figureCharacters = ImmutableBiMap.copyOf(figureCharacterMap);
     }
-    
+
     public String serializeIntoJson(Board board) {
         Gson gson = new Gson();
         return gson.toJson(board);
     }
-    
+
     public Board deserializeFromJson(String board) {
         Gson gson = new Gson();
         return gson.fromJson(board, Board.class);
@@ -48,6 +48,7 @@ public class BoardSerializer {
      * Board also has coordinates on the left side an in the bottom.
      * The A1 position is in the bottom-left corner.
      * Selializes enPassants and castlings.
+     *
      * @param board
      * @return
      */
@@ -57,14 +58,20 @@ public class BoardSerializer {
         writeEnPassantsToUtf8(board, sb);
         writeWhiteCastlingsToUtf8(board, sb);
         writeBlackCastlingsToUtf8(board, sb);
+        writeOnTurn(board, sb);
         return sb.toString();
+    }
+
+    private void writeOnTurn(Board board, StringBuilder sb) {
+        sb.append("on turn: " + board.getOnTurn().name());
+        sb.append("\n");
     }
 
     private void writeBlackCastlingsToUtf8(Board board, StringBuilder sb) {
         // write black castlings enabled:
         sb.append("black castlings: ");
         CastlingType firstBlackCastlingType = null;
-        for (CastlingType c : board.getCastlingsEnabled(Player.BLACK)) {
+        for (CastlingType c : board.getCastlingRights().getCastlingsEnabled(Player.BLACK)) {
             if (firstBlackCastlingType == null) {
                 firstBlackCastlingType = c;
             } else {
@@ -72,13 +79,14 @@ public class BoardSerializer {
             }
             sb.append(c.name());
         }
+        sb.append("\n");
     }
 
     private void writeWhiteCastlingsToUtf8(Board board, StringBuilder sb) {
         // write white castlings enabled:
         sb.append("white castlings: ");
         CastlingType firstWhiteCastlingType = null;
-        for (CastlingType c : board.getCastlingsEnabled(Player.WHITE)) {
+        for (CastlingType c : board.getCastlingRights().getCastlingsEnabled(Player.WHITE)) {
             if (firstWhiteCastlingType == null) {
                 firstWhiteCastlingType = c;
             } else {
@@ -92,7 +100,7 @@ public class BoardSerializer {
     private void writeEnPassantsToUtf8(Board board, StringBuilder sb) {
         // write en passants:
         sb.append("enpassants: ");
-        if(board.getEnPassantAllowed() != null) {
+        if (board.getEnPassantAllowed() != null) {
             sb.append(board.getEnPassantAllowed().name());
         }
         sb.append("\n");
@@ -129,13 +137,20 @@ public class BoardSerializer {
     public Board deserializeFromUtf8(String s) {
         Board board = new Board();
         String[] lines = s.split("\n");
-        Preconditions.checkArgument(lines.length == 12);
+        Preconditions.checkArgument(lines.length >= 12);
         board = readFiguresFromUtf8(board, lines);
         board = readEnPassantsFromUtf8(board, lines[9]);
         board = readWhiteCastlingsFromUtf8(board, lines[10]);
         board = readBlackCastlingsFromUtf8(board, lines[11]);
-
+        if (lines.length > 12) {
+            board = readOnTurn(board, lines[12]);
+        }
         return board;
+    }
+
+    private Board readOnTurn(Board board, String line) {
+        String playerS = line.replace("on turn: ", "").trim();
+        return board.setOnTurn(Player.valueOf(playerS));
     }
 
     private Board readWhiteCastlingsFromUtf8(Board board, String line) {

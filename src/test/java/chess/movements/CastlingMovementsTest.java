@@ -2,7 +2,6 @@ package chess.movements;
 
 import chess.board.Board;
 import chess.board.BoardLoader;
-import chess.enums.CastlingType;
 import chess.enums.Coord;
 import chess.enums.Player;
 import chess.movements.figures.CastlingMovements;
@@ -24,7 +23,7 @@ public class CastlingMovementsTest extends MovementsTest {
         testNumbersOfPossibleMovements(fileName, castlingMovementsWhite, 2);
         testNumbersOfPossibleMovements(fileName, castlingMovementsBlack, 1);
     }
-    
+
     @Test
     public void testCastlingEnabled() {
         BoardLoader boardLoader = new BoardLoader();
@@ -32,9 +31,9 @@ public class CastlingMovementsTest extends MovementsTest {
         MovementFactory movementFactory = MovementFactory.getFor(Player.WHITE);
         List<Movement> moves = movementFactory.getMoves(board);
 
-        Castling castlingKingSide = new Castling(board, CastlingType.KING_SIDE, Coord.E1, Coord.G1);
-        Castling castlingQueenSide = new Castling(board, CastlingType.QUEEN_SIDE, Coord.E1, Coord.C1);
-        if (!Iterables.any(moves, (m) -> castlingKingSide.sameCoordsAndTypeAs(m))){
+        Movement castlingKingSide = new Movement(MovementType.CASTLING, Coord.E1, Coord.G1, MovementEffect.NONE);
+        Movement castlingQueenSide = new Movement(MovementType.CASTLING, Coord.E1, Coord.C1, MovementEffect.NONE);
+        if (!Iterables.any(moves, (m) -> castlingKingSide.sameCoordsAndTypeAs(m))) {
             throw new IllegalStateException("king castling move not found in moves");
         }
         if (!Iterables.any(moves, (m) -> castlingQueenSide.sameCoordsAndTypeAs(m))) {

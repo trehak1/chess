@@ -2,9 +2,10 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.*;
-import chess.movements.Castling;
 import chess.movements.Movement;
+import chess.movements.MovementEffect;
 import chess.movements.MovementProducer;
+import chess.movements.MovementType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -27,11 +28,11 @@ public class CastlingMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> list = new ArrayList<>();
-        Castling ksc = createCastling(board, player, CastlingType.KING_SIDE);
-        if (ksc != null ) {
+        Movement ksc = createCastling(board, player, CastlingType.KING_SIDE);
+        if (ksc != null) {
             list.add(ksc);
         }
-        Castling qsc = createCastling(board, player, CastlingType.QUEEN_SIDE);
+        Movement qsc = createCastling(board, player, CastlingType.QUEEN_SIDE);
         if (qsc != null) {
             list.add(qsc);
         }
@@ -40,7 +41,7 @@ public class CastlingMovements implements MovementProducer {
 
     private boolean isAvailable(Board board, Player player, CastlingType castlingType) {
         // check if castling is enabled
-        if (!board.isCastlingEnabled(player, castlingType)) {
+        if (!board.getCastlingRights().isCastlingEnabled(player, castlingType)) {
             return false;
         }
         // check if all required fields are empty
@@ -48,25 +49,19 @@ public class CastlingMovements implements MovementProducer {
         for (Col c : castlingType.getEmptyCols()) {
             toBeEmpty.add(Coord.get(c, player.getStartingRow()));
         }
-        if (Iterables.any(toBeEmpty, (coord) -> board.get(coord)!= Figure.NONE)) {
+        if (Iterables.any(toBeEmpty, (coord) -> board.get(coord) != Figure.NONE)) {
             return false;
         }
         return true;
     }
-    
-    private Castling createCastling(Board board, Player player, CastlingType castlingType) {
-        if(!isAvailable(board, player, castlingType)) {
+
+    private Movement createCastling(Board board, Player player, CastlingType castlingType) {
+        if (!isAvailable(board, player, castlingType)) {
             return null;
         }
-        MoveUtils kingUtils = new MoveUtils(board, MoveUtils.locateKing(player, board));
-        Board resultingBoard = kingUtils.moveTo(castlingType.getKingDestinationCoord(player));
-        MoveUtils rookUtils = new MoveUtils(resultingBoard, castlingType.getRookStartingCoord(player));
-        resultingBoard = rookUtils.moveTo(castlingType.getRookDestinationCoord(player));
-        resultingBoard = resultingBoard.disableCastling(player, castlingType)
-                .disableCastling(player, castlingType.other())
-                .clearEnPassant();
-        Castling castling = new Castling(resultingBoard, castlingType, MoveUtils.locateKing(player, board), castlingType.getKingDestinationCoord(player));
+        MovementEffect me = new MovementEffect().disableCastling(CastlingType.KING_SIDE,player).disableCastling(CastlingType.QUEEN_SIDE,player);
+        Movement castling = new Movement(MovementType.CASTLING, MoveUtils.locateKing(player, board), castlingType.getKingDestinationCoord(player), me);
         return castling;
     }
-    
+
 }

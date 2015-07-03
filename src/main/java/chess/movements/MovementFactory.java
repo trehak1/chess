@@ -44,74 +44,80 @@ public class MovementFactory {
     private List<Movement> getPseudoLegalMoves(Board board) {
         List<Movement> list = new ArrayList<>();
         for (MovementProducer producer : producers) {
-			try {
-				List<Movement> producerMovements = producer.getMovements(board);
-				List<Movement> movements = disableCastlingOnRookCaptures(board, producerMovements);
-				list.addAll(movements);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            try {
+                List<Movement> producerMovements = producer.getMovements(board);
+                List<Movement> movements = disableCastlingOnRookCaptures(board, producerMovements);
+                list.addAll(movements);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return list;
     }
 
-    private List<Movement> disableCastlingOnRookCaptures(Board prevBoard,List<Movement> movements) {
+    private List<Movement> disableCastlingOnRookCaptures(Board prevBoard, List<Movement> movements) {
         List<Movement> resList = new ArrayList<>();
-        for(Movement m : movements) {
+        for (Movement m : movements) {
             Coord target = m.getTo();
             Figure f = prevBoard.get(target);
-			// target square is rook
-			if (f.getPiece() == Piece.ROOK) {
-			// in it's starting row
-               	if(target.getRow() == f.getPlayer().getStartingRow()) {
-					if(!(m instanceof Capture)) {
-						throw new IllegalStateException("wtf");
-					}
-                	CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
-                    Capture nc = new Capture(m.getFrom(), target, m.getResultingBoard().disableCastling(f.getPlayer(), ct));
-                    resList.add(nc);
-					continue;
-				}
-			}
-			resList.add(m);
+            // target square is rook
+            if (f.getPiece() == Piece.ROOK) {
+                // in it's starting row
+                if (target.getRow() == f.getPlayer().getStartingRow()) {
+                    // if castling was allowed
+                    if (m.getType() != MovementType.CAPTURE && m.getType() != MovementType.PROMOTION_CAPTURE) {
+                        throw new IllegalStateException("wtf");
+                    }
+                    CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
+                    if (prevBoard.getCastlingRights().isCastlingEnabled(f.getPlayer(), ct)) {
+                        Movement movement = new Movement(m.getType(), m.getFrom(), target, new MovementEffect().disableCastling(ct, f.getPlayer()));
+                        resList.add(movement);
+                        continue;
+                    }
+                }
+            }
+            resList.add(m);
         }
         return resList;
     }
 
     public List<Movement> getMoves(Board board) {
         List<Movement> pseudoLegalMoves = getPseudoLegalMoves(board);
-        return filterOutIllegalMoves(pseudoLegalMoves);
+        return filterOutIllegalMoves(board, pseudoLegalMoves);
     }
 
-    private List<Movement> filterOutIllegalMoves(List<Movement> list) {
+    // TODO CHECK FOR CHECK WITHOUT CREATING NEW BOARD (expensive)
+    private List<Movement> filterOutIllegalMoves(Board board, List<Movement> list) {
         Iterator<Movement> it = list.iterator();
         while (it.hasNext()) {
             Movement m = it.next();
-            Board nextBoard = m.getResultingBoard();
+            Board nextBoard = new MovementExecutor(board).doMove(m);
             Coord kingCoord = MoveUtils.locateKing(player, nextBoard);
             if (isEndangered(nextBoard, kingCoord)) {
                 it.remove();
-            } else if ((m instanceof Castling) && castlingFieldEndangered((Castling) m, nextBoard)) {
-                it.remove();
+            } else if (m.getType() == MovementType.CASTLING) {
+                if (castlingFieldEndangered(m, nextBoard)) {
+                    it.remove();
+                }
             }
         }
         return list;
     }
 
     // check if any of castling field of interest is in check
-    private boolean castlingFieldEndangered(Castling m, Board b) {
+    private boolean castlingFieldEndangered(Movement m, Board b) {
         Preconditions.checkNotNull(m);
         Preconditions.checkNotNull(b);
-        Preconditions.checkArgument(m.getType() == CastlingType.KING_SIDE || m.getType() == CastlingType.QUEEN_SIDE);
-        CastlingType ct = m.getType();
+        Preconditions.checkArgument(m.getType() == MovementType.CASTLING, "Must be castling!");
+        CastlingType ct = m.getTo().getCol() == Col.G ? CastlingType.KING_SIDE : CastlingType.QUEEN_SIDE;
         List<Coord> mustNotBeEndangered = Lists.newArrayList();
         // all empty fields must not be in check
-        ct.getEmptyCols().forEach((c)->mustNotBeEndangered.add(Coord.get(c,player.getStartingRow())));
+        ct.getEmptyCols().forEach((c) -> mustNotBeEndangered.add(Coord.get(c, player.getStartingRow())));
         // original king field must not be in check
         mustNotBeEndangered.add(Coord.get(Col.E, player.getStartingRow()));
         // ending king field must not be in check
         mustNotBeEndangered.add(ct.getKingDestinationCoord(player));
-        return Iterables.any(mustNotBeEndangered,(c)->isEndangered(b,c));
+        return Iterables.any(mustNotBeEndangered, (c) -> isEndangered(b, c));
     }
 
     // check if field is endangered
@@ -119,8 +125,8 @@ public class MovementFactory {
         MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
         List<Movement> enemyPossibleMoves = enemyFactory.getPseudoLegalMoves(nextBoard);
         for (Movement enemyMove : enemyPossibleMoves) {
-            Figure f = enemyMove.getResultingBoard().get(coordsToCheck);
-            if (f != Figure.NONE && f.getPlayer()==player.enemy()) {
+            Figure f = new MovementExecutor(nextBoard).doMove(enemyMove).get(coordsToCheck);
+            if (f != Figure.NONE && f.getPlayer() == player.enemy()) {
                 return true;
             }
         }

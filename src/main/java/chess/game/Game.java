@@ -1,10 +1,7 @@
 package chess.game;
 
 import chess.board.Board;
-import chess.board.BoardFactory;
-import chess.enums.Piece;
 import chess.enums.Player;
-import chess.movements.Capture;
 import chess.movements.Movement;
 import com.google.common.io.BaseEncoding;
 
@@ -44,11 +41,12 @@ public class Game {
     }
 
     public Board getCurrentBoard() {
-        if (movements.isEmpty()) {
-            return new BoardFactory().newGameBoard();
-        } else {
-            return movements.get(movements.size() - 1).getResultingBoard();
-        }
+//        if (movements.isEmpty()) {
+//            return new BoardFactory().newGameBoard();
+//        } else {
+//            return movements.get(movements.size() - 1).getResultingBoard();
+//        }
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public Player getPlayerOnTurn() {
@@ -65,18 +63,20 @@ public class Game {
     }
 
     private void checkRule50(Movement movement) {
-        if (movement instanceof Capture || isPawnMove(movement)) {
-            movesWithoutCaptureOrAdvance = 0;
-        }
+//        if (movement instanceof Capture || isPawnMove(movement)) {
+//            movesWithoutCaptureOrAdvance = 0;
+//        }
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     private boolean isPawnMove(Movement movement) {
-        // first move in game
-        if (movements.isEmpty()) {
-            return movement.getResultingBoard().get(movement.getFrom()).getPiece() == Piece.PAWN;
-        }
-        // was there pawn ?
-        return movements.get(movements.size() - 1).getResultingBoard().get(movement.getFrom()).getPiece() == Piece.PAWN;
+//        // first move in game
+//        if (movements.isEmpty()) {
+//            return movement.getResultingBoard().get(movement.getFrom()).getPiece() == Piece.PAWN;
+//        }
+//        // was there pawn ?
+//        return movements.get(movements.size() - 1).getResultingBoard().get(movement.getFrom()).getPiece() == Piece.PAWN;
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
 }

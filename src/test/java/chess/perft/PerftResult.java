@@ -10,9 +10,4 @@ public interface PerftResult {
 
     long getCastlings(int depth);
 
-    boolean hasCaptures();
-
-    boolean hasEnPassants();
-    
-    boolean hasCastlings();
 }

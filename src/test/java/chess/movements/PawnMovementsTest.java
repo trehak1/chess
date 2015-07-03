@@ -48,14 +48,14 @@ public class PawnMovementsTest extends MovementsTest {
     public void testPromotion() {
         testNumbersOfPossibleMovements("pawn/promotion.txt", 12);
     }
-    
+
     @Test
     public void testEp() {
         Board board = new BoardLoader().loadBoard("pawn/enPassant2.txt");
         MovementFactory factory = MovementFactory.getFor(Player.WHITE);
         CoordinateNotationTransformer transformer = new CoordinateNotationTransformer(board, Player.WHITE);
         Movement m = transformer.fromNotation("H5-G6");
-        Assert.assertEquals(EnPassant.class, m.getClass());
+        Assert.assertEquals(MovementType.EN_PASSANT, m.getType());
     }
 
     @Test

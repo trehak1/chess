@@ -2,9 +2,9 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.*;
-import chess.movements.Capture;
-import chess.movements.Move;
 import chess.movements.Movement;
+import chess.movements.MovementEffect;
+import chess.movements.MovementType;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
@@ -50,13 +50,12 @@ class KnightMovement {
         }
         Coord from = moveUtils.myCoords();
         if (moveUtils.isEmpty(target)) {
-            Move m = new Move(from, target, moveUtils.moveTo(target).clearEnPassant());
-            return m;
+            return new Movement(MovementType.MOVE, from, target, MovementEffect.NONE);
         } else if (moveUtils.isEnemy(target)) {
-            Capture c = new Capture(from, target, moveUtils.capture(target).clearEnPassant());
-            return c;
+            return new Movement(MovementType.CAPTURE, from, target, new MovementEffect().captured(board.get(target).getPiece()));
+        } else {
+            return null;
         }
-        return null;
     }
 
 
