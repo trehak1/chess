@@ -4,6 +4,8 @@ import chess.board.Board;
 import chess.enums.*;
 import chess.movements.figures.*;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,14 +44,38 @@ public class MovementFactory {
     private List<Movement> getPseudoLegalMoves(Board board) {
         List<Movement> list = new ArrayList<>();
         for (MovementProducer producer : producers) {
-            try {
-                list.addAll(producer.getMovements(board));
-            } catch (Exception e) {
-                System.err.println("Exception in "+producer);
-                e.printStackTrace();
-            }
+			try {
+				List<Movement> producerMovements = producer.getMovements(board);
+				List<Movement> movements = disableCastlingOnRookCaptures(board, producerMovements);
+				list.addAll(movements);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         }
         return list;
+    }
+
+    private List<Movement> disableCastlingOnRookCaptures(Board prevBoard,List<Movement> movements) {
+        List<Movement> resList = new ArrayList<>();
+        for(Movement m : movements) {
+            Coord target = m.getTo();
+            Figure f = prevBoard.get(target);
+			// target square is rook
+			if (f.getPiece() == Piece.ROOK) {
+			// in it's starting row
+               	if(target.getRow() == f.getPlayer().getStartingRow()) {
+					if(!(m instanceof Capture)) {
+						throw new IllegalStateException("wtf");
+					}
+                	CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
+                    Capture nc = new Capture(m.getFrom(), target, m.getResultingBoard().disableCastling(f.getPlayer(), ct));
+                    resList.add(nc);
+					continue;
+				}
+			}
+			resList.add(m);
+        }
+        return resList;
     }
 
     public List<Movement> getMoves(Board board) {
@@ -73,20 +99,19 @@ public class MovementFactory {
     }
 
     // check if any of castling field of interest is in check
-    private boolean castlingFieldEndangered(Castling m, Board nextBoard) {
-        CastlingType castlingType = m.getType();
-        switch (castlingType) {
-            case QUEEN_SIDE:
-                return isEndangered(nextBoard, Coord.get(Col.C, player.getStartingRow()))
-                        || isEndangered(nextBoard, Coord.get(Col.D, player.getStartingRow()))
-                        || isEndangered(nextBoard, Coord.get(Col.E, player.getStartingRow()));
-            case KING_SIDE:
-                return isEndangered(nextBoard, Coord.get(Col.F, player.getStartingRow()))
-                        || isEndangered(nextBoard, Coord.get(Col.G, player.getStartingRow()))
-                        || isEndangered(nextBoard, Coord.get(Col.E, player.getStartingRow()));
-            default:
-                throw new IllegalStateException("wtf");
-        }
+    private boolean castlingFieldEndangered(Castling m, Board b) {
+        Preconditions.checkNotNull(m);
+        Preconditions.checkNotNull(b);
+        Preconditions.checkArgument(m.getType() == CastlingType.KING_SIDE || m.getType() == CastlingType.QUEEN_SIDE);
+        CastlingType ct = m.getType();
+        List<Coord> mustNotBeEndangered = Lists.newArrayList();
+        // all empty fields must not be in check
+        ct.getEmptyCols().forEach((c)->mustNotBeEndangered.add(Coord.get(c,player.getStartingRow())));
+        // original king field must not be in check
+        mustNotBeEndangered.add(Coord.get(Col.E, player.getStartingRow()));
+        // ending king field must not be in check
+        mustNotBeEndangered.add(ct.getKingDestinationCoord(player));
+        return Iterables.any(mustNotBeEndangered,(c)->isEndangered(b,c));
     }
 
     // check if field is endangered

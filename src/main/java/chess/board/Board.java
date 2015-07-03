@@ -137,7 +137,7 @@ public class Board {
     public Board remove(Col col, Row row) {
         Preconditions.checkNotNull(col, "Null col");
         Preconditions.checkNotNull(row, "Null row");
-        Preconditions.checkArgument(get(col, row) != Figure.NONE, "Unable to remove nonexisting figure");
+        Preconditions.checkArgument(get(col, row) != Figure.NONE, "Unable to remove nonexisting figure from "+Coord.get(col,row));
         Board clone = new Board(castlings, board, enPassantAllowed);
         clone.board[col.ordinal()][row.ordinal()] = Figure.NONE;
         return clone;
