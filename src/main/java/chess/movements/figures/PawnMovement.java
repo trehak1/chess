@@ -15,7 +15,7 @@ import java.util.function.Function;
  */
 class PawnMovement {
 
-	private static final EnumSet<Figure> PROMOTION_SET = EnumSet.of(Figure.WHITE_BISHOP, Figure.WHITE_KNIGHT, Figure.WHITE_QUEEN, Figure.WHITE_ROOK);
+	private static final EnumSet<Piece> PROMOTION_SET = EnumSet.of(Piece.BISHOP, Piece.KNIGHT, Piece.QUEEN, Piece.ROOK);
 
 	private static final Row WHITE_START_ROW = Row._2;
 	private static final Row WHITE_LAST_ROW = Row._7;
@@ -110,9 +110,11 @@ class PawnMovement {
 				// remove this capture
 				retList.remove(m);
 				// add as new with promotion
-				for (Figure f : PROMOTION_SET) {
-					Board resultingBoard = board.remove(m.getTo().getCol(), m.getTo().getRow());
-					resultingBoard = resultingBoard.set(m.getTo().getCol(), m.getTo().getRow(), f);
+				for (Piece p : PROMOTION_SET) {
+                    Figure f = Figure.get(player, p);
+                    Coord coord = Coord.get(m.getTo().getCol(), m.getTo().getRow());
+					Board resultingBoard = board.remove(coord);
+					resultingBoard = resultingBoard.set(coord, f);
 					resultingBoard = resultingBoard.clearEnPassant();
 					Capture c = new Capture(m.getFrom(), m.getTo(), resultingBoard);
 					retList.add(c);
@@ -177,7 +179,8 @@ class PawnMovement {
 			if (moveUtils.isEmpty(col, targetRow)) {
 				List<Movement> promotions = new ArrayList<>();
 				Board resultingBoard = board.remove(col, row).clearEnPassant();
-				for (Figure f : PROMOTION_SET) {
+				for (Piece p : PROMOTION_SET) {
+                    Figure f = Figure.get(player, p);
 					resultingBoard.set(col, targetRow, f);
 					promotions.add(new Promotion(Coord.get(col, row), Coord.get(col, targetRow), f, resultingBoard));
 				}

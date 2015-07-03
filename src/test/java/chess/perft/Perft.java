@@ -33,7 +33,9 @@ public class Perft {
         System.out.println("Start: "+start);
         for (int i = 0; i < iterations; i++) {
             Set<Movement> allMoves = getAllMoves(boards, player);
-            Assert.assertEquals(perftResult.getNodes(i), allMoves.size());
+            Assert.assertEquals("number of nodes differ", perftResult.getNodes(i), allMoves.size());
+            Set<Capture> captures = getAllCaptures(allMoves);
+            Assert.assertEquals("number of captures differ", perftResult.getCaptures(i), captures.size());
             boards.clear();
             allMoves.forEach((m) -> boards.add(m.getResultingBoard()));
             player = player.enemy();
