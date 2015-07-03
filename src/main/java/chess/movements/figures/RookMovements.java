@@ -22,18 +22,19 @@ public class RookMovements extends RayMovements implements MovementProducer {
         processRayList(l, moveUtils.getRayWest(), moveUtils);
         processRayList(l, moveUtils.getRayEast(), moveUtils);
         processRayList(l, moveUtils.getRaySouth(), moveUtils);
-        return addCastlingChangeInformation(l, moveUtils);
+        return addCastlingChangeInformation(l);
     }
 
-    private Collection<Movement> addCastlingChangeInformation(List<Movement> l, MoveUtils moveUtils) {
+    private Collection<Movement> addCastlingChangeInformation(List<Movement> l) {
         List<Movement> modified = new ArrayList<>();
         for (Movement m : l) {
+            CastlingType ct = m.getFrom().getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
             if (m instanceof Move) {
                 Move move = (Move) m;
-                modified.add(new Move(move.getFrom(), move.getTo(), modify(move.getFrom(), move.getResultingBoard())));
+                modified.add(new Move(move.getFrom(), move.getTo(), modify(move.getFrom(), move.getResultingBoard().disableCastling(player,ct))));
             } else if (m instanceof Capture) {
                 Capture c = (Capture) m;
-                modified.add(new Capture(c.getFrom(), c.getTo(), modify(c.getFrom(), c.getResultingBoard())));
+                modified.add(new Capture(c.getFrom(), c.getTo(), modify(c.getFrom(), c.getResultingBoard().disableCastling(player, ct))));
             } else {
                 throw new IllegalArgumentException("wtf");
             }
