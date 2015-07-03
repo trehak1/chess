@@ -1,5 +1,9 @@
 package chess.perft;
 
+import chess.board.Board;
+import chess.board.BoardFactory;
+import chess.board.BoardLoader;
+import chess.enums.Player;
 import org.junit.Test;
 
 /**
@@ -10,9 +14,16 @@ public class PerftTest {
 
 	@Test
 	public void perftTest() throws InterruptedException {
-		Perft perft = new Perft();
+		Perft perft = new Perft(new BoardFactory().newGameBoard(), Player.WHITE, Perft.PERFT);
 		perft.perft(3);
 	}
+
+    @Test
+    public void perftPosition2Test() throws InterruptedException {
+        Board board = new BoardLoader().loadBoard("perft/perftPosition2.txt");
+        Perft perft = new Perft(board, Player.WHITE, Perft.PERFT_POSITION_2);
+        perft.perft(3);
+    }
 
 
 }
