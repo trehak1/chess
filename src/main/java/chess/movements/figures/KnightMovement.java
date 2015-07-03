@@ -52,7 +52,7 @@ class KnightMovement {
         if (moveUtils.isEmpty(target)) {
             return new Movement(MovementType.MOVE, from, target, MovementEffect.NONE);
         } else if (moveUtils.isEnemy(target)) {
-            return new Movement(MovementType.CAPTURE, from, target, MovementEffect.NONE);
+            return new Movement(MovementType.CAPTURE, from, target, new MovementEffect().captured(board.get(target).getPiece()));
         } else {
             return null;
         }

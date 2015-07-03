@@ -1,5 +1,7 @@
 package chess.perft;
 
+import java.util.Arrays;
+
 public enum PerftResults implements PerftResult {
     POSITION_1(new long[]{20, 400, 8902, 197281, 4865609, 119060324, 3195901860L, 84998978956L, 2439530234167L, 69352859712417L},
             new long[]{0, 0, 34, 1576, 82719, 2812008},
@@ -24,10 +26,9 @@ public enum PerftResults implements PerftResult {
     POSITION_6(new long[]{46, 2079, 89890, 3894594, 164075551, 6923051137L, 287188994746L, 11923589843526L, 490154852788714L},
             null,
             null,
-            null)
-    ;
-    
-    
+            null);
+
+
     private long[] nodes;
     private long[] captures;
     private long[] enpassants;
@@ -35,9 +36,21 @@ public enum PerftResults implements PerftResult {
 
     PerftResults(long[] nodes, long[] captures, long[] enpassants, long[] castlings) {
         this.nodes = nodes;
+        captures = fill(captures, nodes);
         this.captures = captures;
+        enpassants = fill(enpassants, nodes);
         this.enpassants = enpassants;
+        castlings = fill(castlings, nodes);
         this.castlings = castlings;
+    }
+
+    private long[] fill(long[] specific, long[] nodes) {
+        if (specific != null) {
+            return specific;
+        }
+        long[] vals = new long[nodes.length];
+        Arrays.fill(vals, 0L);
+        return vals;
     }
 
     @Override
@@ -49,7 +62,7 @@ public enum PerftResults implements PerftResult {
     public long getCaptures(int depth) {
         return captures[depth];
     }
-    
+
     @Override
     public long getEnPassants(int depth) {
         return enpassants[depth];
@@ -59,19 +72,6 @@ public enum PerftResults implements PerftResult {
     public long getCastlings(int depth) {
         return castlings[depth];
     }
-    
-    @Override
-    public boolean hasCaptures() {
-        return captures != null;
-    }
-    
-    @Override
-    public boolean hasEnPassants() {
-        return enpassants != null;
-    }
 
-    @Override
-    public boolean hasCastlings() {
-        return castlings != null;
-    }
+
 }

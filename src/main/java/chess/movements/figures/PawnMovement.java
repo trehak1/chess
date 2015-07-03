@@ -2,7 +2,6 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.Coord;
-import chess.enums.Figure;
 import chess.enums.Piece;
 import chess.enums.Player;
 import chess.movements.Movement;
@@ -100,14 +99,15 @@ class PawnMovement {
             return Lists.newArrayList();
         }
         if (moveUtils.isEnemy(target)) {
+            Piece enemyPiece = board.get(target).getPiece();
             if (myCoord.apply(directionMove).getRow() == player.enemy().getStartingRow()) {
                 List<Movement> res = Lists.newArrayList();
                 for (Piece p : PROMOTION_SET) {
-                    res.add(new Movement(MovementType.PROMOTION_CAPTURE, myCoord, target, new MovementEffect().promotedTo(Figure.get(player, p))));
+                    res.add(new Movement(MovementType.PROMOTION_CAPTURE, myCoord, target, new MovementEffect().promotedTo(p).captured(enemyPiece)));
                 }
                 return res;
             } else {
-                return Lists.newArrayList(new Movement(MovementType.CAPTURE, myCoord, target, MovementEffect.NONE));
+                return Lists.newArrayList(new Movement(MovementType.CAPTURE, myCoord, target, new MovementEffect().captured(enemyPiece)));
             }
         } else {
             return Lists.newArrayList();
@@ -129,7 +129,7 @@ class PawnMovement {
         }
         Coord enemyCoord = Coord.get(target.getCol(), myCoord.getRow());
         if (moveUtils.isEnemy(enemyCoord) && board.isEnPassantAllowed(enemyCoord)) {
-            return new Movement(MovementType.EN_PASSANT, myCoord, target, MovementEffect.NONE);
+            return new Movement(MovementType.EN_PASSANT, myCoord, target, new MovementEffect().captured(Piece.PAWN));
         } else {
             return null;
         }
@@ -142,8 +142,7 @@ class PawnMovement {
                 List<Movement> promotions = new ArrayList<>();
                 MovementEffect me = new MovementEffect();
                 for (Piece p : PROMOTION_SET) {
-                    Figure f = Figure.get(player, p);
-                    promotions.add(new Movement(MovementType.PROMOTION, myCoord, target, me.promotedTo(f)));
+                    promotions.add(new Movement(MovementType.PROMOTION, myCoord, target, me.promotedTo(p)));
                 }
                 return promotions;
             }

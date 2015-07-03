@@ -10,11 +10,11 @@ import java.util.Arrays;
  */
 public class Board {
 
-    final Figure[][] board = new Figure[8][8];
-    final Coord enPassantAllowed;
+    private final Figure[][] board = new Figure[8][8];
+    private final Coord enPassantAllowed;
     // white king, white queen, black king, black queen
-    final CastlingRights castlingRights;
-    final Player onTurn;
+    private final CastlingRights castlingRights;
+    private final Player onTurn;
 
     Board() {
         this.castlingRights = new CastlingRights();
@@ -25,7 +25,7 @@ public class Board {
         }
     }
 
-    Board(CastlingRights castlingRights, Figure[][] board, Coord enPassantAllowed, Player onTurn) {
+    private Board(CastlingRights castlingRights, Figure[][] board, Coord enPassantAllowed, Player onTurn) {
         // castling
         this.castlingRights = castlingRights.clone();
         this.enPassantAllowed = enPassantAllowed;

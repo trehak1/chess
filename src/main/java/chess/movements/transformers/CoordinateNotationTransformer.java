@@ -25,7 +25,7 @@ public class CoordinateNotationTransformer implements NotationTransformer {
     @Override
     public String toNotation(Movement movement) {
         if(movement.getType() == MovementType.PROMOTION_CAPTURE || movement.getType() == MovementType.PROMOTION) {
-            return notation(movement.getFrom(),movement.getTo(),movement.getMovementEffect().getPromotedTo().getPiece());
+            return notation(movement.getFrom(),movement.getTo(),movement.getMovementEffect().getPromotedTo());
         } else {
             return notation(movement.getFrom(),movement.getTo());
         }

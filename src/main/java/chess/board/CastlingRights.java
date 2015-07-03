@@ -14,11 +14,11 @@ public class CastlingRights implements Cloneable {
 
     private final boolean[] castlings;
 
-    CastlingRights(boolean[] castlings) {
+    public CastlingRights(boolean[] castlings) {
         this.castlings = Arrays.copyOf(castlings, castlings.length);
     }
 
-    CastlingRights() {
+    public CastlingRights() {
         this(new boolean[]{true, true, true, true});
     }
 

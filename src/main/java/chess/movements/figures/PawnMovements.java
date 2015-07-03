@@ -1,7 +1,10 @@
 package chess.movements.figures;
 
 import chess.board.Board;
-import chess.enums.*;
+import chess.enums.Coord;
+import chess.enums.Figure;
+import chess.enums.Piece;
+import chess.enums.Player;
 import chess.movements.Movement;
 import chess.movements.MovementProducer;
 import com.google.common.base.Supplier;
@@ -26,13 +29,13 @@ public class PawnMovements implements MovementProducer {
         List<Movement> movements = new ArrayList<>();
         List<Coord> pawnCoords = MoveUtils.locateAll(Figure.get(player, Piece.PAWN), board);
         for (Coord c : pawnCoords) {
-            movements.addAll(movesFor(c.getCol(), c.getRow(), board));
+            movements.addAll(movesFor(c, board));
         }
         return movements;
     }
 
-    private Collection<? extends Movement> movesFor(Col col, Row row, Board board) {
-        PawnMovement pawnMovement = PawnMovement.getFor(board, row, col);
+    private Collection<? extends Movement> movesFor(Coord c, Board board) {
+        PawnMovement pawnMovement = PawnMovement.getFor(board, c);
         List<Movement> list = new ArrayList<>();
         add(list, pawnMovement::forwardByOne);
         add(list, pawnMovement::forwardByTwo);

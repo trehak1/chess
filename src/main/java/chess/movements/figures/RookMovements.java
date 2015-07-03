@@ -21,10 +21,10 @@ public class RookMovements extends RayMovements implements MovementProducer {
     protected Collection<Movement> createMoves(Board board, Col c, Row r) {
         MoveUtils moveUtils = new MoveUtils(board, c, r);
         List<Movement> l = new ArrayList<>();
-        processRayList(l, moveUtils.getRayNorth(), moveUtils);
-        processRayList(l, moveUtils.getRayWest(), moveUtils);
-        processRayList(l, moveUtils.getRayEast(), moveUtils);
-        processRayList(l, moveUtils.getRaySouth(), moveUtils);
+        processRayList(l, moveUtils.getRayNorth(), moveUtils, board);
+        processRayList(l, moveUtils.getRayWest(), moveUtils, board);
+        processRayList(l, moveUtils.getRayEast(), moveUtils, board);
+        processRayList(l, moveUtils.getRaySouth(), moveUtils, board);
         return addCastlingChangeInformation(board, l);
     }
 
@@ -38,9 +38,9 @@ public class RookMovements extends RayMovements implements MovementProducer {
         for (Movement m : l) {
             MovementEffect me;
             if (m.getFrom() == Coord.get(Col.A, player.getStartingRow()) && board.getCastlingRights().isCastlingEnabled(player, CastlingType.QUEEN_SIDE)) {
-                me = new MovementEffect().disableCastling(CastlingType.QUEEN_SIDE);
+                me = new MovementEffect().disableCastling(CastlingType.QUEEN_SIDE, player);
             } else if (m.getFrom() == Coord.get(Col.H, player.getStartingRow()) && board.getCastlingRights().isCastlingEnabled(player, CastlingType.KING_SIDE)) {
-                me = new MovementEffect().disableCastling(CastlingType.KING_SIDE);
+                me = new MovementEffect().disableCastling(CastlingType.KING_SIDE, player);
             } else {
                 me = MovementEffect.NONE;
             }

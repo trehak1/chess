@@ -23,10 +23,10 @@ public class BishopMovements extends RayMovements implements MovementProducer {
     protected Collection<Movement> createMoves(Board board, Col c, Row r) {
         MoveUtils moveUtils = new MoveUtils(board, c, r);
         List<Movement> l = new ArrayList<>();
-        processRayList(l, moveUtils.getRayNorthEast(), moveUtils);
-        processRayList(l, moveUtils.getRayNorthWest(), moveUtils);
-        processRayList(l, moveUtils.getRaySouthEast(), moveUtils);
-        processRayList(l, moveUtils.getRaySouthWest(), moveUtils);
+        processRayList(l, moveUtils.getRayNorthEast(), moveUtils,board);
+        processRayList(l, moveUtils.getRayNorthWest(), moveUtils,board);
+        processRayList(l, moveUtils.getRaySouthEast(), moveUtils,board);
+        processRayList(l, moveUtils.getRaySouthWest(), moveUtils,board);
         return l;
     }
 

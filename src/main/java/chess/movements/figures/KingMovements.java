@@ -31,27 +31,27 @@ public class KingMovements implements MovementProducer {
     private List<Movement> createMoves(Coord kingCoords, Board board) {
         List<Movement> movements = new ArrayList<>();
         MoveUtils moveUtils = new MoveUtils(board, kingCoords);
-        moveTo(kingCoords.east(), movements, moveUtils);
-        moveTo(kingCoords.west(), movements, moveUtils);
-        moveTo(kingCoords.north(), movements, moveUtils);
-        moveTo(kingCoords.south(), movements, moveUtils);
-        moveTo(kingCoords.southEast(), movements, moveUtils);
-        moveTo(kingCoords.southWest(), movements, moveUtils);
-        moveTo(kingCoords.northEast(), movements, moveUtils);
-        moveTo(kingCoords.northWest(), movements, moveUtils);
+        moveTo(kingCoords.east(), movements, moveUtils, board);
+        moveTo(kingCoords.west(), movements, moveUtils, board);
+        moveTo(kingCoords.north(), movements, moveUtils, board);
+        moveTo(kingCoords.south(), movements, moveUtils, board);
+        moveTo(kingCoords.southEast(), movements, moveUtils, board);
+        moveTo(kingCoords.southWest(), movements, moveUtils, board);
+        moveTo(kingCoords.northEast(), movements, moveUtils, board);
+        moveTo(kingCoords.northWest(), movements, moveUtils, board);
         return movements;
     }
 
-    private void moveTo(Coord targetCoords, List<Movement> movements, MoveUtils moveUtils) {
+    private void moveTo(Coord targetCoords, List<Movement> movements, MoveUtils moveUtils, Board board) {
         if (targetCoords != Coord.INVALID) {
             MovementEffect me = new MovementEffect()
-                    .disableCastling(CastlingType.KING_SIDE)
-                    .disableCastling(CastlingType.QUEEN_SIDE);
+                    .disableCastling(CastlingType.KING_SIDE, player)
+                    .disableCastling(CastlingType.QUEEN_SIDE, player);
             if (moveUtils.isEmpty(targetCoords)) {
                 Movement movement = new Movement(MovementType.MOVE, moveUtils.myCoords(), targetCoords, me);
                 movements.add(movement);
             } else if (moveUtils.isEnemy(targetCoords)) {
-                Movement movement = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), targetCoords, me);
+                Movement movement = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), targetCoords, me.captured(board.get(targetCoords).getPiece()));
                 movements.add(movement);
             }
         }

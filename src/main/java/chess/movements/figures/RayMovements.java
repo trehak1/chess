@@ -33,7 +33,7 @@ public abstract class RayMovements implements MovementProducer {
 
     protected abstract Collection<? extends Movement> createMoves(Board board, Col c, Row r);
 
-    protected void processRayList(List<Movement> list, List<Coord> coords, MoveUtils moveUtils) {
+    protected void processRayList(List<Movement> list, List<Coord> coords, MoveUtils moveUtils, Board board) {
         for (Coord c : coords) {
             // move
             if (moveUtils.isEmpty(c.getCol(), c.getRow())) {
@@ -41,7 +41,7 @@ public abstract class RayMovements implements MovementProducer {
                 list.add(move);
             } else if (moveUtils.isEnemy(c.getCol(), c.getRow())) {
                 // capture
-                Movement move = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), c, MovementEffect.NONE);
+                Movement move = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), c, new MovementEffect().captured(board.get(c).getPiece()));
                 list.add(move);
             } else {
                 throw new IllegalStateException("wtf");

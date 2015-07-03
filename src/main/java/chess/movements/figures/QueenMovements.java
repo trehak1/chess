@@ -22,14 +22,14 @@ public class QueenMovements extends RayMovements implements MovementProducer {
     protected Collection<Movement> createMoves(Board board, Col c, Row r) {
         MoveUtils moveUtils = new MoveUtils(board, c, r);
         List<Movement> l = new ArrayList<>();
-        processRayList(l, moveUtils.getRayNorth(), moveUtils);
-        processRayList(l, moveUtils.getRayWest(), moveUtils);
-        processRayList(l, moveUtils.getRayEast(), moveUtils);
-        processRayList(l, moveUtils.getRaySouth(), moveUtils);
-        processRayList(l, moveUtils.getRayNorthEast(), moveUtils);
-        processRayList(l, moveUtils.getRayNorthWest(), moveUtils);
-        processRayList(l, moveUtils.getRaySouthEast(), moveUtils);
-        processRayList(l, moveUtils.getRaySouthWest(), moveUtils);
+        processRayList(l, moveUtils.getRayNorth(), moveUtils, board);
+        processRayList(l, moveUtils.getRayWest(), moveUtils, board);
+        processRayList(l, moveUtils.getRayEast(), moveUtils, board);
+        processRayList(l, moveUtils.getRaySouth(), moveUtils, board);
+        processRayList(l, moveUtils.getRayNorthEast(), moveUtils, board);
+        processRayList(l, moveUtils.getRayNorthWest(), moveUtils, board);
+        processRayList(l, moveUtils.getRaySouthEast(), moveUtils, board);
+        processRayList(l, moveUtils.getRaySouthWest(), moveUtils, board);
         return l;
     }
 
