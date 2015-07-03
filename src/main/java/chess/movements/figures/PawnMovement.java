@@ -158,13 +158,14 @@ class PawnMovement {
 
 	private EnPassant enPassant(Col targetCol, Row targetRow) {
 		if (targetCol.isValid() && targetRow.isValid()) {
+			Coord myCoord = Coord.get(col, row);
 			Coord enemyCoord = Coord.get(targetCol, row);
 			Coord destinationCoord = Coord.get(targetCol, targetRow);
 			if (moveUtils.isEnemy(enemyCoord) && board.isEnPassantAllowed(enemyCoord)) {
-				Board resultingBoard = board.remove(col, row);
+				Board resultingBoard = board.remove(myCoord);
 				resultingBoard = resultingBoard.remove(enemyCoord);
 				resultingBoard = resultingBoard.set(destinationCoord, myFigure).clearEnPassant();
-				return new EnPassant(Coord.get(col, row), Coord.get(targetCol, targetRow), resultingBoard);
+				return new EnPassant(myCoord, destinationCoord, resultingBoard);
 			}
 		}
 		return null;
