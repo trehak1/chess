@@ -45,7 +45,7 @@ public class RookMovements extends RayMovements implements MovementProducer {
                 me = MovementEffect.NONE;
             }
 
-            if (m.getType() != MovementType.MOVE || m.getType() != MovementType.CAPTURE) {
+            if (m.getType() != MovementType.MOVE && m.getType() != MovementType.CAPTURE) {
                 throw new IllegalArgumentException("wtf");
             }
             Movement movement = new Movement(m.getType(), m.getFrom(), m.getTo(), me);

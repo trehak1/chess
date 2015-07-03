@@ -65,7 +65,7 @@ public class MovementFactory {
                 // in it's starting row
                 if (target.getRow() == f.getPlayer().getStartingRow()) {
                     // if castling was allowed
-                    if (m.getType() != MovementType.CAPTURE || m.getType() != MovementType.PROMOTION_CAPTURE) {
+                    if (m.getType() != MovementType.CAPTURE && m.getType() != MovementType.PROMOTION_CAPTURE) {
                         throw new IllegalStateException("wtf");
                     }
                     CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
@@ -86,6 +86,7 @@ public class MovementFactory {
         return filterOutIllegalMoves(board, pseudoLegalMoves);
     }
 
+    // TODO CHECK FOR CHECK WITHOUT CREATING NEW BOARD (expensive)
     private List<Movement> filterOutIllegalMoves(Board board, List<Movement> list) {
         Iterator<Movement> it = list.iterator();
         while (it.hasNext()) {

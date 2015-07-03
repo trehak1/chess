@@ -4,15 +4,15 @@ import chess.board.Board;
 import chess.board.BoardFactory;
 import chess.enums.Player;
 import chess.movements.Movement;
-import chess.movements.MovementExecutor;
 import chess.movements.MovementFactory;
 import chess.movements.MovementType;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.junit.Assert;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Perft {
@@ -32,21 +32,22 @@ public class Perft {
         Date start = new Date();
         System.out.println("Start: " + start);
         for (int i = 0; i < iterations; i++) {
-            List<Movement> allMoves = getAllMoves(boards, player);
+            Set<Movement> allMoves = getAllMoves(boards, player);
             Assert.assertEquals("number of nodes differ", perftResult.getNodes(i), allMoves.size());
 
-            List<Movement> captures = getAllCaptures(allMoves);
+            List<Movement> captures = allMoves.stream().filter((m) -> m.getType() == MovementType.CAPTURE || m.getType() == MovementType.PROMOTION_CAPTURE).collect(Collectors.toList());
             Assert.assertEquals("number of captures differ", perftResult.getCaptures(i), captures.size());
 
-            List<Movement> enPassants = getAllEnPassants(allMoves);
+            List<Movement> enPassants = allMoves.stream().filter((m) -> m.getType() == MovementType.EN_PASSANT).collect(Collectors.toList());
             Assert.assertEquals("number of enpassants differ", perftResult.getEnPassants(i), enPassants.size());
 
-            List<Movement> castlings = getAllCastlings(allMoves);
+            List<Movement> castlings = allMoves.stream().filter((m) -> m.getType() == MovementType.CASTLING).collect(Collectors.toList());
             Assert.assertEquals("number of castlings differ", perftResult.getCastlings(i), castlings.size());
 
             boards.clear();
+            // TODO FIX PERFT to perform Depth-first search; to achieve this create UNDO in MovementExecutor
 //            allMoves.forEach((m) -> {
-//                MovementExecutor ex = new MovementExecutor(board);
+//                new MovementExecutor().doMove(m)
 //                return boards.add(m.getResultingBoard();
 //            }));
             player = player.enemy();
@@ -58,25 +59,14 @@ public class Perft {
         return -1;
     }
 
-    private List<Movement> getAllMoves(List<Board> boards, Player player) throws InterruptedException {
-        List<Movement> moves = new ArrayList<>();
+    private Set<Movement> getAllMoves(List<Board> boards, Player player) throws InterruptedException {
+        Set<Movement> moves = Sets.newConcurrentHashSet();
         MovementFactory factory = MovementFactory.getFor(player);
-//        boards.parallelStream().forEach((b) -> moves.addAll(factory.getMoves(b)));
-        boards.forEach((b) -> moves.addAll(factory.getMoves(b)));
+        boards.parallelStream().forEach((b) -> moves.addAll(factory.getMoves(b)));
+//        boards.forEach((b) -> moves.addAll(factory.getMoves(b)));
         return moves;
     }
 
-    private List<Movement> getAllCaptures(List<Movement> movements) {
-        return movements.stream().filter((m) -> m.getType() == MovementType.CAPTURE || m.getType() == MovementType.PROMOTION_CAPTURE).collect(Collectors.toList());
-    }
-
-    private List<Movement> getAllEnPassants(List<Movement> movements) {
-        return movements.stream().filter((m) -> m.getType() == MovementType.EN_PASSANT).collect(Collectors.toList());
-    }
-
-    private List<Movement> getAllCastlings(List<Movement> movements) {
-        return movements.stream().filter((m) -> m.getType() == MovementType.CASTLING).collect(Collectors.toList());
-    }
 
     public static void main(String[] args) throws InterruptedException {
         Perft perft = new Perft(new BoardFactory().newGameBoard(), Player.WHITE, PerftResults.POSITION_1);
