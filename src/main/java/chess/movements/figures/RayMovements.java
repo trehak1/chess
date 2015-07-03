@@ -2,10 +2,10 @@ package chess.movements.figures;
 
 import chess.board.Board;
 import chess.enums.*;
-import chess.movements.Capture;
-import chess.movements.Move;
 import chess.movements.Movement;
+import chess.movements.MovementEffect;
 import chess.movements.MovementProducer;
+import chess.movements.MovementType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,12 +37,12 @@ public abstract class RayMovements implements MovementProducer {
         for (Coord c : coords) {
             // move
             if (moveUtils.isEmpty(c.getCol(), c.getRow())) {
-                Move move = new Move(moveUtils.myCoords(), c, moveUtils.moveTo(c).clearEnPassant());
+                Movement move = new Movement(MovementType.MOVE, moveUtils.myCoords(), c, MovementEffect.NONE);
                 list.add(move);
             } else if (moveUtils.isEnemy(c.getCol(), c.getRow())) {
                 // capture
-                Capture capture = new Capture(moveUtils.myCoords(), c, moveUtils.capture(c).clearEnPassant());
-                list.add(capture);
+                Movement move = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), c, MovementEffect.NONE);
+                list.add(move);
             } else {
                 throw new IllegalStateException("wtf");
             }

@@ -24,29 +24,10 @@ public class CoordinateNotationTransformer implements NotationTransformer {
 
     @Override
     public String toNotation(Movement movement) {
-        if (movement instanceof Castling) {
-            Castling cm = (Castling) movement;
-            if (cm.getType() == CastlingType.KING_SIDE) {
-                return notation(cm.getFrom(), cm.getTo());
-            } else if (cm.getType() == CastlingType.QUEEN_SIDE) {
-                return notation(cm.getFrom(), cm.getTo());
-            } else {
-                throw new IllegalStateException("wtf");
-            }
-        } else if (movement instanceof Capture) {
-            Capture c = (Capture) movement;
-            return notation(c.getFrom(), c.getTo());
-        } else if (movement instanceof Move) {
-            Move m = (Move) movement;
-            return notation(m.getFrom(), m.getTo());
-        } else if (movement instanceof Promotion) {
-            Promotion p = (Promotion) movement;
-            return notation(p.getFrom(), p.getTo(), p.getPromotedTo().getPiece());
-        } else if(movement instanceof EnPassant) {
-            EnPassant ep = (EnPassant)movement;
-            return notation(ep.getFrom(), ep.getTo());
+        if(movement.getType() == MovementType.PROMOTION_CAPTURE || movement.getType() == MovementType.PROMOTION) {
+            return notation(movement.getFrom(),movement.getTo(),movement.getMovementEffect().getPromotedTo().getPiece());
         } else {
-            throw new IllegalArgumentException("wtf " + movement.getClass());
+            return notation(movement.getFrom(),movement.getTo());
         }
     }
 

@@ -2,26 +2,37 @@ package chess.movements;
 
 import chess.board.Board;
 import chess.enums.Coord;
+import com.google.common.base.Preconditions;
 
 /**
  * Created by Tom on 27.6.2015.
  */
-public abstract class Movement {
+public class Movement {
 
-    private final Board resultingBoard;
     protected final Coord from;
     protected final Coord to;
+    private final MovementEffect movementEffect;
+    private final MovementType type;
 
-    public Movement(Board resultingBoard, Coord from, Coord to) {
-        this.resultingBoard = resultingBoard;
+    public Movement(MovementType movementType, Coord from, Coord to, MovementEffect movementEffect) {
+        Preconditions.checkNotNull(movementType);
+        Preconditions.checkNotNull(from);
+        Preconditions.checkNotNull(to);
+        Preconditions.checkNotNull(movementEffect);
+        this.type = movementType;
         this.from = from;
         this.to = to;
+        this.movementEffect = movementEffect;
     }
 
-    public Board getResultingBoard() {
-        return resultingBoard;
+    public MovementType getType() {
+        return type;
     }
-    
+
+    public MovementEffect getMovementEffect() {
+        return movementEffect;
+    }
+
     public Coord getFrom() {
         return from;
     }

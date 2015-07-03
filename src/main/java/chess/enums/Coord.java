@@ -3,6 +3,7 @@ package chess.enums;
 import com.google.common.base.Preconditions;
 
 import java.util.EnumSet;
+import java.util.function.Function;
 
 /**
  * Created by Tom on 27.6.2015.
@@ -31,6 +32,10 @@ public enum Coord {
 
     public boolean isValid() {
         return this != INVALID;
+    }
+
+    public Coord apply(Function<Coord, Coord> function) {
+        return function.apply(this);
     }
 
     public Coord east() {

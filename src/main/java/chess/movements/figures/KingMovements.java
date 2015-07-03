@@ -4,7 +4,10 @@ import chess.board.Board;
 import chess.enums.CastlingType;
 import chess.enums.Coord;
 import chess.enums.Player;
-import chess.movements.*;
+import chess.movements.Movement;
+import chess.movements.MovementEffect;
+import chess.movements.MovementProducer;
+import chess.movements.MovementType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +23,13 @@ public class KingMovements implements MovementProducer {
 
     @Override
     public List<Movement> getMovements(Board board) {
-        List<Movement> movements = new ArrayList<>();
         Coord kingCoords = MoveUtils.locateKing(player, board);
-        createMoves(movements, kingCoords, board);
+        List<Movement> movements = createMoves(kingCoords, board);
         return movements;
     }
 
-    private void createMoves(List<Movement> movements, Coord kingCoords, Board board) {
+    private List<Movement> createMoves(Coord kingCoords, Board board) {
+        List<Movement> movements = new ArrayList<>();
         MoveUtils moveUtils = new MoveUtils(board, kingCoords);
         moveTo(kingCoords.east(), movements, moveUtils);
         moveTo(kingCoords.west(), movements, moveUtils);
@@ -36,22 +39,20 @@ public class KingMovements implements MovementProducer {
         moveTo(kingCoords.southWest(), movements, moveUtils);
         moveTo(kingCoords.northEast(), movements, moveUtils);
         moveTo(kingCoords.northWest(), movements, moveUtils);
+        return movements;
     }
 
     private void moveTo(Coord targetCoords, List<Movement> movements, MoveUtils moveUtils) {
         if (targetCoords != Coord.INVALID) {
+            MovementEffect me = new MovementEffect()
+                    .disableCastling(CastlingType.KING_SIDE)
+                    .disableCastling(CastlingType.QUEEN_SIDE);
             if (moveUtils.isEmpty(targetCoords)) {
-                Move m = new Move(moveUtils.myCoords(), targetCoords, moveUtils.moveTo(targetCoords)
-                        .disableCastling(player, CastlingType.QUEEN_SIDE)
-                        .disableCastling(player, CastlingType.KING_SIDE)
-                        .clearEnPassant());
-                movements.add(m);
+                Movement movement = new Movement(MovementType.MOVE, moveUtils.myCoords(), targetCoords, me);
+                movements.add(movement);
             } else if (moveUtils.isEnemy(targetCoords)) {
-                Capture c = new Capture(moveUtils.myCoords(), targetCoords, moveUtils.capture(targetCoords)
-                        .disableCastling(player, CastlingType.QUEEN_SIDE)
-                        .disableCastling(player, CastlingType.KING_SIDE)
-                        .clearEnPassant());
-                movements.add(c);
+                Movement movement = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), targetCoords, me);
+                movements.add(movement);
             }
         }
     }

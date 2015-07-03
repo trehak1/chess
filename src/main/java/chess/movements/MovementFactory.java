@@ -64,13 +64,16 @@ public class MovementFactory {
 			if (f.getPiece() == Piece.ROOK) {
 			// in it's starting row
                	if(target.getRow() == f.getPlayer().getStartingRow()) {
-					if(!(m instanceof Capture)) {
+                    // if castling was allowed
+					if(m.getType()!=MovementType.CAPTURE || m.getType()!=MovementType.PROMOTION_CAPTURE) {
 						throw new IllegalStateException("wtf");
 					}
                 	CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
-                    Capture nc = new Capture(m.getFrom(), target, m.getResultingBoard().disableCastling(f.getPlayer(), ct));
-                    resList.add(nc);
-					continue;
+                    if(prevBoard.getCastlingRights().isCastlingEnabled(f.getPlayer(),ct)) {
+                        Movement movement = new Movement(m.getType(),m.getFrom(),target, new MovementEffect().disableCastling(ct));
+                        resList.add(movement);
+                        continue;
+                    }
 				}
 			}
 			resList.add(m);
