@@ -9,7 +9,7 @@ import java.util.List;
  */
 public enum CastlingType {
 
-    QUEEN_SIDE(Lists.newArrayList(Col.B, Col.C), Col.D, Col.F, Col.A), KING_SIDE(Lists.newArrayList(Col.F), Col.G, Col.F, Col.H);
+    QUEEN_SIDE(Lists.newArrayList(Col.B, Col.C), Col.C, Col.D, Col.A), KING_SIDE(Lists.newArrayList(Col.F), Col.G, Col.F, Col.H);
 
     private final List<Col> emptyCols;
     private final Col rookStartingCol;
