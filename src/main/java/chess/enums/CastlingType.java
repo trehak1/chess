@@ -9,15 +9,58 @@ import java.util.List;
  */
 public enum CastlingType {
 
-    QUEEN_SIDE(Col.B, Col.C, Col.D), KING_SIDE(Col.F, Col.G);
+    QUEEN_SIDE(Lists.newArrayList(Col.B, Col.C), Col.D, Col.F, Col.A), KING_SIDE(Lists.newArrayList(Col.F), Col.G, Col.F, Col.H);
 
-    private final List<Col> cols;
+    private final List<Col> emptyCols;
+    private final Col rookStartingCol;
+    private final Col kingDestinationCol;
+    private final Col rookDestinationCol;
 
-    CastlingType(Col... cols) {
-        this.cols = Lists.newArrayList(cols);
+    CastlingType(List<Col> emptyCols, Col kingDestinationCol, Col rookDestinationCol, Col rookStartingCol) {
+        this.emptyCols = Lists.newArrayList(emptyCols);
+        this.kingDestinationCol = kingDestinationCol;
+        this.rookDestinationCol = rookDestinationCol;
+        this.rookStartingCol = rookStartingCol;
     }
 
-    public List<Col> getCols() {
-        return Lists.newArrayList(cols);
+    public List<Col> getEmptyCols() {
+        return Lists.newArrayList(emptyCols);
+    }
+    
+    public Col getKingDestinationCol() {
+        return kingDestinationCol;
+    }
+    
+    public Coord getKingDestinationCoord(Player player) {
+        return Coord.get(kingDestinationCol, player.getStartingRow());
+    }
+
+    public Col getRookStartingCol() {
+        return rookStartingCol;
+    }
+    
+    
+
+    public Col getRookDestinationCol() {
+        return rookDestinationCol; 
+    }
+    
+    public Coord getRookDestinationCoord(Player player) {
+        return Coord.get(rookDestinationCol, player.getStartingRow());
+    }
+
+    public CastlingType other() {
+        switch (this) {
+            case KING_SIDE:
+                return QUEEN_SIDE;
+            case QUEEN_SIDE:
+                return KING_SIDE;
+            default:
+                throw new IllegalStateException("wtf");
+        }
+    }
+
+    public Coord getRookStartingCoord(Player player) {
+        return Coord.get(rookStartingCol, player.getStartingRow());
     }
 }

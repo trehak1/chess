@@ -123,7 +123,7 @@ public class Board {
         Preconditions.checkNotNull(col);
         Preconditions.checkNotNull(row);
         Preconditions.checkNotNull(figure);
-        Preconditions.checkArgument(get(col, row).equals(Figure.NONE));
+        Preconditions.checkArgument(get(col, row).equals(Figure.NONE),"There is a figure "+get(col, row)+" on target square "+Coord.get(col, row));
         Board clone = new Board(castlings, board, enPassantAllowed);
         clone.board[col.ordinal()][row.ordinal()] = figure;
         return clone;

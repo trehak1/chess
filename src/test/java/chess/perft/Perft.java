@@ -12,14 +12,11 @@ import org.junit.Assert;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Perft {
 
 	private static final long[] PERFT = new long[]{20, 400, 8902, 197281, 4865609, 119060324, 3195901860L, 84998978956L, 2439530234167L, 69352859712417L};
-	private final ExecutorService ex = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
+	
 	public long perft(int iterations) throws InterruptedException {
 		Board newGame = new BoardFactory().newGameBoard();
 		Player player = Player.WHITE;
@@ -49,7 +46,7 @@ public class Perft {
 
 	public static void main(String[] args) throws InterruptedException {
 		Perft perft = new Perft();
-		long res = perft.perft(5);
+		long res = perft.perft(4);
 		System.out.println(res);
 	}
 
