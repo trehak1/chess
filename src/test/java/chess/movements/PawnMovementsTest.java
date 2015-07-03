@@ -3,7 +3,6 @@ package chess.movements;
 import chess.board.Board;
 import chess.board.BoardFactory;
 import chess.board.BoardLoader;
-import chess.enums.Coord;
 import chess.enums.Player;
 import chess.movements.figures.PawnMovements;
 import chess.movements.transformers.CoordinateNotationTransformer;
@@ -44,6 +43,11 @@ public class PawnMovementsTest extends MovementsTest {
     public void testEnPassant2() {
         testNumbersOfPossibleMovements("pawn/enPassant2.txt", 2);
     }
+
+    @Test
+    public void testPromotion() {
+        testNumbersOfPossibleMovements("pawn/promotion.txt", 12);
+    }
     
     @Test
     public void testEp() {
@@ -51,7 +55,7 @@ public class PawnMovementsTest extends MovementsTest {
         MovementFactory factory = MovementFactory.getFor(Player.WHITE);
         CoordinateNotationTransformer transformer = new CoordinateNotationTransformer(board, Player.WHITE);
         Movement m = transformer.fromNotation("H5-G6");
-        Assert.assertEquals(EnPassant.class,m.getClass());
+        Assert.assertEquals(EnPassant.class, m.getClass());
     }
 
     @Test

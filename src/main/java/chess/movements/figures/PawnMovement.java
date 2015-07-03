@@ -106,7 +106,7 @@ class PawnMovement {
 		Iterator<Capture> it = moves.iterator();
 		while (it.hasNext()) {
 			Capture m = it.next();
-			if (directionMove.apply(m.getFrom().getRow()) == lastRow) {
+			if (m.getFrom().getRow() == lastRow) {
 				// remove this capture
 				retList.remove(m);
 				// add as new with promotion
