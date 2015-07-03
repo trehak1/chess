@@ -39,8 +39,6 @@ public enum CastlingType {
         return rookStartingCol;
     }
     
-    
-
     public Col getRookDestinationCol() {
         return rookDestinationCol; 
     }

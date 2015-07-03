@@ -39,4 +39,18 @@ public class PerftTest {
         perft.perft(3);
     }
 
+    @Test
+    public void perftPosition5Test() throws InterruptedException {
+        Board board = new BoardLoader().loadBoard("perft/perftPosition5.txt");
+        Perft perft = new Perft(board, Player.WHITE, PerftResults.POSITION_5);
+        perft.perft(3);
+    }
+
+    @Test
+    public void perftPosition6Test() throws InterruptedException {
+        Board board = new BoardLoader().loadBoard("perft/perftPosition6.txt");
+        Perft perft = new Perft(board, Player.WHITE, PerftResults.POSITION_6);
+        perft.perft(3);
+    }
+
 }

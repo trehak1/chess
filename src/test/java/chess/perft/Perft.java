@@ -3,17 +3,13 @@ package chess.perft;
 import chess.board.Board;
 import chess.board.BoardFactory;
 import chess.enums.Player;
-import chess.movements.Capture;
-import chess.movements.Movement;
-import chess.movements.MovementFactory;
+import chess.movements.*;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.junit.Assert;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Perft {
 
@@ -32,10 +28,20 @@ public class Perft {
         Date start = new Date();
         System.out.println("Start: "+start);
         for (int i = 0; i < iterations; i++) {
-            Set<Movement> allMoves = getAllMoves(boards, player);
-            Assert.assertEquals("number of nodes differ", perftResult.getNodes(i), allMoves.size());
-            Set<Capture> captures = getAllCaptures(allMoves);
-            Assert.assertEquals("number of captures differ", perftResult.getCaptures(i), captures.size());
+            List<Movement> allMoves = getAllMoves(boards, player);
+            //Assert.assertEquals("number of nodes differ", perftResult.getNodes(i), allMoves.size());
+            if (perftResult.hasCaptures()) {
+                List<Capture> captures = getAllCaptures(allMoves);
+                Assert.assertEquals("number of captures differ", perftResult.getCaptures(i), captures.size());
+            }
+            if (perftResult.hasEnPassants()) {
+                List<EnPassant> enPassants = getAllEnPassants(allMoves);
+                Assert.assertEquals("number of enpassants differ", perftResult.getEnPassants(i), enPassants.size());
+            }
+            if (perftResult.hasCastlings()) {
+                List<Castling> castlings = getAllCastlings(allMoves);
+                Assert.assertEquals("number of castlings differ", perftResult.getCastlings(i), castlings.size());
+            }
             boards.clear();
             allMoves.forEach((m) -> boards.add(m.getResultingBoard()));
             player = player.enemy();
@@ -47,17 +53,29 @@ public class Perft {
         return -1;
     }
 
-    private Set<Movement> getAllMoves(List<Board> boards, Player player) throws InterruptedException {
-        Set<Movement> moves = Sets.newConcurrentHashSet();
+    private List<Movement> getAllMoves(List<Board> boards, Player player) throws InterruptedException {
+        List<Movement> moves = new ArrayList<>();
         MovementFactory factory = MovementFactory.getFor(player);
 //        boards.parallelStream().forEach((b) -> moves.addAll(factory.getMoves(b)));
         boards.forEach((b) -> moves.addAll(factory.getMoves(b)));
         return moves;
     }
     
-    private Set<Capture> getAllCaptures(Set<Movement> movements) {
-        Set<Capture> captures = new HashSet<>();
+    private List<Capture> getAllCaptures(List<Movement> movements) {
+        List<Capture> captures = new ArrayList<>();
         movements.forEach((m) -> {if (m instanceof Capture){ captures.add((Capture) m); }});
+        return captures;
+    }
+
+    private List<EnPassant> getAllEnPassants(List<Movement> movements) {
+        List<EnPassant> captures = new ArrayList<>();
+        movements.forEach((m) -> {if (m instanceof EnPassant){ captures.add((EnPassant) m); }});
+        return captures;
+    }
+
+    private List<Castling> getAllCastlings(List<Movement> movements) {
+        List<Castling> captures = new ArrayList<>();
+        movements.forEach((m) -> {if (m instanceof Castling){ captures.add((Castling) m); }});
         return captures;
     }
 

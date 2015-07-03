@@ -54,7 +54,7 @@ public class CastlingMovements implements MovementProducer {
         return true;
     }
     
-    private Castling createCastling(Board board, Player player,CastlingType castlingType) {
+    private Castling createCastling(Board board, Player player, CastlingType castlingType) {
         if(!isAvailable(board, player, castlingType)) {
             return null;
         }
