@@ -14,28 +14,28 @@ public class PerftTest {
 
 	@Test
 	public void perftTest() throws InterruptedException {
-		Perft perft = new Perft(new BoardFactory().newGameBoard(), Player.WHITE, Perft.PERFT);
+		Perft perft = new Perft(new BoardFactory().newGameBoard(), Player.WHITE, PerftResults.POSITION_1);
 		perft.perft(3);
 	}
 
     @Test
     public void perftPosition2Test() throws InterruptedException {
         Board board = new BoardLoader().loadBoard("perft/perftPosition2.txt");
-        Perft perft = new Perft(board, Player.WHITE, Perft.PERFT_POSITION_2);
+        Perft perft = new Perft(board, Player.WHITE, PerftResults.POSITION_2);
         perft.perft(3);
     }
 
     @Test
     public void perftPosition3Test() throws InterruptedException {
         Board board = new BoardLoader().loadBoard("perft/perftPosition3.txt");
-        Perft perft = new Perft(board, Player.WHITE, Perft.PERFT_POSITION_3);
+        Perft perft = new Perft(board, Player.WHITE, PerftResults.POSITION_3);
         perft.perft(3);
     }
 
     @Test
     public void perftPosition4Test() throws InterruptedException {
         Board board = new BoardLoader().loadBoard("perft/perftPosition4.txt");
-        Perft perft = new Perft(board, Player.WHITE, Perft.PERFT_POSITION_4);
+        Perft perft = new Perft(board, Player.WHITE, PerftResults.POSITION_4);
         perft.perft(3);
     }
 

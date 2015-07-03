@@ -17,19 +17,14 @@ import java.util.Set;
 
 public class Perft {
 
-    public static final long[] PERFT = new long[]{20, 400, 8902, 197281, 4865609, 119060324, 3195901860L, 84998978956L, 2439530234167L, 69352859712417L};
-    public static final long[] PERFT_POSITION_2 = new long[]{48, 2039, 97862, 4085603, 193690690L};
-    public static final long[] PERFT_POSITION_3 = new long[]{14, 191, 2812, 43238, 674624, 11030083, 178633661L};
-    public static final long[] PERFT_POSITION_4 = new long[]{6, 264, 9467, 422333, 15833292, 706045033};
-
     private Board board;
     private Player player;
-    private long[] perfts;
+    private PerftResult perftResult;
 
-    public Perft(Board board, Player player, long[] perfts) {
+    public Perft(Board board, Player player, PerftResult perftResult) {
         this.board = board;
         this.player = player;
-        this.perfts = perfts;
+        this.perftResult = perftResult;
     }
 
     public long perft(int iterations) throws InterruptedException {
@@ -38,7 +33,7 @@ public class Perft {
         System.out.println("Start: "+start);
         for (int i = 0; i < iterations; i++) {
             Set<Movement> allMoves = getAllMoves(boards, player);
-            Assert.assertEquals(perfts[i], allMoves.size());
+            Assert.assertEquals(perftResult.getNodes(i), allMoves.size());
             boards.clear();
             allMoves.forEach((m) -> boards.add(m.getResultingBoard()));
             player = player.enemy();
@@ -64,7 +59,7 @@ public class Perft {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        Perft perft = new Perft(new BoardFactory().newGameBoard(), Player.WHITE, PERFT);
+        Perft perft = new Perft(new BoardFactory().newGameBoard(), Player.WHITE, PerftResults.POSITION_1);
         long res = perft.perft(5);
         System.out.println(res);
     }
