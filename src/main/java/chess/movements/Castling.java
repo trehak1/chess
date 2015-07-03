@@ -20,20 +20,4 @@ public class Castling extends Movement {
         return type;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Castling m = (Castling) o;
-
-        return super.equals(o) && m.type == type;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + type.hashCode();
-        return result;
-    }
 }

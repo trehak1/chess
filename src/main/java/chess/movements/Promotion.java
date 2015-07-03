@@ -20,21 +20,4 @@ public class Promotion extends Movement {
         return promotedTo;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Promotion m = (Promotion) o;
-
-        return super.equals(o) && m.promotedTo == promotedTo;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + promotedTo.hashCode();
-        return result;
-    }
-
 }

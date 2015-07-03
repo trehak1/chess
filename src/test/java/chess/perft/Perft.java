@@ -32,7 +32,7 @@ public class Perft {
 			boards.clear();
 			allMoves.forEach((m) -> boards.add(m.getResultingBoard()));
 			player = player.enemy();
-			System.out.println("iteration: " + (i+1) + ", boards: " + allMoves.size()+", completed on "+new Date());
+			System.out.println("iteration: " + (i+1) + ", boards: " + allMoves.size() + ", completed on " + new Date());
 			if (i == iterations - 1) {
 				return allMoves.size();
 			}
