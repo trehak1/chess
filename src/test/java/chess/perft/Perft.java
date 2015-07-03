@@ -16,7 +16,8 @@ import java.util.Set;
 public class Perft {
 
     public static final long[] PERFT = new long[]{20, 400, 8902, 197281, 4865609, 119060324, 3195901860L, 84998978956L, 2439530234167L, 69352859712417L};
-    public static final long[] PERFT_POSITION_2 = new long[]{20, 400, 8902, 197281, 4865609, 119060324, 3195901860L, 84998978956L, 2439530234167L, 69352859712417L};
+    public static final long[] PERFT_POSITION_2 = new long[]{48, 2039, 97862, 4085603, 193690690L};
+    public static final long[] PERFT_POSITION_3 = new long[]{14, 191, 2812, 43238, 674624, 11030083, 178633661L};
 
     private Board board;
     private Player player;

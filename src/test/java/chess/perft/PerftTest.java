@@ -25,5 +25,12 @@ public class PerftTest {
         perft.perft(3);
     }
 
+    @Test
+    public void perftPosition3Test() throws InterruptedException {
+        Board board = new BoardLoader().loadBoard("perft/perftPosition3.txt");
+        Perft perft = new Perft(board, Player.WHITE, Perft.PERFT_POSITION_3);
+        perft.perft(3);
+    }
+
 
 }
