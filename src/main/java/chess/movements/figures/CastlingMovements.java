@@ -1,10 +1,7 @@
 package chess.movements.figures;
 
 import chess.board.Board;
-import chess.enums.Col;
-import chess.enums.Coord;
-import chess.enums.Player;
-import chess.enums.CastlingType;
+import chess.enums.*;
 import chess.movements.Castling;
 import chess.movements.Movement;
 import chess.movements.MovementProducer;
@@ -47,12 +44,11 @@ public class CastlingMovements implements MovementProducer {
             return false;
         }
         // check if all required fields are empty
-        List<Coord> toBeEmpty = Lists.newArrayList(castlingType.getKingDestinationCoord(player));
+        List<Coord> toBeEmpty = Lists.newArrayList(castlingType.getKingDestinationCoord(player), castlingType.getRookDestinationCoord(player));
         for (Col c : castlingType.getEmptyCols()) {
             toBeEmpty.add(Coord.get(c, player.getStartingRow()));
         }
-        MoveUtils kingUtils = new MoveUtils(board, MoveUtils.locateKing(player, board));
-        if (Iterables.any(toBeEmpty, (coord) -> !kingUtils.isEmpty(coord))) {
+        if (Iterables.any(toBeEmpty, (coord) -> board.get(coord)!= Figure.NONE)) {
             return false;
         }
         return true;

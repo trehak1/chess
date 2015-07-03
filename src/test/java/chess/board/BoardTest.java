@@ -15,6 +15,40 @@ import org.junit.Test;
 public class BoardTest {
 
     @Test
+    public void testCastling() {
+        Board b = new BoardFactory().newGameBoard();
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        
+        b = b.disableCastling(Player.BLACK, CastlingType.KING_SIDE);
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        
+        b = b.disableCastling(Player.BLACK, CastlingType.QUEEN_SIDE);
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+
+        b = b.disableCastling(Player.WHITE, CastlingType.KING_SIDE);
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+
+        b = b.disableCastling(Player.WHITE, CastlingType.QUEEN_SIDE);
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        
+    }
+    
+    @Test
     public void testWhiteCastlingImmutable() {
         Board orig = new BoardFactory().newGameBoard();
         Board mod = orig.disableCastling(Player.WHITE, CastlingType.KING_SIDE);

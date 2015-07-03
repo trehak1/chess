@@ -50,7 +50,8 @@ public class Perft {
     private Set<Movement> getAllMoves(List<Board> boards, Player player) throws InterruptedException {
         Set<Movement> moves = Sets.newConcurrentHashSet();
         MovementFactory factory = MovementFactory.getFor(player);
-        boards.parallelStream().forEach((b) -> moves.addAll(factory.getMoves(b)));
+//        boards.parallelStream().forEach((b) -> moves.addAll(factory.getMoves(b)));
+        boards.forEach((b) -> moves.addAll(factory.getMoves(b)));
         return moves;
     }
 
