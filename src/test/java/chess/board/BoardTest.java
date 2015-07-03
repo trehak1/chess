@@ -17,34 +17,34 @@ public class BoardTest {
     @Test
     public void testCastling() {
         Board b = new BoardFactory().newGameBoard();
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
         
         b = b.disableCastling(Player.BLACK, CastlingType.KING_SIDE);
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
         
         b = b.disableCastling(Player.BLACK, CastlingType.QUEEN_SIDE);
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
 
         b = b.disableCastling(Player.WHITE, CastlingType.KING_SIDE);
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
-        Assert.assertEquals(true, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(true, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
 
         b = b.disableCastling(Player.WHITE, CastlingType.QUEEN_SIDE);
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
-        Assert.assertEquals(false, b.isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.QUEEN_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertEquals(false, b.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.QUEEN_SIDE));
         
     }
     
@@ -53,8 +53,8 @@ public class BoardTest {
         Board orig = new BoardFactory().newGameBoard();
         Board mod = orig.disableCastling(Player.WHITE, CastlingType.KING_SIDE);
 
-        Assert.assertFalse(mod.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
-        Assert.assertTrue(orig.isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertFalse(mod.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
+        Assert.assertTrue(orig.getCastlingRights().isCastlingEnabled(Player.WHITE, CastlingType.KING_SIDE));
         Assert.assertNotSame(orig, mod);
     }
 
@@ -63,8 +63,8 @@ public class BoardTest {
         Board orig = new BoardFactory().newGameBoard();
         Board mod = orig.disableCastling(Player.BLACK, CastlingType.KING_SIDE);
 
-        Assert.assertFalse(mod.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
-        Assert.assertTrue(orig.isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertFalse(mod.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
+        Assert.assertTrue(orig.getCastlingRights().isCastlingEnabled(Player.BLACK, CastlingType.KING_SIDE));
         Assert.assertNotSame(orig, mod);
     }
 

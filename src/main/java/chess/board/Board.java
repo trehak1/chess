@@ -142,4 +142,27 @@ public class Board {
         return new Board(castlingRights.enableCastling(player, castlingType), board, enPassantAllowed, onTurn);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Board board1 = (Board) o;
+
+        if (!Arrays.deepEquals(board, board1.board)) return false;
+        if (enPassantAllowed != board1.enPassantAllowed) return false;
+        if (castlingRights != null ? !castlingRights.equals(board1.castlingRights) : board1.castlingRights != null)
+            return false;
+        return onTurn == board1.onTurn;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = board != null ? Arrays.deepHashCode(board) : 0;
+        result = 31 * result + (enPassantAllowed != null ? enPassantAllowed.hashCode() : 0);
+        result = 31 * result + (castlingRights != null ? castlingRights.hashCode() : 0);
+        result = 31 * result + (onTurn != null ? onTurn.hashCode() : 0);
+        return result;
+    }
 }

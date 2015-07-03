@@ -17,16 +17,6 @@ public class MovementFactoryTest {
         MovementFactory factory = MovementFactory.getFor(player);
         List<Movement> moves = factory.getMoves(new BoardFactory().newGameBoard());
         Assert.assertEquals(20, moves.size());
-
-//        System.out.println(serializer.serializeIntoUtf8(moves.get(0).getResultingBoard()));
-        
-        for (int i = 0; i < 5; i++) {
-            player = player.enemy();
-            moves = MovementFactory.getFor(player).getMoves(moves.get(0).getResultingBoard());
-//            System.out.println(serializer.serializeIntoUtf8(moves.get(0).getResultingBoard()));
-        }
-
-
     }
-    
+
 }

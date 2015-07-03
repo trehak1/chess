@@ -81,4 +81,20 @@ public class CastlingRights implements Cloneable {
         copy[index] = true;
         return new CastlingRights(copy);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CastlingRights that = (CastlingRights) o;
+
+        return Arrays.equals(castlings, that.castlings);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return castlings != null ? Arrays.hashCode(castlings) : 0;
+    }
 }

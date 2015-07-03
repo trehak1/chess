@@ -1,6 +1,5 @@
 package chess.movements;
 
-import chess.board.Board;
 import chess.enums.Coord;
 import com.google.common.base.Preconditions;
 
@@ -36,14 +35,16 @@ public class Movement {
     public Coord getFrom() {
         return from;
     }
-    
+
     public Coord getTo() {
         return to;
     }
 
     public boolean sameCoordsAndTypeAs(Movement other) {
-        if (other == null || getClass() != other.getClass()) return false;
+        if (other.getType() != getType()) {
+            return false;
+        }
         return other.from == from && other.to == to;
     }
-    
+
 }

@@ -4,6 +4,7 @@ import chess.board.Board;
 import chess.board.BoardFactory;
 import chess.enums.Player;
 import chess.movements.Movement;
+import chess.movements.MovementExecutor;
 import chess.movements.MovementFactory;
 import chess.movements.MovementType;
 import com.google.common.collect.Lists;
@@ -40,12 +41,14 @@ public class Perft {
             List<Movement> enPassants = getAllEnPassants(allMoves);
             Assert.assertEquals("number of enpassants differ", perftResult.getEnPassants(i), enPassants.size());
 
-
             List<Movement> castlings = getAllCastlings(allMoves);
             Assert.assertEquals("number of castlings differ", perftResult.getCastlings(i), castlings.size());
 
             boards.clear();
-            allMoves.forEach((m) -> boards.add(m.getResultingBoard()));
+//            allMoves.forEach((m) -> {
+//                MovementExecutor ex = new MovementExecutor(board);
+//                return boards.add(m.getResultingBoard();
+//            }));
             player = player.enemy();
             System.out.println("iteration: " + (i + 1) + ", boards: " + allMoves.size() + ", completed on " + new Date());
             if (i == iterations - 1) {
