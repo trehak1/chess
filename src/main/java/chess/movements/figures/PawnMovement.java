@@ -62,7 +62,7 @@ class PawnMovement {
     }
 
     public Movement forwardByTwo() {
-        Coord startingCoord = Coord.get(myCoord.getCol(), player.getStartingRow());
+        Coord startingCoord = Coord.get(myCoord.getCol(), player.getStartingRow()).apply(directionMove);
         // not on start ?
         if (myCoord != startingCoord) {
             return null;
