@@ -36,10 +36,10 @@ public abstract class RayMovements implements MovementProducer {
     protected void processRayList(List<Movement> list, List<Coord> coords, MoveUtils moveUtils, Board board) {
         for (Coord c : coords) {
             // move
-            if (moveUtils.isEmpty(c.getCol(), c.getRow())) {
+            if (moveUtils.isEmpty(c)) {
                 Movement move = new Movement(MovementType.MOVE, moveUtils.myCoords(), c, MovementEffect.NONE);
                 list.add(move);
-            } else if (moveUtils.isEnemy(c.getCol(), c.getRow())) {
+            } else if (moveUtils.isEnemy(c)) {
                 // capture
                 Movement move = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), c, new MovementEffect().captured(board.get(c).getPiece()));
                 list.add(move);

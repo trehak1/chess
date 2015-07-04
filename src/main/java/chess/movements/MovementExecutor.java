@@ -140,7 +140,9 @@ public class MovementExecutor {
 
 	public Board undoMove(Movement movement) {
 		Preconditions.checkNotNull(movement, "Movement must not be null");
-		Preconditions.checkArgument(board.get(movement.getFrom()).getPlayer().enemy() == board.getOnTurn(), "Trying to undo enemy move");
+		Player boardTurn = board.getOnTurn();
+		Player toUndo = board.get(movement.getTo()).getPlayer();
+		Preconditions.checkArgument(boardTurn == toUndo.enemy(), "Trying to undo enemy move");
 
 		Board mutated;
 
@@ -241,7 +243,11 @@ public class MovementExecutor {
 		// put it to original coords
 		mutated = mutated.set(movement.getFrom(), moved);
 		// put back captured figure
-		mutated = mutated.set(movement.getTo(), Figure.get(moved.getPlayer().enemy(), movement.getMovementEffect().getCaptured()));
+		try {
+			mutated = mutated.set(movement.getTo(), Figure.get(moved.getPlayer().enemy(), movement.getMovementEffect().getCaptured()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return mutated;
 	}
 

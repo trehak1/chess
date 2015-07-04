@@ -41,7 +41,7 @@ public class MovementFactory {
         producers.add(new RookMovements(player));
     }
 
-    private List<Movement> getPseudoLegalMoves(Board board) {
+    public List<Movement> getPseudoLegalMoves(Board board) {
         List<Movement> list = new ArrayList<>();
         for (MovementProducer producer : producers) {
             try {
@@ -87,7 +87,7 @@ public class MovementFactory {
     }
 
     // TODO CHECK FOR CHECK WITHOUT CREATING NEW BOARD (expensive)
-    private List<Movement> filterOutIllegalMoves(Board board, List<Movement> list) {
+    public List<Movement> filterOutIllegalMoves(Board board, List<Movement> list) {
         Iterator<Movement> it = list.iterator();
         while (it.hasNext()) {
             Movement m = it.next();

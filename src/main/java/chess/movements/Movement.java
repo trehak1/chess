@@ -18,6 +18,7 @@ public class Movement {
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
         Preconditions.checkNotNull(movementEffect);
+        Preconditions.checkArgument((movementType == MovementType.CAPTURE || movementType == MovementType.PROMOTION_CAPTURE) && movementEffect.getCaptured() != null);
         this.type = movementType;
         this.from = from;
         this.to = to;
