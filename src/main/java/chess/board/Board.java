@@ -138,7 +138,7 @@ public class Board {
         return new Board(castlingRights, board, null, onTurn);
     }
 
-    Board enableCastling(Player player, CastlingType castlingType) {
+    public Board enableCastling(Player player, CastlingType castlingType) {
         return new Board(castlingRights.enableCastling(player, castlingType), board, enPassantAllowed, onTurn);
     }
 

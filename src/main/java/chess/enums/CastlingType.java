@@ -1,5 +1,6 @@
 package chess.enums;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -21,6 +22,18 @@ public enum CastlingType {
         this.kingDestinationCol = kingDestinationCol;
         this.rookDestinationCol = rookDestinationCol;
         this.rookStartingCol = rookStartingCol;
+    }
+    
+    public static CastlingType fromKingDestCol(Col kingDestination) {
+        Preconditions.checkNotNull(kingDestination);
+        switch (kingDestination) {
+            case C:
+                return QUEEN_SIDE;
+            case G:
+                return KING_SIDE;
+            default:
+                throw new IllegalArgumentException("wtf");
+        }
     }
 
     public List<Col> getEmptyCols() {

@@ -42,6 +42,10 @@ public class MovementEffect {
         return promotedTo;
     }
 
+    public Piece getCaptured() {
+        return captured;
+    }
+
     public MovementEffect allowEnPassant(Coord coord) {
         Preconditions.checkNotNull(coord);
         return new MovementEffect(coord, promotedTo, castlingRights, captured);
