@@ -18,7 +18,11 @@ public class Movement {
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
         Preconditions.checkNotNull(movementEffect);
-        Preconditions.checkArgument((movementType == MovementType.CAPTURE || movementType == MovementType.PROMOTION_CAPTURE) && movementEffect.getCaptured() != null);
+        if(movementType == MovementType.CAPTURE || movementType == MovementType.PROMOTION_CAPTURE) {
+            if(movementEffect.getCaptured() == null) {
+                throw new IllegalStateException("Movement type capture or promotion capture and no capture piece set!");
+            }
+        }
         this.type = movementType;
         this.from = from;
         this.to = to;

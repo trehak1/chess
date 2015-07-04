@@ -243,11 +243,7 @@ public class MovementExecutor {
 		// put it to original coords
 		mutated = mutated.set(movement.getFrom(), moved);
 		// put back captured figure
-		try {
-			mutated = mutated.set(movement.getTo(), Figure.get(moved.getPlayer().enemy(), movement.getMovementEffect().getCaptured()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		mutated = mutated.set(movement.getTo(), Figure.get(moved.getPlayer().enemy(), movement.getMovementEffect().getCaptured()));
 		return mutated;
 	}
 

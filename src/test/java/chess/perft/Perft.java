@@ -14,6 +14,7 @@ import org.junit.Assert;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class Perft {
@@ -76,25 +77,32 @@ public class Perft {
 
 		Board newGameBoard = new BoardFactory().newGameBoard();
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 6; i++) {
 			long results = perft2(i, newGameBoard);
 			System.out.println(i + " : " + results);
 		}
 
 	}
 
-	private static long perft2(int depth, Board board) {
+	private static long perft2(int depth, final Board board) {
 		if (depth == 0) {
 			return 1;
 		}
-		long nodes = 0;
+		AtomicLong nodes = new AtomicLong(0);
+		
 		List<Movement> moves = MovementFactory.getFor(board.getOnTurn()).getMoves(board);
-		for (int i = 0; i < moves.size(); i++) {
-			board = new MovementExecutor(board).doMove(moves.get(i));
-			nodes += perft2(depth - 1, board);
-			board = new MovementExecutor(board).undoMove(moves.get(i));
-		}
-		return nodes;
+		moves.parallelStream().forEach((m) -> {
+			Board mutated = board;
+			mutated = new MovementExecutor(mutated).doMove(m);
+			nodes.addAndGet(perft2(depth - 1, mutated));
+			mutated = new MovementExecutor(mutated).undoMove(m);
+		});
+//		for (int i = 0; i < moves.size(); i++) {
+//			board = new MovementExecutor(board).doMove(moves.get(i));
+//			nodes += perft2(depth - 1, board);
+//			board = new MovementExecutor(board).undoMove(moves.get(i));
+//		}
+		return nodes.get();
 	}
 
 

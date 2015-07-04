@@ -70,7 +70,11 @@ public class MovementFactory {
                     }
                     CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
                     if (prevBoard.getCastlingRights().isCastlingEnabled(f.getPlayer(), ct)) {
-                        Movement movement = new Movement(m.getType(), m.getFrom(), target, new MovementEffect().disableCastling(ct, f.getPlayer()));
+                        MovementEffect me = new MovementEffect().disableCastling(ct, f.getPlayer());
+                        if(m.getMovementEffect().getCaptured()!=null) {
+                            me = me.captured(m.getMovementEffect().getCaptured());
+                        }
+                        Movement movement = new Movement(m.getType(), m.getFrom(), target, me);
                         resList.add(movement);
                         continue;
                     }

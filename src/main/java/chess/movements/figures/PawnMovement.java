@@ -124,7 +124,12 @@ class PawnMovement {
     }
 
     private Movement enPassant(Coord target) {
+        // target would be out of board ?
         if (!target.isValid()) {
+            return null;
+        }
+        // target is occupied
+        if(!moveUtils.isEmpty(target)) {
             return null;
         }
         Coord enemyCoord = Coord.get(target.getCol(), myCoord.getRow());

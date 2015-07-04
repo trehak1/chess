@@ -1,10 +1,7 @@
 package chess.movements;
 
 import chess.board.CastlingRights;
-import chess.enums.CastlingType;
-import chess.enums.Coord;
-import chess.enums.Piece;
-import chess.enums.Player;
+import chess.enums.*;
 import com.google.common.base.Preconditions;
 
 /**
@@ -48,6 +45,7 @@ public class MovementEffect {
 
     public MovementEffect allowEnPassant(Coord coord) {
         Preconditions.checkNotNull(coord);
+        Preconditions.checkArgument(coord.getRow() == Row._4 || coord.getRow() == Row._5,"Row not suitable for en passant");
         return new MovementEffect(coord, promotedTo, castlingRights, captured);
     }
 

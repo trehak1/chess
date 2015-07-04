@@ -85,11 +85,8 @@ public enum Coord {
         if (col == Col.INVALID || row == Row.INVALID) {
             return INVALID;
         }
-        for (Coord c : Coord.VALID_VALUES) {
-            if (c.col == col && c.row == row) {
-                return c;
-            }
-        }
-        throw new IllegalStateException("wtf");
+        int colOrd = col.ordinal();
+        int rowOrd = row.ordinal();
+        return Coord.values()[colOrd*8+rowOrd];
     }
 }
