@@ -8,5 +8,5 @@
 1 ♖♘♗♕♔░░♖
   A B C D E F G H
 enpassants: 
-white castlings: KING_SIDE
+white castlings: KING_SIDE, QUEEN_SIDE
 black castlings: 

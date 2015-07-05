@@ -47,8 +47,15 @@ public class PerftTest {
 	public void perftPosition5Test() throws InterruptedException {
 		Board board = new BoardLoader().loadBoard("perft/perftPosition5.txt");
 		Perft perft = new Perft(board, Player.WHITE);
+		perft.perft(1);
+		perft.validate(PerftResults.POSITION_5);
+
+		perft.perft(2);
+		perft.validate(PerftResults.POSITION_5);
+
 		perft.perft(3);
 		perft.validate(PerftResults.POSITION_5);
+		
 	}
 
 	@Test
