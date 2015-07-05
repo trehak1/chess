@@ -18,6 +18,11 @@ public class Movement {
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
         Preconditions.checkNotNull(movementEffect);
+        if(movementType == MovementType.PROMOTION || movementType == MovementType.PROMOTION_CAPTURE) {
+            if(movementEffect.getPromotedTo() == null) {
+                throw new IllegalStateException("Movement type promotion or promotion capture and no promotion result set!");
+            }
+        }
         if(movementType == MovementType.CAPTURE || movementType == MovementType.PROMOTION_CAPTURE) {
             if(movementEffect.getCaptured() == null) {
                 throw new IllegalStateException("Movement type capture or promotion capture and no capture piece set!");

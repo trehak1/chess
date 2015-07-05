@@ -74,6 +74,9 @@ public class MovementFactory {
                         if(m.getMovementEffect().getCaptured()!=null) {
                             me = me.captured(m.getMovementEffect().getCaptured());
                         }
+                        if(m.getMovementEffect().getPromotedTo()!=null) {
+                            me = me.promotedTo(m.getMovementEffect().getPromotedTo());
+                        }
                         Movement movement = new Movement(m.getType(), m.getFrom(), target, me);
                         resList.add(movement);
                         continue;

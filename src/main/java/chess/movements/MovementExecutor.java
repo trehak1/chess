@@ -51,6 +51,8 @@ public class MovementExecutor {
 		// allow en passant ?
 		if (effect.getAllowEnPassant() != null) {
 			mutated = mutated.allowEnPassant(effect.getAllowEnPassant());
+		} else {
+			mutated = mutated.clearEnPassant();
 		}
 		// disable castlings?
 		for (Player p : Player.values()) {
@@ -66,9 +68,7 @@ public class MovementExecutor {
 	}
 
 	private Board executePromotionCapture(Movement movement) {
-		// get pawn
-		Figure pawn = board.get(movement.getFrom());
-		// remove it
+		// remove pawn
 		Board mutated = board.remove(movement.getFrom());
 		// remove figure in destination
 		mutated = mutated.remove(movement.getTo());
@@ -78,9 +78,7 @@ public class MovementExecutor {
 	}
 
 	private Board executePromotion(Movement movement) {
-		// get pawn
-		Figure pawn = board.get(movement.getFrom());
-		// remove it
+		// remove pawn
 		Board mutated = board.remove(movement.getFrom());
 		// set it to new destination as promoted piece
 		mutated = mutated.set(movement.getTo(), Figure.get(board.getOnTurn(), movement.getMovementEffect().getPromotedTo()));
@@ -88,53 +86,36 @@ public class MovementExecutor {
 	}
 
 	private Board executeEnPassant(Movement movement) {
-		// get pawn
-		Figure pawn = board.get(movement.getFrom());
-		// remove it
-		Board mutated = board.remove(movement.getFrom());
-		// set it to new destination
-		mutated = mutated.set(movement.getTo(), pawn);
+		// move pawn
+		Board mutated = moveFigure(board, movement.getFrom(), movement.getTo());
 		// remove captured en passant
-		mutated = mutated.remove(movement.getTo().getCol(), movement.getFrom().getRow());
+		Coord captureCoord = getEnPassantCaptured(movement);
+		mutated = mutated.remove(captureCoord);
 		return mutated;
 	}
 
 	private Board executeCastling(Movement movement) {
 		CastlingType ct = CastlingType.fromKingDestCol(movement.getTo().getCol());
-		// get king
-		Figure king = board.get(movement.getFrom());
-		// remove it
-		Board mutated = board.remove(movement.getFrom());
-		// move it to target
-		mutated = mutated.set(movement.getTo(), king);
-		// get rook
-		Figure rook = mutated.get(ct.getRookStartingCol(), movement.getTo().getRow());
-		// remove it
-		mutated = mutated.remove(ct.getRookStartingCol(), movement.getTo().getRow());
-		// move it to it's finished col
-		mutated = mutated.set(ct.getRookDestinationCol(), movement.getTo().getRow(), rook);
+		Row castlingRow = board.get(movement.getFrom()).getPlayer().getStartingRow();
+		Coord rookDestCoord = Coord.get(ct.getRookDestinationCol(), castlingRow);
+		Coord rookStartCoord = Coord.get(ct.getRookStartingCol(), castlingRow);
+		// move king
+		Board mutated = moveFigure(board, movement.getFrom(), movement.getTo());
+		// move rook
+		mutated = moveFigure(mutated, rookStartCoord, rookDestCoord); 
+		// castling is disabled in method doMove
 		return mutated;
 	}
 
 	private Board executeCapture(Movement movement) {
-		// get moved figure
-		Figure moved = board.get(movement.getFrom());
-		// remove it
-		Board mutated = board.remove(movement.getFrom());
-		// remove captured
-		mutated = mutated.remove(movement.getTo());
-		// set moved figure to new coords
-		mutated = mutated.set(movement.getTo(), moved);
+		// remove target figure
+		Board mutated = board.remove(movement.getTo());
+		mutated = moveFigure(mutated,movement.getFrom(),movement.getTo());
 		return mutated;
 	}
 
 	private Board executeMove(Movement movement) {
-		// get moved figure
-		Figure moved = board.get(movement.getFrom());
-		// remove it
-		Board mutated = board.remove(movement.getFrom());
-		// put it to new coords
-		mutated = mutated.set(movement.getTo(), moved);
+		Board mutated = moveFigure(board, movement.getFrom(), movement.getTo());
 		return mutated;
 	}
 
@@ -208,54 +189,60 @@ public class MovementExecutor {
 	private Board rollbackEnPassant(Movement movement) {
 		// get pawn
 		Figure pawn = board.get(movement.getTo());
-		// remove it
-		Board mutated = board.remove(movement.getTo());
-		// set it to prev destination
-		mutated = mutated.set(movement.getFrom(), pawn);
+		// move it back
+		Board mutated = moveFigure(board, movement.getTo(), movement.getFrom());
 		// put back captured en passant
-		Coord captureCoord = Coord.get(movement.getTo().getCol(), movement.getFrom().getRow());
+		Coord captureCoord = getEnPassantCaptured(movement);
 		mutated = mutated.set(captureCoord, Figure.get(pawn.getPlayer().enemy(), Piece.PAWN));
+		// reallow en passant
 		mutated = mutated.allowEnPassant(captureCoord);
 		return mutated;
 	}
 
 	private Board rollbackCastling(Movement movement) {
 		CastlingType ct = CastlingType.fromKingDestCol(movement.getTo().getCol());
-		// get king
-		Figure king = board.get(movement.getTo());
-		// remove it
-		Board mutated = board.remove(movement.getTo());
-		// get rook
-		Figure rook = mutated.get(ct.getRookDestinationCol(), movement.getTo().getRow());
-		// remove it
-		mutated = mutated.remove(ct.getRookDestinationCol(), movement.getTo().getRow());
-		// put back king, rook
-		mutated = mutated.set(movement.getFrom(), king);
-		mutated = mutated.set(ct.getRookStartingCol(), movement.getTo().getRow(), rook);
+		// get player row
+		Row castlingRow = board.get(movement.getTo()).getPlayer().getStartingRow();
+		Coord rookDestCoord = Coord.get(ct.getRookDestinationCol(), castlingRow);
+		Coord rookStartCoord = Coord.get(ct.getRookStartingCol(), castlingRow);
+		// move king back
+		Board mutated = moveFigure(board,movement.getTo(),movement.getFrom());
+		// move rook back
+		mutated = moveFigure(mutated, rookDestCoord, rookStartCoord);
 		return mutated;
 	}
 
 	private Board rollbackCapture(Movement movement) {
-		// get moved figure
-		Figure moved = board.get(movement.getTo());
-		// remove it
-		Board mutated = board.remove(movement.getTo());
-		// put it to original coords
-		mutated = mutated.set(movement.getFrom(), moved);
+		Board mutated = moveFigure(board,movement.getTo(), movement.getFrom());
 		// put back captured figure
-		mutated = mutated.set(movement.getTo(), Figure.get(moved.getPlayer().enemy(), movement.getMovementEffect().getCaptured()));
+		mutated = mutated.set(movement.getTo(), Figure.get(getPlayer(board,movement.getTo()).enemy(), movement.getMovementEffect().getCaptured()));
 		return mutated;
 	}
 
 	private Board rollbackMove(Movement movement) {
-		// get moved figure
-		Figure moved = board.get(movement.getTo());
-		// remove it
-		Board mutated = board.remove(movement.getTo());
-		// put it to original coords
-		mutated = mutated.set(movement.getFrom(), moved);
+		Board mutated = moveFigure(board,movement.getTo(), movement.getFrom());
 		return mutated;
 	}
 
+	private Coord getEnPassantCaptured(Movement m) {
+		if(m.getType()!=MovementType.EN_PASSANT) {
+			throw new IllegalArgumentException("wtf");
+		}
+		return Coord.get(m.getTo().getCol(),m.getFrom().getRow());
+	}
+	
+	private Player getPlayer(Board board, Coord figureCoord) {
+		return board.get(figureCoord).getPlayer();
+	}
+	
+	private Board moveFigure(Board board, Coord from, Coord to) {
+		// get moved figure
+		Figure moved = board.get(from);
+		// remove it
+		Board mutated = board.remove(from);
+		// put it to original coords
+		mutated = mutated.set(to, moved);
+		return mutated;
+	}
 
 }
