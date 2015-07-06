@@ -49,7 +49,7 @@ public enum PerftResults implements PerftResult {
             return specific;
         }
         long[] vals = new long[nodes.length];
-        Arrays.fill(vals, 0L);
+        Arrays.fill(vals, -1L);
         return vals;
     }
 

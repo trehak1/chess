@@ -56,7 +56,7 @@ class PawnMovement {
         Coord from = moveUtils.myCoords();
         Coord target = myCoord.apply(directionMove);
         if (moveUtils.isEmpty(target)) {
-            return new Movement(MovementType.MOVE, from, target, MovementEffect.NONE);
+            return new Movement(MovementType.MOVE, from, target, new MovementEffect().disableEnPassantIfAllowed(board));
         }
         return null;
     }
@@ -73,7 +73,7 @@ class PawnMovement {
         Coord target = intermediate.apply(directionMove);
         if (moveUtils.isEmpty(intermediate)) {
             if (moveUtils.isEmpty(target)) {
-                return new Movement(MovementType.MOVE, from, target, new MovementEffect().allowEnPassant(target));
+                return new Movement(MovementType.MOVE, from, target, new MovementEffect().allowEnPassant(target).disableEnPassantIfAllowed(board));
             }
         }
         return null;
@@ -103,11 +103,11 @@ class PawnMovement {
             if (myCoord.apply(directionMove).getRow() == player.enemy().getStartingRow()) {
                 List<Movement> res = Lists.newArrayList();
                 for (Piece p : PROMOTION_SET) {
-                    res.add(new Movement(MovementType.PROMOTION_CAPTURE, myCoord, target, new MovementEffect().promotedTo(p).captured(enemyPiece)));
+                    res.add(new Movement(MovementType.PROMOTION_CAPTURE, myCoord, target, new MovementEffect().promotedTo(p).captured(enemyPiece).disableEnPassantIfAllowed(board)));
                 }
                 return res;
             } else {
-                return Lists.newArrayList(new Movement(MovementType.CAPTURE, myCoord, target, new MovementEffect().captured(enemyPiece)));
+                return Lists.newArrayList(new Movement(MovementType.CAPTURE, myCoord, target, new MovementEffect().captured(enemyPiece).disableEnPassantIfAllowed(board)));
             }
         } else {
             return Lists.newArrayList();
@@ -134,7 +134,7 @@ class PawnMovement {
         }
         Coord enemyCoord = Coord.get(target.getCol(), myCoord.getRow());
         if (moveUtils.isEnemy(enemyCoord) && board.isEnPassantAllowed(enemyCoord)) {
-            return new Movement(MovementType.EN_PASSANT, myCoord, target, new MovementEffect().captured(Piece.PAWN));
+            return new Movement(MovementType.EN_PASSANT, myCoord, target, new MovementEffect().captured(Piece.PAWN).disableEnPassantIfAllowed(board));
         } else {
             return null;
         }
@@ -145,7 +145,7 @@ class PawnMovement {
             Coord target = myCoord.apply(directionMove);
             if (moveUtils.isEmpty(target)) {
                 List<Movement> promotions = new ArrayList<>();
-                MovementEffect me = new MovementEffect();
+                MovementEffect me = new MovementEffect().disableEnPassantIfAllowed(board);
                 for (Piece p : PROMOTION_SET) {
                     promotions.add(new Movement(MovementType.PROMOTION, myCoord, target, me.promotedTo(p)));
                 }

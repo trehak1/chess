@@ -8,6 +8,7 @@ import chess.movements.MovementExecutor;
 import chess.movements.MovementFactory;
 import chess.movements.MovementType;
 import com.google.common.util.concurrent.AtomicLongMap;
+import org.junit.Assert;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -34,15 +35,18 @@ public class Perft {
 			moves.forEach((m) -> types.incrementAndGet(m.getType()));
 		}
 		AtomicLong nodes = new AtomicLong(0);
-		moves.stream().forEach((m) -> {
+				for (int i = 0; i < moves.size(); i++) {
+		 Movement m = moves.get(i);
+//		moves.parallelStream().forEach((m) -> {
 			Board nb = new MovementExecutor(board).doMove(m);
 			nodes.addAndGet(perft(nb, player.enemy(), depth - 1));
-		});
-//		for (int i = 0; i < moves.size(); i++) {
-//			Board nb = new MovementExecutor(board).doMove(moves.get(i));
-//			count += perft(nb, player.enemy(), depth - 1);
-//		}
-//		return count;
+			Board undo = new MovementExecutor(nb).undoMove(m);
+			if (!board.equals(undo)) {
+				new MovementExecutor(nb).undoMove(m);
+				Assert.assertEquals("Invalid undo of " + m, board, undo);
+			}
+		}
+//		});
 		return nodes.get();
 	}
 
@@ -54,10 +58,11 @@ public class Perft {
 
 	public boolean validate(PerftResult perftResult) {
 		boolean res = true;
-		res &= compare(perftResult.getCaptures(depth), MovementType.CAPTURE);
-		res &= compare(perftResult.getCastlings(depth), MovementType.CASTLING);
-		res &= compare(perftResult.getEnPassants(depth), MovementType.EN_PASSANT);
-		res &= compareSum(perftResult.getNodes(depth));
+		res &= compare(perftResult.getCaptures(depth-1), MovementType.CAPTURE);
+		res &= compare(perftResult.getCastlings(depth-1), MovementType.CASTLING);
+		res &= compare(perftResult.getEnPassants(depth-1), MovementType.EN_PASSANT);
+		res &= compareSum(perftResult.getNodes(depth-1));
+		Assert.assertTrue("perft does not match!",res);
 		return res;
 	}
 
@@ -70,9 +75,14 @@ public class Perft {
 		return true;
 	}
 
-	private boolean compare(long captures, MovementType t) {
-		if (captures != types.get(t)) {
-			System.err.println("Mismatching number of " + t + ", expected " + captures + ", got " + types.get(t));
+	private boolean compare(long expected, MovementType t) {
+		if (expected != types.get(t)) {
+			if(expected == -1) {
+				System.err.println("No information about expected count of "+t+", actual # was "+types.get(t));
+				return true;
+			} else {
+				System.err.println("Mismatching number of " + t + ", expected " + expected + ", got " + types.get(t));
+			}
 			return false;
 		}
 		return true;

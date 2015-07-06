@@ -50,11 +50,11 @@ public class PerftTest {
 		perft.perft(1);
 		perft.validate(PerftResults.POSITION_5);
 
-		perft.perft(2);
-		perft.validate(PerftResults.POSITION_5);
+//		perft.perft(2);
+//		perft.validate(PerftResults.POSITION_5);
 
-		perft.perft(3);
-		perft.validate(PerftResults.POSITION_5);
+//		perft.perft(3);
+//		perft.validate(PerftResults.POSITION_5);
 		
 	}
 

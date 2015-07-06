@@ -150,16 +150,28 @@ public class MovementExecutor {
 				throw new IllegalStateException("wtf");
 		}
 
+		// disable en passant?
+		if(movement.getMovementEffect().getAllowEnPassant() != null){
+			mutated = mutated.clearEnPassant();
+		}
+		
+		// allow en passant
+		if(movement.getMovementEffect().getDisableEnPassant()!=null) {
+			mutated = mutated.allowEnPassant(movement.getMovementEffect().getDisableEnPassant());
+		}
+		
 		// repair castling rights
-		CastlingRights cr = movement.getMovementEffect().getDisableCastlings();
+		CastlingRights cr = movement.getMovementEffect().getDisableCastlings().negate();
 		for (CastlingType ctt : CastlingType.values()) {
-			if (!cr.isCastlingEnabled(board.getOnTurn().enemy(), ctt)) {
-				mutated = mutated.enableCastling(board.getOnTurn().enemy(), ctt);
+			for(Player p : Player.values()) {
+				if(cr.isCastlingEnabled(p, ctt)) {
+					mutated = mutated.enableCastling(p, ctt);
+				}
 			}
 		}
 
 		// set next player
-		mutated = mutated.setOnTurn(mutated.getOnTurn().enemy());
+		mutated = mutated.setOnTurn(boardTurn.enemy());
 		return mutated;
 
 	}

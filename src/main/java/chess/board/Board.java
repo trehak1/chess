@@ -171,4 +171,14 @@ public class Board {
 		result = 31 * result + (onTurn != null ? onTurn.hashCode() : 0);
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "Board{" +
+				"board=" + Arrays.deepToString(board) +
+				", enPassantAllowed=" + enPassantAllowed +
+				", castlingRights=" + castlingRights +
+				", onTurn=" + onTurn +
+				'}';
+	}
 }

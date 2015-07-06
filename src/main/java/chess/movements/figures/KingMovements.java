@@ -45,8 +45,9 @@ public class KingMovements implements MovementProducer {
     private void moveTo(Coord targetCoords, List<Movement> movements, MoveUtils moveUtils, Board board) {
         if (targetCoords != Coord.INVALID) {
             MovementEffect me = new MovementEffect()
-                    .disableCastling(CastlingType.KING_SIDE, player)
-                    .disableCastling(CastlingType.QUEEN_SIDE, player);
+                    .disableCastlingIfAllowed(board,CastlingType.KING_SIDE, player)
+                    .disableCastlingIfAllowed(board,CastlingType.QUEEN_SIDE, player)
+                    .disableEnPassantIfAllowed(board);
             if (moveUtils.isEmpty(targetCoords)) {
                 Movement movement = new Movement(MovementType.MOVE, moveUtils.myCoords(), targetCoords, me);
                 movements.add(movement);

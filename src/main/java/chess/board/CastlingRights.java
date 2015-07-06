@@ -5,6 +5,7 @@ import chess.enums.Player;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.EnumSet;
 
 /**
@@ -96,5 +97,20 @@ public class CastlingRights implements Cloneable {
     @Override
     public int hashCode() {
         return castlings != null ? Arrays.hashCode(castlings) : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "CastlingRights{" +
+                "castlings=" + Arrays.toString(castlings) +
+                '}';
+    }
+
+    public CastlingRights negate() {
+        CastlingRights nc = new CastlingRights(castlings);
+        for(int i = 0; i < nc.castlings.length; i++) {
+            nc.castlings[i] = !nc.castlings[i];
+        }
+        return nc;
     }
 }

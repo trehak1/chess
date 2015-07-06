@@ -37,11 +37,11 @@ public abstract class RayMovements implements MovementProducer {
         for (Coord c : coords) {
             // move
             if (moveUtils.isEmpty(c)) {
-                Movement move = new Movement(MovementType.MOVE, moveUtils.myCoords(), c, MovementEffect.NONE);
+                Movement move = new Movement(MovementType.MOVE, moveUtils.myCoords(), c, new MovementEffect().disableEnPassantIfAllowed(board));
                 list.add(move);
             } else if (moveUtils.isEnemy(c)) {
                 // capture
-                Movement move = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), c, new MovementEffect().captured(board.get(c).getPiece()));
+                Movement move = new Movement(MovementType.CAPTURE, moveUtils.myCoords(), c, new MovementEffect().captured(board.get(c).getPiece()).disableEnPassantIfAllowed(board));
                 list.add(move);
             } else {
                 throw new IllegalStateException("wtf");
