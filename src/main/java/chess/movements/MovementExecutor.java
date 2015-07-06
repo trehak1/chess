@@ -180,7 +180,7 @@ public class MovementExecutor {
 		// get promoted piece
 		Figure promoted = board.get(movement.getTo());
 		// remove it
-		Board mutated = board.remove(movement.getFrom());
+		Board mutated = board.remove(movement.getTo());
 		// restore figure in destination
 		mutated = mutated.set(movement.getTo(), Figure.get(promoted.getPlayer().enemy(), movement.getMovementEffect().getCaptured()));
 		// set pawn to from
@@ -192,7 +192,7 @@ public class MovementExecutor {
 		// get promoted piece
 		Figure promoted = board.get(movement.getTo());
 		// remove it
-		Board mutated = board.remove(movement.getFrom());
+		Board mutated = board.remove(movement.getTo());
 		// set pawn to from
 		mutated = mutated.set(movement.getFrom(), Figure.get(promoted.getPlayer(), Piece.PAWN));
 		return mutated;
