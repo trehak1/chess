@@ -6,22 +6,23 @@ import com.google.common.base.Preconditions;
  * Created by Tom on 26.6.2015.
  */
 public enum Figure {
-
-
-    NONE(null, null),
+    
     WHITE_PAWN(Player.WHITE, Piece.PAWN),
     WHITE_ROOK(Player.WHITE, Piece.ROOK),
-    WHITE_KNIGHT(Player.WHITE, Piece.KNIGHT),
-    WHITE_BISHOP(Player.WHITE, Piece.BISHOP),
     WHITE_QUEEN(Player.WHITE, Piece.QUEEN),
     WHITE_KING(Player.WHITE, Piece.KING),
+    WHITE_BISHOP(Player.WHITE, Piece.BISHOP),
+    WHITE_KNIGHT(Player.WHITE, Piece.KNIGHT),
     BLACK_PAWN(Player.BLACK, Piece.PAWN),
     BLACK_ROOK(Player.BLACK, Piece.ROOK),
-    BLACK_KNIGHT(Player.BLACK, Piece.KNIGHT),
-    BLACK_BISHOP(Player.BLACK, Piece.BISHOP),
     BLACK_QUEEN(Player.BLACK, Piece.QUEEN),
-    BLACK_KING(Player.BLACK, Piece.KING);
+    BLACK_KING(Player.BLACK, Piece.KING),
+    BLACK_BISHOP(Player.BLACK, Piece.BISHOP),
+    BLACK_KNIGHT(Player.BLACK, Piece.KNIGHT),
+    NONE(null, null);
 
+    private static final Figure[] VALS = Figure.values();
+    
     private final Piece piece;
     private final Player player;
 
@@ -41,14 +42,7 @@ public enum Figure {
     public static Figure get(Player player, Piece piece) {
         Preconditions.checkNotNull(piece);
         Preconditions.checkNotNull(player);
-        for (Figure f : Figure.values()) {
-            if (f.getPlayer() == player) {
-                if (f.getPiece() == piece) {
-                    return f;
-                }
-            }
-        }
-        throw new IllegalArgumentException("wtf");
+        return VALS[6*player.ordinal()+piece.ordinal()];
     }
 
     public Player getPlayer() {

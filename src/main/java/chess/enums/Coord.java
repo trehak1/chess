@@ -21,7 +21,8 @@ public enum Coord {
     INVALID(Col.INVALID, Row.INVALID);
 
     public static final EnumSet<Coord> VALID_VALUES = EnumSet.complementOf(EnumSet.of(INVALID));
-
+    private static final Coord[] vals = Coord.values();
+    
     private final Col col;
     private final Row row;
 
@@ -79,6 +80,10 @@ public enum Coord {
         return row;
     }
 
+    public static Coord get(int ord) {
+        return vals[ord];
+    }
+    
     public static Coord get(Col col, Row row) {
         Preconditions.checkNotNull(col);
         Preconditions.checkNotNull(row);
@@ -87,6 +92,6 @@ public enum Coord {
         }
         int colOrd = col.ordinal();
         int rowOrd = row.ordinal();
-        return Coord.values()[colOrd*8+rowOrd];
+        return Coord.get(colOrd*8+rowOrd);
     }
 }

@@ -59,7 +59,7 @@ public class BitBoard {
 		for(int i = 0; i < 12; i++) {
 			if(board.get((64 * i) + coordIndex)) {
 				Player pl = i < 6 ? Player.WHITE : Player.BLACK;
-				Piece pi = Piece.values()[i%6];
+				Piece pi = Piece.get(i%6);
 				return Figure.get(pl, pi);
 			}
 		}
@@ -108,7 +108,7 @@ public class BitBoard {
 		List<Coord> res = Lists.newArrayList();
 		for(int i = 0; i < Coord.VALID_VALUES.size(); i++ ) {
 			if(board.get(pageStart+i)) {
-				res.add(Coord.values()[i]);
+				res.add(Coord.get(i));
 			}
 		}
 		return res;
