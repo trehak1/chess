@@ -66,4 +66,12 @@ public class PerftTest {
 		perft.validate(PerftResults.POSITION_6);
 	}
 
+    @Test
+    public void perftPromotionTest() throws InterruptedException {
+        Board board = new BoardLoader().loadBoard("perft/perftPromotion.txt");
+        Perft perft = new Perft(board, Player.WHITE);
+        perft.perft(4);
+        perft.validate(PerftResults.PROMOTION);
+    }
+
 }

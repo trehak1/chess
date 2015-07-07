@@ -26,6 +26,10 @@ public enum PerftResults implements PerftResult {
     POSITION_6(new long[]{46, 2079, 89890, 3894594, 164075551, 6923051137L, 287188994746L, 11923589843526L, 490154852788714L},
             null,
             null,
+            null),
+    PROMOTION(new long[]{24, 496, 9483, 182838, 3605103, 71179139},
+            null,
+            null,
             null);
 
 

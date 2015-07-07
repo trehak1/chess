@@ -54,7 +54,7 @@ public class Perft {
 
 	public boolean validate(PerftResult perftResult) {
 		boolean res = true;
-		res &= compare(perftResult.getCaptures(depth - 1), MovementType.CAPTURE);
+		res &= compare(perftResult.getCaptures(depth - 1), MovementType.CAPTURE, MovementType.EN_PASSANT);
 		res &= compare(perftResult.getCastlings(depth - 1), MovementType.CASTLING);
 		res &= compare(perftResult.getEnPassants(depth - 1), MovementType.EN_PASSANT);
 		res &= compareSum(perftResult.getNodes(depth - 1));
@@ -71,13 +71,19 @@ public class Perft {
 		return true;
 	}
 
-	private boolean compare(long expected, MovementType t) {
-		if (expected != types.get(t)) {
+	private boolean compare(long expected, MovementType... movementTypes) {
+        long actual = 0;
+        String movementTypesAsString = "";
+        for (MovementType t : movementTypes) {
+            actual += types.get(t);
+            movementTypesAsString += t + ", ";
+        }
+		if (expected != actual) {
 			if(expected == -1) {
-				System.err.println("No information about expected count of " + t + ", actual # was " + types.get(t));
+				System.err.println("No information about expected count of " + movementTypesAsString + "actual # was " + actual);
 				return true;
 			} else {
-				System.err.println("Mismatching number of " + t + ", expected " + expected + ", got " + types.get(t));
+				System.err.println("Mismatching number of " + movementTypesAsString + "expected " + expected + ", got " + actual);
 			}
 			return false;
 		}
