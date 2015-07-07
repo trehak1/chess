@@ -11,7 +11,6 @@ import com.google.common.util.concurrent.AtomicLongMap;
 import org.junit.Assert;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Perft {
 
@@ -25,43 +24,40 @@ public class Perft {
 		this.player = player;
 	}
 
-	private long perft(Board board, Player player, int depth) {
+	private void perft(Board board, Player player, int depth) {
 		if (depth == 0) {
-			return 1;
+			return;
 		}
 
 		List<Movement> moves = MovementFactory.getFor(player).getMoves(board);
 		if (depth == 1) {
 			moves.forEach((m) -> types.incrementAndGet(m.getType()));
 		}
-		AtomicLong nodes = new AtomicLong(0);
-				for (int i = 0; i < moves.size(); i++) {
-		 Movement m = moves.get(i);
-//		moves.parallelStream().forEach((m) -> {
-			Board nb = new MovementExecutor(board).doMove(m);
-			nodes.addAndGet(perft(nb, player.enemy(), depth - 1));
-			Board undo = new MovementExecutor(nb).undoMove(m);
-			if (!board.equals(undo)) {
-				new MovementExecutor(nb).undoMove(m);
-				Assert.assertEquals("Invalid undo of " + m, board, undo);
-			}
-		}
-//		});
-		return nodes.get();
+        for (int i = 0; i < moves.size(); i++) {
+            Movement m = moves.get(i);
+//		        moves.parallelStream().forEach((m) -> {
+            Board nb = new MovementExecutor(board).doMove(m);
+            perft(nb, player.enemy(), depth - 1);
+            Board undo = new MovementExecutor(nb).undoMove(m);
+            if (!board.equals(undo)) {
+                new MovementExecutor(nb).undoMove(m);
+                Assert.assertEquals("Invalid undo of " + m, board, undo);
+            }
+        }
 	}
 
-	public long perft(int depth) {
+	public void perft(int depth) {
 		this.depth = depth;
 		types.clear();
-		return perft(board, player, depth);
+		perft(board, player, depth);
 	}
 
 	public boolean validate(PerftResult perftResult) {
 		boolean res = true;
-		res &= compare(perftResult.getCaptures(depth-1), MovementType.CAPTURE);
-		res &= compare(perftResult.getCastlings(depth-1), MovementType.CASTLING);
-		res &= compare(perftResult.getEnPassants(depth-1), MovementType.EN_PASSANT);
-		res &= compareSum(perftResult.getNodes(depth-1));
+		res &= compare(perftResult.getCaptures(depth - 1), MovementType.CAPTURE);
+		res &= compare(perftResult.getCastlings(depth - 1), MovementType.CASTLING);
+		res &= compare(perftResult.getEnPassants(depth - 1), MovementType.EN_PASSANT);
+		res &= compareSum(perftResult.getNodes(depth - 1));
 		Assert.assertTrue("perft does not match!",res);
 		return res;
 	}
@@ -78,7 +74,7 @@ public class Perft {
 	private boolean compare(long expected, MovementType t) {
 		if (expected != types.get(t)) {
 			if(expected == -1) {
-				System.err.println("No information about expected count of "+t+", actual # was "+types.get(t));
+				System.err.println("No information about expected count of " + t + ", actual # was " + types.get(t));
 				return true;
 			} else {
 				System.err.println("Mismatching number of " + t + ", expected " + expected + ", got " + types.get(t));
@@ -93,7 +89,6 @@ public class Perft {
 
 		for (int i = 0; i < 6; i++) {
 			Perft perft = new Perft(newGameBoard, Player.WHITE);
-			System.out.println(perft.perft(i));
 			System.out.println(perft.types);
 		}
 
