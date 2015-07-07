@@ -11,22 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 class KnightMovement {
-
-    private final Col col;
-    private final Row row;
+    
     private final Board board;
     private final Player player;
     private final MoveUtils moveUtils;
     private final Figure figure;
+    private final Coord coord;
 
 
-    public KnightMovement(Col col, Row row, Board board) {
-        this.col = col;
-        this.row = row;
+    public KnightMovement(Coord coord, Board board) {
+        this.coord =coord;
         this.board = board;
-        this.player = board.get(col, row).getPlayer();
-        this.moveUtils = new MoveUtils(board, col, row);
-        this.figure = board.get(col, row);
+        this.player = board.get(coord).getPlayer();
+        this.moveUtils = new MoveUtils(board, coord);
+        this.figure = board.get(coord);
         Preconditions.checkArgument(figure.getPiece() == Piece.KNIGHT);
     }
 
@@ -49,7 +47,7 @@ class KnightMovement {
             return null;
         }
         Coord from = moveUtils.myCoords();
-        if (moveUtils.isEmpty(target)) {
+        if (board.isEmpty(target)) {
             return new Movement(MovementType.MOVE, from, target, new MovementEffect().disableEnPassantIfAllowed(board));
         } else if (moveUtils.isEnemy(target)) {
             return new Movement(MovementType.CAPTURE, from, target, new MovementEffect().captured(board.get(target).getPiece()).disableEnPassantIfAllowed(board));

@@ -1,6 +1,7 @@
 package chess.board;
 
 import chess.enums.Col;
+import chess.enums.Coord;
 import chess.enums.Figure;
 import chess.enums.Row;
 import org.junit.Before;
@@ -22,29 +23,29 @@ public class BoardFactoryTest {
     @Test
     public void newGameBoardTest() {
         for (Col c : Col.validValues()) {
-            assertEquals(Figure.WHITE_PAWN, board.get(c, Row._2));
+            assertEquals(Figure.WHITE_PAWN, board.get(Coord.get(c, Row._2)));
         }
-        assertEquals(Figure.WHITE_ROOK, board.get(Col.A, Row._1));
-        assertEquals(Figure.WHITE_ROOK, board.get(Col.H, Row._1));
-        assertEquals(Figure.WHITE_KNIGHT, board.get(Col.B, Row._1));
-        assertEquals(Figure.WHITE_KNIGHT, board.get(Col.G, Row._1));
-        assertEquals(Figure.WHITE_BISHOP, board.get(Col.C, Row._1));
-        assertEquals(Figure.WHITE_BISHOP, board.get(Col.F, Row._1));
-        assertEquals(Figure.WHITE_QUEEN, board.get(Col.D, Row._1));
-        assertEquals(Figure.WHITE_KING, board.get(Col.E, Row._1));
+        assertEquals(Figure.WHITE_ROOK, board.get(Coord.A1));
+        assertEquals(Figure.WHITE_ROOK, board.get(Coord.H1));
+        assertEquals(Figure.WHITE_KNIGHT, board.get(Coord.B1));
+        assertEquals(Figure.WHITE_KNIGHT, board.get(Coord.G1));
+        assertEquals(Figure.WHITE_BISHOP, board.get(Coord.C1));
+        assertEquals(Figure.WHITE_BISHOP, board.get(Coord.F1));
+        assertEquals(Figure.WHITE_QUEEN, board.get(Coord.D1));
+        assertEquals(Figure.WHITE_KING, board.get(Coord.E1));
 
 
         for (Col c : Col.validValues()) {
-            assertEquals(Figure.BLACK_PAWN, board.get(c, Row._7));
+            assertEquals(Figure.BLACK_PAWN, board.get(Coord.get(c, Row._7)));
         }
-        assertEquals(Figure.BLACK_ROOK, board.get(Col.A, Row._8));
-        assertEquals(Figure.BLACK_ROOK, board.get(Col.H, Row._8));
-        assertEquals(Figure.BLACK_KNIGHT, board.get(Col.B, Row._8));
-        assertEquals(Figure.BLACK_KNIGHT, board.get(Col.G, Row._8));
-        assertEquals(Figure.BLACK_BISHOP, board.get(Col.C, Row._8));
-        assertEquals(Figure.BLACK_BISHOP, board.get(Col.F, Row._8));
-        assertEquals(Figure.BLACK_QUEEN, board.get(Col.D, Row._8));
-        assertEquals(Figure.BLACK_KING, board.get(Col.E, Row._8));
+        assertEquals(Figure.BLACK_ROOK, board.get(Coord.A8));
+        assertEquals(Figure.BLACK_ROOK, board.get(Coord.H8));
+        assertEquals(Figure.BLACK_KNIGHT, board.get(Coord.B8));
+        assertEquals(Figure.BLACK_KNIGHT, board.get(Coord.G8));
+        assertEquals(Figure.BLACK_BISHOP, board.get(Coord.C8));
+        assertEquals(Figure.BLACK_BISHOP, board.get(Coord.F8));
+        assertEquals(Figure.BLACK_QUEEN, board.get(Coord.D8));
+        assertEquals(Figure.BLACK_KING, board.get(Coord.E8));
 
     }
 }

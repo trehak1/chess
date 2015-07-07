@@ -23,47 +23,29 @@ public class MoveUtils {
         this.board = board;
         this.col = col;
         this.row = row;
-        this.player = board.get(col, row).getPlayer();
+        this.player = board.get(Coord.get(col, row)).getPlayer();
     }
 
     public Coord myCoords() {
         return Coord.get(col, row);
     }
-
-    public boolean isEmpty(Coord coord) {
-        return isEmpty(coord.getCol(), coord.getRow());
-    }
-
+    
     public boolean isEnemy(Coord coord) {
         return isEnemy(coord.getCol(), coord.getRow());
     }
-
-    public boolean isEmpty(Col col, Row row) {
-        Preconditions.checkArgument(col.isValid());
-        Preconditions.checkArgument(row.isValid());
-        return board.get(col, row) == Figure.NONE;
-    }
-
+    
     public boolean isEnemy(Col col, Row row) {
         Preconditions.checkArgument(col.isValid());
         Preconditions.checkArgument(row.isValid());
-        return board.get(col, row) != Figure.NONE && board.get(col, row).getPlayer() != player;
+        return board.get(Coord.get(col, row)) != Figure.NONE && board.get(Coord.get(col, row)).getPlayer() != player;
     }
-
-    public boolean isMine(Coord coord) {
-        return isMine(coord.getCol(), coord.getRow());
-    }
-
+    
     public boolean isMine(Col col, Row row) {
         Preconditions.checkArgument(col.isValid());
         Preconditions.checkArgument(row.isValid());
-        return board.get(col, row) != Figure.NONE && board.get(col, row).getPlayer() == player;
+        return board.get(Coord.get(col, row)) != Figure.NONE && board.get(Coord.get(col, row)).getPlayer() == player;
     }
-
-    public boolean isCapture(Coord coord) {
-        return isEmpty(coord.getCol(), coord.getRow());
-    }
-
+    
     public List<Coord> getRayWest() {
         return getRay(Function.identity(), Col.WEST);
     }
@@ -109,7 +91,7 @@ public class MoveUtils {
                 break;
             } else if (isMine(currentCol, currentRow)) {
                 break;
-            } else if (isEmpty(currentCol, currentRow)) {
+            } else if (board.isEmpty(Coord.get(currentCol, currentRow))) {
                 // if is empty, add coord and move to next one
                 coords.add(Coord.get(currentCol, currentRow));
                 currentRow = rowModifyFunction.apply(currentRow);
@@ -120,24 +102,7 @@ public class MoveUtils {
         }
         return coords;
     }
-
-
-    public Board moveTo(Coord c) {
-        Figure figure = board.get(col, row);
-        Board resultingBoard = board.remove(col, row);
-        resultingBoard = resultingBoard.set(c.getCol(), c.getRow(), figure);
-        return resultingBoard;
-    }
-
-    public Board capture(Coord c) {
-        Figure figure = board.get(col, row);
-        Board resultingBoard = board.remove(col, row);
-        resultingBoard = resultingBoard.remove(c.getCol(), c.getRow());
-        resultingBoard = resultingBoard.set(c.getCol(), c.getRow(), figure);
-        return resultingBoard;
-    }
-
-
+    
     public static Coord locateKing(Player player, Board board) {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(board);
@@ -148,18 +113,6 @@ public class MoveUtils {
             }
         }
         throw new IllegalStateException("wtf no king for " + player);
-    }
-
-    public static List<Coord> locateAll(Figure figure, Board board) {
-        Preconditions.checkNotNull(figure);
-        List<Coord> coords = new ArrayList<>();
-        for (Coord c : Coord.VALID_VALUES) {
-            Figure f = board.get(c);
-            if (f == figure) {
-                coords.add(c);
-            }
-        }
-        return coords;
     }
 
 }

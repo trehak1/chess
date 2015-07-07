@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -12,25 +13,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BoardSerializer {
+    
+    private static final BiMap<Figure, Character> figureCharacters;
 
-    BiMap<Figure, Character> figureCharacters;
-
+    static {
+        HashMap<Figure, Character> m = Maps.newHashMap();
+        m.put(Figure.WHITE_PAWN, '♙');
+        m.put(Figure.WHITE_ROOK, '♖');
+        m.put(Figure.WHITE_KNIGHT, '♘');
+        m.put(Figure.WHITE_BISHOP, '♗');
+        m.put(Figure.WHITE_QUEEN, '♕');
+        m.put(Figure.WHITE_KING, '♔');
+        m.put(Figure.BLACK_PAWN, '♟');
+        m.put(Figure.BLACK_ROOK, '♜');
+        m.put(Figure.BLACK_KNIGHT, '♞');
+        m.put(Figure.BLACK_BISHOP, '♝');
+        m.put(Figure.BLACK_QUEEN, '♛');
+        m.put(Figure.BLACK_KING, '♚');
+        m.put(Figure.NONE, '░');
+        figureCharacters = ImmutableBiMap.copyOf(m);
+    }
+    
     public BoardSerializer() {
-        Map<Figure, Character> figureCharacterMap = new HashMap<>();
-        figureCharacterMap.put(Figure.WHITE_PAWN, '♙');
-        figureCharacterMap.put(Figure.WHITE_ROOK, '♖');
-        figureCharacterMap.put(Figure.WHITE_KNIGHT, '♘');
-        figureCharacterMap.put(Figure.WHITE_BISHOP, '♗');
-        figureCharacterMap.put(Figure.WHITE_QUEEN, '♕');
-        figureCharacterMap.put(Figure.WHITE_KING, '♔');
-        figureCharacterMap.put(Figure.BLACK_PAWN, '♟');
-        figureCharacterMap.put(Figure.BLACK_ROOK, '♜');
-        figureCharacterMap.put(Figure.BLACK_KNIGHT, '♞');
-        figureCharacterMap.put(Figure.BLACK_BISHOP, '♝');
-        figureCharacterMap.put(Figure.BLACK_QUEEN, '♛');
-        figureCharacterMap.put(Figure.BLACK_KING, '♚');
-        figureCharacterMap.put(Figure.NONE, '░');
-        figureCharacters = ImmutableBiMap.copyOf(figureCharacterMap);
+       
     }
 
     public String serializeIntoJson(Board board) {
@@ -118,7 +123,7 @@ public class BoardSerializer {
                 if (c == Col.INVALID) {
                     continue;
                 }
-                Figure figure = board.get(c, r);
+                Figure figure = board.get(Coord.get(c, r));
                 sb.append(figureCharacters.get(figure));
             }
             sb.append('\n');
@@ -201,7 +206,11 @@ public class BoardSerializer {
             Preconditions.checkArgument(line.replaceAll("[\n\r]", "").length() == 10);
             Col c = Col.A;
             for (int i = 0; i < 8; i++) {
-                board = board.set(c, r, figureCharacters.inverse().get(line.charAt(i + 2)));//first 2 characters are number of row and " "
+                //first 2 characters are number of row and " "
+                Figure f = figureCharacters.inverse().get(line.charAt(i + 2));
+                if(f!=Figure.NONE) {
+                    board = board.set(Coord.get(c, r), f);
+                }
                 c = c.east();
             }
             r = r.south();

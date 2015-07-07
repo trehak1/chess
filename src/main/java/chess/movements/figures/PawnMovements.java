@@ -27,7 +27,7 @@ public class PawnMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> movements = new ArrayList<>();
-        List<Coord> pawnCoords = MoveUtils.locateAll(Figure.get(player, Piece.PAWN), board);
+        List<Coord> pawnCoords = board.locateAll(Figure.get(player, Piece.PAWN));
         for (Coord c : pawnCoords) {
             movements.addAll(movesFor(c, board));
         }

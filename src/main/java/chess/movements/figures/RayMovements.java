@@ -24,7 +24,7 @@ public abstract class RayMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> moves = new ArrayList<>();
-        List<Coord> coords = MoveUtils.locateAll(Figure.get(player, piece), board);
+        List<Coord> coords = board.locateAll(Figure.get(player, piece));
         for (Coord c : coords) {
             moves.addAll(createMoves(board, c.getCol(), c.getRow()));
         }
@@ -36,7 +36,7 @@ public abstract class RayMovements implements MovementProducer {
     protected void processRayList(List<Movement> list, List<Coord> coords, MoveUtils moveUtils, Board board) {
         for (Coord c : coords) {
             // move
-            if (moveUtils.isEmpty(c)) {
+            if (board.isEmpty(c)) {
                 Movement move = new Movement(MovementType.MOVE, moveUtils.myCoords(), c, new MovementEffect().disableEnPassantIfAllowed(board));
                 list.add(move);
             } else if (moveUtils.isEnemy(c)) {

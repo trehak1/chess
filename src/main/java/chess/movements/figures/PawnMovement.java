@@ -55,7 +55,7 @@ class PawnMovement {
         }
         Coord from = moveUtils.myCoords();
         Coord target = myCoord.apply(directionMove);
-        if (moveUtils.isEmpty(target)) {
+        if (board.isEmpty(target)) {
             return new Movement(MovementType.MOVE, from, target, new MovementEffect().disableEnPassantIfAllowed(board));
         }
         return null;
@@ -71,8 +71,8 @@ class PawnMovement {
         Coord from = moveUtils.myCoords();
         Coord intermediate = myCoord.apply(directionMove);
         Coord target = intermediate.apply(directionMove);
-        if (moveUtils.isEmpty(intermediate)) {
-            if (moveUtils.isEmpty(target)) {
+        if (board.isEmpty(intermediate)) {
+            if (board.isEmpty(target)) {
                 return new Movement(MovementType.MOVE, from, target, new MovementEffect().allowEnPassant(target).disableEnPassantIfAllowed(board));
             }
         }
@@ -129,7 +129,7 @@ class PawnMovement {
             return null;
         }
         // target is occupied
-        if(!moveUtils.isEmpty(target)) {
+        if(!board.isEmpty(target)) {
             return null;
         }
         Coord enemyCoord = Coord.get(target.getCol(), myCoord.getRow());
@@ -143,7 +143,7 @@ class PawnMovement {
     public List<Movement> promotions() {
         if (myCoord.apply(directionMove).getRow() == player.enemy().getStartingRow()) {
             Coord target = myCoord.apply(directionMove);
-            if (moveUtils.isEmpty(target)) {
+            if (board.isEmpty(target)) {
                 List<Movement> promotions = new ArrayList<>();
                 MovementEffect me = new MovementEffect().disableEnPassantIfAllowed(board);
                 for (Piece p : PROMOTION_SET) {

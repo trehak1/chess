@@ -22,8 +22,8 @@ public class KnightMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> movements = new ArrayList<>();
-        for (Coord c : MoveUtils.locateAll(Figure.get(player, Piece.KNIGHT), board)) {
-            movements.addAll(new KnightMovement(c.getCol(), c.getRow(), board).getMoves());
+        for (Coord c : board.locateAll(Figure.get(player, Piece.KNIGHT))) {
+            movements.addAll(new KnightMovement(c, board).getMoves());
         }
 
         return movements;

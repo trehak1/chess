@@ -4,13 +4,14 @@ import chess.enums.*;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Tom on 26.6.2015.
  */
 public class Board {
 
-	private final Figure[][] board = new Figure[8][8];
+	private final BitBoard bitBoard;
 	private final Coord enPassantAllowed;
 	// white king, white queen, black king, black queen
 	private final CastlingRights castlingRights;
@@ -18,48 +19,36 @@ public class Board {
 
 	Board() {
 		this.castlingRights = new CastlingRights();
+		this.bitBoard = new BitBoard();
 		this.enPassantAllowed = null;
 		this.onTurn = Player.WHITE;
-		for (int i = 0; i < board.length; i++) {
-			Arrays.fill(board[i], Figure.NONE);
-		}
 	}
 
-	private Board(CastlingRights castlingRights, Figure[][] board, Coord enPassantAllowed, Player onTurn) {
+	private Board(CastlingRights castlingRights, Coord enPassantAllowed, Player onTurn, BitBoard bitBoard) {
 		// castling
 		this.castlingRights = castlingRights.clone();
 		this.enPassantAllowed = enPassantAllowed;
 		this.onTurn = onTurn;
-		copyFigures(board);
+		this.bitBoard = bitBoard.copy();
 	}
 
 	public Player getOnTurn() {
 		return onTurn;
 	}
-
-	private void copyFigures(Figure[][] board) {
-		// figures
-		for (int x = 0; x < board.length; x++) {
-			System.arraycopy(board[x], 0, this.board[x], 0, board[x].length);
-		}
-	}
-
-	public Board allowEnPassant(Col col, Row row) {
-		Figure figure = get(col, row);
-		Preconditions.checkArgument(get(col, row).getPiece() == Piece.PAWN, "No PAWN on {}, {}", col, row);
-		if(figure.getPlayer() == Player.WHITE && row != Row._4) {
-			throw new IllegalArgumentException("Unsuitable row "+row+" for white en passant");
-		}
-		if(figure.getPlayer() == Player.BLACK && row != Row._5) {
-			throw new IllegalArgumentException("Unsuitable row "+row+" for black en passant");
-		}
-		Board nb = new Board(castlingRights, board, Coord.get(col, row), onTurn);
-		return nb;
-	}
-
+	
 	public Board allowEnPassant(Coord coord) {
 		Preconditions.checkNotNull(coord);
-		return allowEnPassant(coord.getCol(), coord.getRow());
+		Preconditions.checkArgument(coord.isValid());
+		Figure figure = get(coord);
+		Preconditions.checkArgument(get(coord).getPiece() == Piece.PAWN, "No PAWN on %s", coord);
+		if(figure.getPlayer() == Player.WHITE && coord.getRow() != Row._4) {
+			throw new IllegalArgumentException("Unsuitable row "+coord.getRow()+" for white en passant");
+		}
+		if(figure.getPlayer() == Player.BLACK && coord.getRow() != Row._5) {
+			throw new IllegalArgumentException("Unsuitable row "+coord.getRow()+" for black en passant");
+		}
+		Board nb = new Board(castlingRights, coord, onTurn, bitBoard);
+		return nb;
 	}
 
 	public Coord getEnPassantAllowed() {
@@ -68,84 +57,53 @@ public class Board {
 
 	public boolean isEnPassantAllowed(Coord coord) {
 		Preconditions.checkNotNull(coord);
-		return isEnPassantAllowed(coord.getCol(), coord.getRow());
+		Preconditions.checkArgument(coord.isValid());
+		return enPassantAllowed == coord;
 	}
-
-	public boolean isEnPassantAllowed(Col col, Row row) {
-		Preconditions.checkNotNull(col);
-		Preconditions.checkNotNull(col);
-		return enPassantAllowed == Coord.get(col, row);
-	}
-
+	
 	public CastlingRights getCastlingRights() {
 		return castlingRights;
 	}
 
 	public Board disableCastling(Player player, CastlingType castlingType) {
-		return new Board(castlingRights.disableCastling(player, castlingType), board, enPassantAllowed, onTurn);
+		return new Board(castlingRights.disableCastling(player, castlingType), enPassantAllowed, onTurn, bitBoard);
 	}
 
 	public Figure get(Coord coord) {
 		Preconditions.checkNotNull(coord);
-		return get(coord.getCol(), coord.getRow());
+		Preconditions.checkArgument(coord.isValid());
+		return bitBoard.get(coord);
 	}
-
-	public Figure get(Col col, Row row) {
-		Preconditions.checkNotNull(col);
-		Preconditions.checkNotNull(col);
-		return board[col.ordinal()][row.ordinal()];
-	}
-
+	
 	public Board set(Coord coord, Figure figure) {
-		Preconditions.checkNotNull(coord);
-		return set(coord.getCol(), coord.getRow(), figure);
-	}
-
-	public Board set(Col col, Row row, Figure figure) {
-		Preconditions.checkNotNull(col);
-		Preconditions.checkNotNull(row);
-		Preconditions.checkNotNull(figure);
-		Preconditions.checkArgument(get(col, row).equals(Figure.NONE), "There is a figure " + get(col, row) + " on target square " + Coord.get(col, row));
-		Board clone = new Board(castlingRights, board, enPassantAllowed, onTurn);
-		clone.board[col.ordinal()][row.ordinal()] = figure;
+		Board clone = new Board(castlingRights, enPassantAllowed, onTurn, bitBoard);
+		clone.bitBoard.set(coord, figure);
 		return clone;
 	}
 
 	public Board remove(Coord coord) {
-		Preconditions.checkNotNull(coord);
-		return remove(coord.getCol(), coord.getRow());
-	}
-
-	public Board remove(Col col, Row row) {
-		Preconditions.checkNotNull(col, "Null col");
-		Preconditions.checkNotNull(row, "Null row");
-		Preconditions.checkArgument(get(col, row) != Figure.NONE, "Unable to remove nonexisting figure from " + Coord.get(col, row));
-		Board clone = new Board(castlingRights, board, enPassantAllowed, onTurn);
-		clone.board[col.ordinal()][row.ordinal()] = Figure.NONE;
+		Board clone = new Board(castlingRights, enPassantAllowed, onTurn, bitBoard);
+		clone.bitBoard.clear(coord);
 		return clone;
 	}
-
-	public Figure[][] getBoard() {
-		Figure[][] copy = new Figure[board.length][board[0].length];
-		for (int i = 0; i < copy.length; i++) {
-			for (int x = 0; x < copy[i].length; x++) {
-				copy[i][x] = board[i][x];
-			}
-		}
-		return copy;
+	
+	public boolean isEmpty(Coord coord) {
+		Preconditions.checkNotNull(coord);
+		Preconditions.checkArgument(coord.isValid());
+		return get(coord) == Figure.NONE;
 	}
 
 	public Board setOnTurn(Player player) {
 		Preconditions.checkNotNull(player);
-		return new Board(castlingRights, board, enPassantAllowed, player);
+		return new Board(castlingRights, enPassantAllowed, player, bitBoard);
 	}
 
 	public Board clearEnPassant() {
-		return new Board(castlingRights, board, null, onTurn);
+		return new Board(castlingRights, null, onTurn, bitBoard);
 	}
 
 	public Board enableCastling(Player player, CastlingType castlingType) {
-		return new Board(castlingRights.enableCastling(player, castlingType), board, enPassantAllowed, onTurn);
+		return new Board(castlingRights.enableCastling(player, castlingType), enPassantAllowed, onTurn, bitBoard);
 	}
 
 	@Override
@@ -153,19 +111,19 @@ public class Board {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		Board board1 = (Board) o;
+		Board board = (Board) o;
 
-		if (!Arrays.deepEquals(board, board1.board)) return false;
-		if (enPassantAllowed != board1.enPassantAllowed) return false;
-		if (castlingRights != null ? !castlingRights.equals(board1.castlingRights) : board1.castlingRights != null)
+		if (bitBoard != null ? !bitBoard.equals(board.bitBoard) : board.bitBoard != null) return false;
+		if (enPassantAllowed != board.enPassantAllowed) return false;
+		if (castlingRights != null ? !castlingRights.equals(board.castlingRights) : board.castlingRights != null)
 			return false;
-		return onTurn == board1.onTurn;
+		return onTurn == board.onTurn;
 
 	}
 
 	@Override
 	public int hashCode() {
-		int result = board != null ? Arrays.deepHashCode(board) : 0;
+		int result = bitBoard != null ? bitBoard.hashCode() : 0;
 		result = 31 * result + (enPassantAllowed != null ? enPassantAllowed.hashCode() : 0);
 		result = 31 * result + (castlingRights != null ? castlingRights.hashCode() : 0);
 		result = 31 * result + (onTurn != null ? onTurn.hashCode() : 0);
@@ -174,11 +132,10 @@ public class Board {
 
 	@Override
 	public String toString() {
-		return "Board{" +
-				"board=" + Arrays.deepToString(board) +
-				", enPassantAllowed=" + enPassantAllowed +
-				", castlingRights=" + castlingRights +
-				", onTurn=" + onTurn +
-				'}';
+		return new BoardSerializer().serializeIntoUtf8(this);
+	}
+
+	public List<Coord> locateAll(Figure figure) {
+		return bitBoard.getAll(figure);
 	}
 }

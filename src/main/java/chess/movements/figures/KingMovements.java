@@ -48,7 +48,7 @@ public class KingMovements implements MovementProducer {
                     .disableCastlingIfAllowed(board,CastlingType.KING_SIDE, player)
                     .disableCastlingIfAllowed(board,CastlingType.QUEEN_SIDE, player)
                     .disableEnPassantIfAllowed(board);
-            if (moveUtils.isEmpty(targetCoords)) {
+            if (board.isEmpty(targetCoords)) {
                 Movement movement = new Movement(MovementType.MOVE, moveUtils.myCoords(), targetCoords, me);
                 movements.add(movement);
             } else if (moveUtils.isEnemy(targetCoords)) {

@@ -1,11 +1,7 @@
 package chess.board;
 
 
-import chess.enums.Col;
-import chess.enums.Figure;
-import chess.enums.Player;
-import chess.enums.Row;
-import chess.enums.CastlingType;
+import chess.enums.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -71,50 +67,50 @@ public class BoardTest {
     @Test
     public void testSetFigureImmutable() {
         Board orig = new BoardFactory().newGameBoard();
-        Board mod = orig.set(Col.D, Row._4, Figure.BLACK_BISHOP);
+        Board mod = orig.set(Coord.D4, Figure.BLACK_BISHOP);
 
         Assert.assertNotSame(orig, mod);
-        Assert.assertEquals(Figure.BLACK_BISHOP, mod.get(Col.D, Row._4));
-        Assert.assertEquals(Figure.NONE, orig.get(Col.D, Row._4));
+        Assert.assertEquals(Figure.BLACK_BISHOP, mod.get(Coord.D4));
+        Assert.assertEquals(Figure.NONE, orig.get(Coord.D4));
     }
 
     @Test
     public void testRemoveFigureImmutable() {
         Board orig = new BoardFactory().newGameBoard();
-        Board mod = orig.remove(Col.A, Row._1);
+        Board mod = orig.remove(Coord.A1);
 
         Assert.assertNotSame(orig, mod);
-        Assert.assertEquals(Figure.NONE, mod.get(Col.D, Row._4));
-        Assert.assertEquals(Figure.WHITE_ROOK, orig.get(Col.A, Row._1));
+        Assert.assertEquals(Figure.NONE, mod.get(Coord.D4));
+        Assert.assertEquals(Figure.WHITE_ROOK, orig.get(Coord.A1));
     }
 
     @Test
     public void testWhiteEnPassantImmutableAndSane() {
         Board orig = new BoardFactory().newGameBoard();
-        Board mod = orig.remove(Col.A, Row._2);
-        mod = mod.set(Col.A, Row._4, Figure.WHITE_PAWN);
+        Board mod = orig.remove(Coord.A2);
+        mod = mod.set(Coord.A4, Figure.WHITE_PAWN);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Col.A, Row._4));
+        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A4));
 
-        Board m2 = mod.allowEnPassant(Col.A, Row._4);
+        Board m2 = mod.allowEnPassant(Coord.A4);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Col.A, Row._4));
-        Assert.assertTrue(m2.isEnPassantAllowed(Col.A, Row._4));
+        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A4));
+        Assert.assertTrue(m2.isEnPassantAllowed(Coord.A4));
 
     }
 
     @Test
     public void testBlackEnPassantImmutableAndSane() {
         Board orig = new BoardFactory().newGameBoard();
-        Board mod = orig.remove(Col.A, Row._7);
-        mod = mod.set(Col.A, Row._5, Figure.BLACK_PAWN);
+        Board mod = orig.remove(Coord.A7);
+        mod = mod.set(Coord.A5, Figure.BLACK_PAWN);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Col.A, Row._5));
+        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A5));
 
-        Board m2 = mod.allowEnPassant(Col.A, Row._5);
+        Board m2 = mod.allowEnPassant(Coord.A5);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Col.A, Row._5));
-        Assert.assertTrue(m2.isEnPassantAllowed(Col.A, Row._5));
+        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A5));
+        Assert.assertTrue(m2.isEnPassantAllowed(Coord.A5));
 
     }
 
