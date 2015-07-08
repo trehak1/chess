@@ -92,4 +92,12 @@ public class PerftTest {
         perft.validateTotalNodes(1134888);
     }
 
+    @Test
+    public void testMore3() {
+        Board b = new BoardSerializer().readFromFEN("r3k2r/8/3Q4/8/8/5q2/8/R3K2R b KQkq - 0 1");
+        Perft perft = new Perft(b,b.getOnTurn());
+        perft.perft(4);
+        perft.validateTotalNodes(1720476);
+    }
+
 }
