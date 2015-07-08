@@ -37,4 +37,13 @@ public enum Col {
         return this != INVALID;
     }
 
+    public static Function<Col, Col> inverseOf(Function<Col, Col> moveFc) {
+        if(moveFc == WEST) {
+            return EAST;
+        } else if(moveFc == EAST) {
+            return WEST;
+        } else {
+            throw new IllegalArgumentException("Unknown direction function");
+        }
+    }
 }

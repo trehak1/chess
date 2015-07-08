@@ -2,6 +2,7 @@ package chess.board;
 
 import chess.enums.*;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
@@ -10,6 +11,7 @@ import com.google.gson.Gson;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class BoardSerializer {
     
@@ -17,19 +19,32 @@ public class BoardSerializer {
 
     static {
         HashMap<Figure, Character> m = Maps.newHashMap();
-        m.put(Figure.WHITE_PAWN, '♙');
-        m.put(Figure.WHITE_ROOK, '♖');
-        m.put(Figure.WHITE_KNIGHT, '♘');
-        m.put(Figure.WHITE_BISHOP, '♗');
-        m.put(Figure.WHITE_QUEEN, '♕');
-        m.put(Figure.WHITE_KING, '♔');
-        m.put(Figure.BLACK_PAWN, '♟');
-        m.put(Figure.BLACK_ROOK, '♜');
-        m.put(Figure.BLACK_KNIGHT, '♞');
-        m.put(Figure.BLACK_BISHOP, '♝');
-        m.put(Figure.BLACK_QUEEN, '♛');
-        m.put(Figure.BLACK_KING, '♚');
-        m.put(Figure.NONE, '░');
+        m.put(Figure.WHITE_PAWN, 'P');
+        m.put(Figure.WHITE_ROOK, 'R');
+        m.put(Figure.WHITE_KNIGHT, 'N');
+        m.put(Figure.WHITE_BISHOP, 'B');
+        m.put(Figure.WHITE_QUEEN, 'Q');
+        m.put(Figure.WHITE_KING, 'K');
+        m.put(Figure.BLACK_PAWN, 'p');
+        m.put(Figure.BLACK_ROOK, 'r');
+        m.put(Figure.BLACK_KNIGHT, 'n');
+        m.put(Figure.BLACK_BISHOP, 'b');
+        m.put(Figure.BLACK_QUEEN, 'q');
+        m.put(Figure.BLACK_KING, 'k');
+        m.put(Figure.NONE, '.');
+//        m.put(Figure.WHITE_PAWN, '♙');
+//        m.put(Figure.WHITE_ROOK, '♖');
+//        m.put(Figure.WHITE_KNIGHT, '♘');
+//        m.put(Figure.WHITE_BISHOP, '♗');
+//        m.put(Figure.WHITE_QUEEN, '♕');
+//        m.put(Figure.WHITE_KING, '♔');
+//        m.put(Figure.BLACK_PAWN, '♟');
+//        m.put(Figure.BLACK_ROOK, '♜');
+//        m.put(Figure.BLACK_KNIGHT, '♞');
+//        m.put(Figure.BLACK_BISHOP, '♝');
+//        m.put(Figure.BLACK_QUEEN, '♛');
+//        m.put(Figure.BLACK_KING, '♚');
+//        m.put(Figure.NONE, '░');
         figureCharacters = ImmutableBiMap.copyOf(m);
     }
     
@@ -216,4 +231,112 @@ public class BoardSerializer {
         }
         return board;
     }
+    
+    public Board readFromFEN(String fen) {
+        // 8/P1k5/K7/8/8/8/8/8 w - - 0 1
+        Preconditions.checkNotNull(fen);
+        List<String> parts = Splitter.on(' ').trimResults().splitToList(fen.trim());
+        Preconditions.checkArgument(parts.size() == 6,"Expecting 6 parts of FEN, got "+parts.size());
+        Board b = new BoardFactory().newEmptyBoard();
+        
+        // pieces
+        List<String> rows = Splitter.on('/').splitToList(parts.get(0));
+        Preconditions.checkArgument(rows.size() == 8,"Expecting 8 rows, got "+rows.size());
+        int rn = 7;
+        for(String row : rows) {
+            Col col = Col.A;
+            char[] chars = row.toCharArray();
+            for(int i = 0; i < chars.length; i++) {
+                char c = chars[i];
+                if(!Character.isDigit(c)) {
+                    Figure f = figureFromChar(c);
+                    b = b.set(Coord.get(col,Row.values()[rn]), f);
+                    col = col.east();
+                } else {
+                    for(int x = 0; x < Integer.parseInt(c+""); x++) {
+                        col = col.east();
+                    }
+                }
+            }
+            rn--;
+        }
+        
+        // turn
+        if(parts.get(1).trim().toLowerCase().equals("w")) {
+            b = b.setOnTurn(Player.WHITE);
+        } else if(parts.get(1).trim().toLowerCase().equals("b")) {
+            b = b.setOnTurn(Player.BLACK);
+        } else {
+            throw new IllegalArgumentException("wtf turn "+parts.get(1));
+        }
+        
+        // castling
+        b = b.disableCastling(Player.BLACK, CastlingType.KING_SIDE);
+        b = b.disableCastling(Player.BLACK, CastlingType.QUEEN_SIDE);
+        b = b.disableCastling(Player.WHITE, CastlingType.KING_SIDE);
+        b = b.disableCastling(Player.WHITE, CastlingType.QUEEN_SIDE);
+        if(!parts.get(2).trim().equals("-")) {
+            char[] chars = parts.get(2).toCharArray();
+            for(char c : chars) {
+                switch (c) {
+                    case 'K':
+                        b = b.enableCastling(Player.WHITE,CastlingType.KING_SIDE);
+                        break;
+                    case 'Q':
+                        b = b.enableCastling(Player.WHITE,CastlingType.QUEEN_SIDE);
+                        break;
+                    case 'k':
+                        b = b.enableCastling(Player.BLACK,CastlingType.KING_SIDE);
+                        break;
+                    case 'q':
+                        b = b.enableCastling(Player.BLACK,CastlingType.QUEEN_SIDE);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("wtf castling "+c);
+                }
+            }
+        }
+        
+        // en passant
+        if(!parts.get(3).trim().equals("-")) {
+            Coord epC = Coord.valueOf(parts.get(3).toUpperCase());
+            b = b.allowEnPassant(epC);
+        }
+        
+        return b;
+    }
+
+    private Figure figureFromChar(char c) {
+        Player player;
+        if(Character.isUpperCase(c)) {
+            player = Player.WHITE;
+        } else {
+            player =Player.BLACK;
+        }
+        Piece piece;
+        switch (Character.toLowerCase(c)) {
+            case 'p':
+                piece = Piece.PAWN;
+                break;
+            case 'r':
+                piece = Piece.ROOK;
+                break;
+            case 'n':
+                piece = Piece.KNIGHT;
+                break;
+            case 'b':
+                piece = Piece.BISHOP;
+                break;
+            case 'q':
+                piece = Piece.QUEEN;
+                break;
+            case 'k':
+                piece = Piece.KING;
+                break;
+            default:
+                throw new IllegalArgumentException("wtf");
+        }
+        return Figure.get(player, piece);
+    }
+
 }

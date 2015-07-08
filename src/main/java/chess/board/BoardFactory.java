@@ -65,4 +65,8 @@ public class BoardFactory {
     }
 
 
+    public Board newEmptyBoard() {
+        Board board = new ImmutableBoard();
+        return board;
+    }
 }

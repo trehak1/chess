@@ -106,13 +106,9 @@ public class MoveUtils {
     public static Coord locateKing(Player player, Board board) {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(board);
-        for (Coord c : Coord.VALID_VALUES) {
-            Figure f = board.get(c);
-            if (f != Figure.NONE && f.getPlayer() == player && f.getPiece() == Piece.KING) {
-                return c;
-            }
-        }
-        throw new IllegalStateException("wtf no king for " + player);
+        List<Coord> coords = board.locateAll(Figure.get(player, Piece.KING));
+        Preconditions.checkArgument(coords.size()==1);
+        return coords.get(0);
     }
 
 }
