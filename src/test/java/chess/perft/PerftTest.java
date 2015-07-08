@@ -5,7 +5,14 @@ import chess.board.BoardFactory;
 import chess.board.BoardLoader;
 import chess.board.BoardSerializer;
 import chess.enums.Player;
+import com.google.common.base.Splitter;
+import com.google.common.io.ByteStreams;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Created by Tom on 1.7.2015.
@@ -75,29 +82,27 @@ public class PerftTest {
         perft.validate(PerftResults.PROMOTION);
     }
 
-    // following tests from http://www.chessprogramming.net/perfect-perft/
     @Test
-    public void testMore1() {
-        Board b = new BoardSerializer().readFromFEN("1k6/1b6/8/8/7R/8/8/4K2R b K - 0 1");
-        Perft perft = new Perft(b,b.getOnTurn());
-        perft.perft(5);
-        perft.validateTotalNodes(1063513);
-    }
-
-    @Test
-    public void testMore2() {
-        Board b = new BoardSerializer().readFromFEN("3k4/3p4/8/K1P4r/8/8/8/8 b - - 0 1");
-        Perft perft = new Perft(b,b.getOnTurn());
-        perft.perft(6);
-        perft.validateTotalNodes(1134888);
-    }
-
-    @Test
-    public void testMore3() {
-        Board b = new BoardSerializer().readFromFEN("r3k2r/8/3Q4/8/8/5q2/8/R3K2R b KQkq - 0 1");
-        Perft perft = new Perft(b,b.getOnTurn());
-        perft.perft(4);
-        perft.validateTotalNodes(1720476);
+    public void fensTest() throws IOException {
+        InputStream in = PerftTest.class.getResourceAsStream("/perft/fens.txt");
+        List<String> lines = Splitter.on('\n').trimResults().omitEmptyStrings().splitToList(new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8));
+        in.close();
+        for(String l : lines) {
+            if(l.startsWith("#")) {
+                continue;
+            }
+            List<String> vals = Splitter.on(';').trimResults().omitEmptyStrings().splitToList(l);
+            String fen = vals.get(0);
+            List<String> expected = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(vals.get(1));
+            Board b = new BoardSerializer().readFromFEN(fen);
+            Perft perft = new Perft(b,b.getOnTurn());
+            for(String ex : expected) {
+                List<String> spl = Splitter.on('=').trimResults().splitToList(ex);
+                perft.perft(Integer.parseInt(spl.get(0)));
+                perft.validateTotalNodes(Long.parseLong(spl.get(1)));
+                System.out.println("Perft ("+spl.get(0)+") for "+fen+" calculated OK, got "+spl.get(1)+" nodes");
+            }
+        }
     }
 
 }
