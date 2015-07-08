@@ -146,6 +146,11 @@ public class MutableBoard implements Board {
         return bitBoard;
     }
 
+    @Override
+    public void checkSanity() {
+
+    }
+
     public static Board from(Board board) {
         MutableBoard mb = new MutableBoard(board.getCastlingRights(), board.getBitBoard(), board.getEnPassantAllowed(), board.getOnTurn());
         return mb;

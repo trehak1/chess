@@ -70,7 +70,7 @@ public class MovementFactory {
                     }
                     CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
                     if (prevBoard.getCastlingRights().isCastlingEnabled(f.getPlayer(), ct)) {
-                        MovementEffect me = m.getMovementEffect().disableCastlingIfAllowed(prevBoard,ct, f.getPlayer());
+                        MovementEffect me = m.getMovementEffect().disableCastlingIfAllowed(prevBoard, ct, f.getPlayer());
                         Movement movement = new Movement(m.getType(), m.getFrom(), target, me);
                         resList.add(movement);
                         continue;
@@ -93,23 +93,25 @@ public class MovementFactory {
         while (it.hasNext()) {
             Movement m = it.next();
             Board nextBoard = new MovementExecutor(board).doMove(m);
-            Coord kingCoord = MoveUtils.locateKing(player, nextBoard);
-            if (isEndangered(nextBoard, kingCoord)) {
+
+            MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
+            List<Movement> enemyPossibleMoves = enemyFactory.getPseudoLegalMoves(nextBoard);
+
+            boolean remove = shouldRemoveMoveToCheck(nextBoard, enemyPossibleMoves);
+            remove |= shouldRemoveIllegalCastling(m, enemyPossibleMoves);
+            if (remove) {
                 it.remove();
-            } else if (m.getType() == MovementType.CASTLING) {
-                if (castlingFieldEndangered(m, nextBoard)) {
-                    it.remove();
-                }
             }
+
         }
         return list;
     }
 
-    // check if any of castling field of interest is in check
-    private boolean castlingFieldEndangered(Movement m, Board b) {
+    private boolean shouldRemoveIllegalCastling(Movement m, List<Movement> enemyPossibleMoves) {
         Preconditions.checkNotNull(m);
-        Preconditions.checkNotNull(b);
-        Preconditions.checkArgument(m.getType() == MovementType.CASTLING, "Must be castling!");
+        if (m.getType() != MovementType.CASTLING) {
+            return false;
+        }
         CastlingType ct = m.getTo().getCol() == Col.G ? CastlingType.KING_SIDE : CastlingType.QUEEN_SIDE;
         List<Coord> mustNotBeEndangered = Lists.newArrayList();
         // all empty fields must not be in check
@@ -118,20 +120,23 @@ public class MovementFactory {
         mustNotBeEndangered.add(Coord.get(Col.E, player.getStartingRow()));
         // ending king field must not be in check
         mustNotBeEndangered.add(ct.getKingDestinationCoord(player));
-        return Iterables.any(mustNotBeEndangered, (c) -> isEndangered(b, c));
+        if (Iterables.any(mustNotBeEndangered, (c) -> isEndangered(c, enemyPossibleMoves))) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean shouldRemoveMoveToCheck(Board board, List<Movement> enemyPossibleMoves) {
+        Coord kingCoord = MoveUtils.locateKing(player, board);
+        if (isEndangered(kingCoord, enemyPossibleMoves)) {
+            return true;
+        }
+        return false;
     }
 
     // check if field is endangered
-    private boolean isEndangered(Board nextBoard, Coord coordsToCheck) {
-        MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
-        List<Movement> enemyPossibleMoves = enemyFactory.getPseudoLegalMoves(nextBoard);
-        for (Movement enemyMove : enemyPossibleMoves) {
-            Figure f = new MovementExecutor(nextBoard).doMove(enemyMove).get(coordsToCheck);
-            if (f != Figure.NONE && f.getPlayer() == player.enemy()) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isEndangered(Coord coordsToCheck, List<Movement> enemyPossibleMoves) {
+        return Iterables.any(enemyPossibleMoves, (m) -> m.getTo() == coordsToCheck);
     }
 
 

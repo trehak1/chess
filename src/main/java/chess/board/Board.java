@@ -35,4 +35,6 @@ public interface Board {
     List<Coord> locateAll(Figure figure);
 
     BitBoard getBitBoard();
+
+    void checkSanity();
 }

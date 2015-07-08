@@ -3,6 +3,7 @@ package chess.board;
 import chess.enums.*;
 import com.google.common.base.Preconditions;
 
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -149,4 +150,17 @@ public class ImmutableBoard implements Board {
     public BitBoard getBitBoard() {
         return bitBoard.copy();
     }
+
+    @Override
+    public void checkSanity() {
+        // check number of pieces
+        for(Figure f: EnumSet.complementOf(EnumSet.of(Figure.NONE))) {
+            List<Coord> coords = locateAll(f);
+            Preconditions.checkArgument(coords.size() <= 32,"too many pieces!");
+        }
+        // check single king
+        Preconditions.checkArgument(locateAll(Figure.WHITE_KING).size() == 1,"Multiple white kings");
+        Preconditions.checkArgument(locateAll(Figure.BLACK_KING).size() == 1,"Multiple black kings");
+    }
+
 }

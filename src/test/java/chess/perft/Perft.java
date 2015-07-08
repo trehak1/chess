@@ -2,6 +2,7 @@ package chess.perft;
 
 import chess.board.Board;
 import chess.board.BoardFactory;
+import chess.board.BoardSerializer;
 import chess.enums.Player;
 import chess.movements.Movement;
 import chess.movements.MovementExecutor;
@@ -10,6 +11,7 @@ import chess.movements.MovementType;
 import com.google.common.util.concurrent.AtomicLongMap;
 import org.junit.Assert;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Perft {
@@ -29,6 +31,10 @@ public class Perft {
             return;
         }
 
+//        System.out.println("FROM ::");
+//        System.out.println("==================");
+//        System.out.println(new BoardSerializer().serializeIntoUtf8(board));
+
         List<Movement> moves = MovementFactory.getFor(player).getMoves(board);
         if (depth == 1) {
             moves.forEach((m) -> types.incrementAndGet(m.getType()));
@@ -36,6 +42,9 @@ public class Perft {
         for (int i = 0; i < moves.size(); i++) {
             Movement m = moves.get(i);
             Board nb = new MovementExecutor(board).doMove(m);
+//            System.out.println("TO ::");
+//            System.out.println(new BoardSerializer().serializeIntoUtf8(nb));
+//            System.out.println("==================");
             perft(nb, player.enemy(), depth - 1);
             Board undo = new MovementExecutor(nb).undoMove(m);
             if (!board.equals(undo)) {
@@ -67,7 +76,7 @@ public class Perft {
         return res;
     }
 
-    private boolean compareSum(long nodes) {
+    public boolean compareSum(long nodes) {
         long total = types.sum();
         if (total != nodes) {
             System.err.println("Mismatching number of total nodes, expected " + nodes + ", got " + total);
@@ -76,34 +85,25 @@ public class Perft {
         return true;
     }
 
+    public long getSum() {
+        return types.sum();
+    }
+
     private boolean compare(long expected, MovementType... movementTypes) {
         long actual = 0;
-        String movementTypesAsString = "";
         for (MovementType t : movementTypes) {
             actual += types.get(t);
-            movementTypesAsString += t + ", ";
         }
         if (expected != actual) {
             if (expected == -1) {
-                System.err.println("No information about expected count of " + movementTypesAsString + "actual # was " + actual);
+                System.err.println("No information about expected count of " + Arrays.toString(movementTypes) + "actual # was " + actual);
                 return true;
             } else {
-                System.err.println("Mismatching number of " + movementTypesAsString + "expected " + expected + ", got " + actual);
+                System.err.println("Mismatching number of " +  Arrays.toString(movementTypes) + "expected " + expected + ", got " + actual);
             }
             return false;
         }
         return true;
     }
-
-    public static void main(String[] args) throws InterruptedException {
-        Board newGameBoard = new BoardFactory().newGameBoard();
-
-        for (int i = 0; i < 6; i++) {
-            Perft perft = new Perft(newGameBoard, Player.WHITE);
-            System.out.println(perft.types);
-        }
-
-    }
-
 
 }

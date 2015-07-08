@@ -300,6 +300,13 @@ public class BoardSerializer {
         // en passant
         if(!parts.get(3).trim().equals("-")) {
             Coord epC = Coord.valueOf(parts.get(3).toUpperCase());
+            if (epC.getRow() == Row._3) {
+                epC = epC.north();
+            } else if(epC.getRow() == Row._6) {
+                epC = epC.south();
+            } else {
+                throw new IllegalArgumentException("wtf");
+            }
             b = b.allowEnPassant(epC);
         }
         
