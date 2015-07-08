@@ -19,32 +19,32 @@ public class BoardSerializer {
 
     static {
         HashMap<Figure, Character> m = Maps.newHashMap();
-        m.put(Figure.WHITE_PAWN, 'P');
-        m.put(Figure.WHITE_ROOK, 'R');
-        m.put(Figure.WHITE_KNIGHT, 'N');
-        m.put(Figure.WHITE_BISHOP, 'B');
-        m.put(Figure.WHITE_QUEEN, 'Q');
-        m.put(Figure.WHITE_KING, 'K');
-        m.put(Figure.BLACK_PAWN, 'p');
-        m.put(Figure.BLACK_ROOK, 'r');
-        m.put(Figure.BLACK_KNIGHT, 'n');
-        m.put(Figure.BLACK_BISHOP, 'b');
-        m.put(Figure.BLACK_QUEEN, 'q');
-        m.put(Figure.BLACK_KING, 'k');
-        m.put(Figure.NONE, '.');
-//        m.put(Figure.WHITE_PAWN, '♙');
-//        m.put(Figure.WHITE_ROOK, '♖');
-//        m.put(Figure.WHITE_KNIGHT, '♘');
-//        m.put(Figure.WHITE_BISHOP, '♗');
-//        m.put(Figure.WHITE_QUEEN, '♕');
-//        m.put(Figure.WHITE_KING, '♔');
-//        m.put(Figure.BLACK_PAWN, '♟');
-//        m.put(Figure.BLACK_ROOK, '♜');
-//        m.put(Figure.BLACK_KNIGHT, '♞');
-//        m.put(Figure.BLACK_BISHOP, '♝');
-//        m.put(Figure.BLACK_QUEEN, '♛');
-//        m.put(Figure.BLACK_KING, '♚');
-//        m.put(Figure.NONE, '░');
+//        m.put(Figure.WHITE_PAWN, 'P');
+//        m.put(Figure.WHITE_ROOK, 'R');
+//        m.put(Figure.WHITE_KNIGHT, 'N');
+//        m.put(Figure.WHITE_BISHOP, 'B');
+//        m.put(Figure.WHITE_QUEEN, 'Q');
+//        m.put(Figure.WHITE_KING, 'K');
+//        m.put(Figure.BLACK_PAWN, 'p');
+//        m.put(Figure.BLACK_ROOK, 'r');
+//        m.put(Figure.BLACK_KNIGHT, 'n');
+//        m.put(Figure.BLACK_BISHOP, 'b');
+//        m.put(Figure.BLACK_QUEEN, 'q');
+//        m.put(Figure.BLACK_KING, 'k');
+//        m.put(Figure.NONE, '.');
+        m.put(Figure.WHITE_PAWN, '♙');
+        m.put(Figure.WHITE_ROOK, '♖');
+        m.put(Figure.WHITE_KNIGHT, '♘');
+        m.put(Figure.WHITE_BISHOP, '♗');
+        m.put(Figure.WHITE_QUEEN, '♕');
+        m.put(Figure.WHITE_KING, '♔');
+        m.put(Figure.BLACK_PAWN, '♟');
+        m.put(Figure.BLACK_ROOK, '♜');
+        m.put(Figure.BLACK_KNIGHT, '♞');
+        m.put(Figure.BLACK_BISHOP, '♝');
+        m.put(Figure.BLACK_QUEEN, '♛');
+        m.put(Figure.BLACK_KING, '♚');
+        m.put(Figure.NONE, '░');
         figureCharacters = ImmutableBiMap.copyOf(m);
     }
     
