@@ -35,7 +35,6 @@ public class Perft {
 		}
         for (int i = 0; i < moves.size(); i++) {
             Movement m = moves.get(i);
-//		        moves.parallelStream().forEach((m) -> {
             Board nb = new MovementExecutor(board).doMove(m);
             perft(nb, player.enemy(), depth - 1);
             Board undo = new MovementExecutor(nb).undoMove(m);

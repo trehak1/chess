@@ -11,8 +11,18 @@ public class BoardFactory {
     }
 
     public Board newGameBoard() {
-        Board board = new Board();
+        Board board = new ImmutableBoard();
+        board = setUpNewGame(board);
+        return board;
+    }
 
+    public Board newMutableGameBoard() {
+        Board board = new MutableBoard();
+        board = setUpNewGame(board);
+        return board;
+    }
+    
+    private Board setUpNewGame(Board board) {
         // whites
         // pawns
         for (Col c : Col.validValues()) {
@@ -50,7 +60,6 @@ public class BoardFactory {
         board = board.set(Coord.E8, Figure.black(Piece.KING));
         // queen
         board = board.set(Coord.D8, Figure.black(Piece.QUEEN));
-
 
         return board;
     }

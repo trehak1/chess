@@ -59,7 +59,7 @@ public class CastlingMovements implements MovementProducer {
         if (!isAvailable(board, player, castlingType)) {
             return null;
         }
-        MovementEffect me = new MovementEffect().disableCastlingIfAllowed(board,CastlingType.KING_SIDE,player).disableCastlingIfAllowed(board,CastlingType.QUEEN_SIDE,player).disableEnPassantIfAllowed(board);
+        MovementEffect me = new MovementEffect().disableCastlingIfAllowed(board, CastlingType.KING_SIDE, player).disableCastlingIfAllowed(board, CastlingType.QUEEN_SIDE, player).disableEnPassantIfAllowed(board);
         Movement castling = new Movement(MovementType.CASTLING, MoveUtils.locateKing(player, board), castlingType.getKingDestinationCoord(player), me);
         return castling;
     }

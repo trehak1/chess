@@ -3,6 +3,7 @@ package chess.perft;
 import chess.board.Board;
 import chess.board.BoardFactory;
 import chess.board.BoardLoader;
+import chess.board.MutableBoard;
 import chess.enums.Player;
 import org.junit.Test;
 
@@ -22,7 +23,8 @@ public class PerftTest {
 	@Test
 	public void perftPosition2Test() throws InterruptedException {
 		Board board = new BoardLoader().loadBoard("perft/perftPosition2.txt");
-		Perft perft = new Perft(board, Player.WHITE);
+		Board mutable = MutableBoard.from(board);
+		Perft perft = new Perft(mutable, Player.WHITE);
 		perft.perft(3);
 		perft.validate(PerftResults.POSITION_2);
 	}

@@ -12,7 +12,6 @@ public class MovementFactoryTest {
 
     @Test
     public void firstMovesTest() {
-        BoardSerializer serializer = new BoardSerializer();
         Player player = Player.WHITE;
         MovementFactory factory = MovementFactory.getFor(player);
         List<Movement> moves = factory.getMoves(new BoardFactory().newGameBoard());

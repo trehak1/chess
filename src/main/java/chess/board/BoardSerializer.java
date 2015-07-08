@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 public class BoardSerializer {
     
@@ -45,7 +44,7 @@ public class BoardSerializer {
 
     public Board deserializeFromJson(String board) {
         Gson gson = new Gson();
-        return gson.fromJson(board, Board.class);
+        return gson.fromJson(board, ImmutableBoard.class);
     }
 
     /**
@@ -140,7 +139,7 @@ public class BoardSerializer {
     }
 
     public Board deserializeFromUtf8(String s) {
-        Board board = new Board();
+        Board board = new ImmutableBoard();
         String[] lines = s.split("\n");
         Preconditions.checkArgument(lines.length >= 12);
         board = readFiguresFromUtf8(board, lines);

@@ -7,7 +7,6 @@ import chess.enums.Player;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class BitBoard {
 	public BitBoard(BitSet board) {
 		this.board = board;
 	}
-
+	
 	public void set(Coord coord, Figure figure) {
 		Preconditions.checkNotNull(coord);
 		Preconditions.checkArgument(coord.isValid());
@@ -51,7 +50,7 @@ public class BitBoard {
 		int index = playerShift + (pieceShift * 8 * 8) + coordIndex;
 		return index;
 	}
-
+	
 	public Figure get(Coord coord) {
 		Preconditions.checkNotNull(coord);
 		Preconditions.checkArgument(coord.isValid());
@@ -65,7 +64,7 @@ public class BitBoard {
 		}
 		return Figure.NONE;
 	}
-
+	
 	public void clear(Coord coord) {
 		Preconditions.checkNotNull(coord);
 		Preconditions.checkArgument(coord.isValid());
@@ -75,12 +74,11 @@ public class BitBoard {
 		}
 		board.clear(getIndex(coord, figure.getPlayer(), figure.getPiece()));
 	}
-
+	
 	public BitBoard copy() {
 		return new BitBoard(BitSet.valueOf(board.toLongArray()));
 	}
-
-	@Override
+	
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;

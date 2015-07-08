@@ -133,7 +133,7 @@ class PawnMovement {
             return null;
         }
         Coord enemyCoord = Coord.get(target.getCol(), myCoord.getRow());
-        if (moveUtils.isEnemy(enemyCoord) && board.isEnPassantAllowed(enemyCoord)) {
+        if (moveUtils.isEnemy(enemyCoord) && board.getEnPassantAllowed() == enemyCoord) {
             return new Movement(MovementType.EN_PASSANT, myCoord, target, new MovementEffect().captured(Piece.PAWN).disableEnPassantIfAllowed(board));
         } else {
             return null;

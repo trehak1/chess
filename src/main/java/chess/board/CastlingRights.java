@@ -11,7 +11,7 @@ import java.util.EnumSet;
 /**
  * Created by Tom on 3.7.2015.
  */
-public class CastlingRights implements Cloneable {
+public class CastlingRights {
 
     private final boolean[] castlings;
 
@@ -70,10 +70,6 @@ public class CastlingRights implements Cloneable {
             default:
                 throw new IllegalArgumentException("wtf");
         }
-    }
-
-    public CastlingRights clone() {
-        return new CastlingRights(castlings);
     }
 
     CastlingRights enableCastling(Player player, CastlingType castlingType) {

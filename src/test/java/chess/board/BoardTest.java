@@ -90,12 +90,12 @@ public class BoardTest {
         Board mod = orig.remove(Coord.A2);
         mod = mod.set(Coord.A4, Figure.WHITE_PAWN);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A4));
+        Assert.assertFalse(mod.getEnPassantAllowed()==Coord.A4);
 
         Board m2 = mod.allowEnPassant(Coord.A4);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A4));
-        Assert.assertTrue(m2.isEnPassantAllowed(Coord.A4));
+        Assert.assertFalse(mod.getEnPassantAllowed()==Coord.A4);
+        Assert.assertTrue(m2.getEnPassantAllowed()==Coord.A4);
 
     }
 
@@ -105,12 +105,12 @@ public class BoardTest {
         Board mod = orig.remove(Coord.A7);
         mod = mod.set(Coord.A5, Figure.BLACK_PAWN);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A5));
+        Assert.assertFalse(mod.getEnPassantAllowed()==Coord.A5);
 
         Board m2 = mod.allowEnPassant(Coord.A5);
 
-        Assert.assertFalse(mod.isEnPassantAllowed(Coord.A5));
-        Assert.assertTrue(m2.isEnPassantAllowed(Coord.A5));
+        Assert.assertFalse(mod.getEnPassantAllowed()==Coord.A5);
+        Assert.assertTrue(m2.getEnPassantAllowed()==Coord.A5);
 
     }
 

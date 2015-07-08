@@ -1,7 +1,6 @@
 package chess.movements.transformers;
 
 import chess.board.Board;
-import chess.enums.CastlingType;
 import chess.enums.Coord;
 import chess.enums.Piece;
 import chess.enums.Player;
