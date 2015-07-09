@@ -28,11 +28,6 @@ public class Perft {
         if (depth == 0) {
             return;
         }
-
-//        System.out.println("FROM ::");
-//        System.out.println("==================");
-//        System.out.println(new BoardSerializer().serializeIntoUtf8(board));
-
         List<Movement> moves = MovementFactory.getFor(player).getMoves(board);
         if (depth == 1) {
             moves.forEach((m) -> types.incrementAndGet(m.getType()));
@@ -40,15 +35,7 @@ public class Perft {
         for (int i = 0; i < moves.size(); i++) {
             Movement m = moves.get(i);
             Board nb = new MovementExecutor(board).doMove(m);
-//            System.out.println("TO ::");
-//            System.out.println(new BoardSerializer().serializeIntoUtf8(nb));
-//            System.out.println("==================");
             perft(nb, player.enemy(), depth - 1);
-            Board undo = new MovementExecutor(nb).undoMove(m);
-            if (!board.equals(undo)) {
-                new MovementExecutor(nb).undoMove(m);
-                Assert.assertEquals("Invalid undo of " + m, board, undo);
-            }
         }
     }
 

@@ -58,40 +58,54 @@ public class MovementFactory {
     private List<Movement> disableCastlingOnRookCaptures(Board board, List<Movement> movements) {
         List<Movement> resList = new ArrayList<>();
         for (Movement m : movements) {
+//            if (m.getFrom() == Coord.A1 && m.getTo() == Coord.A8 && m.getType() == MovementType.CAPTURE) {
+//                System.out.println("fsd");
+//            }
             // must be a rook capture from it's starting location
             if (!isRookCaptureInStartingLocation(board, m)) {
                 resList.add(m);
                 continue;
             }
-            Figure captured = board.get(m.getTo());
-            CastlingType ct = CastlingType.fromKingDestCol(m.getTo().getCol());
-            if (board.getCastlingRights().isCastlingEnabled(captured.getPlayer(), ct)) {
-                MovementEffect me = m.getMovementEffect().disableCastlingIfAllowed(board, ct, captured.getPlayer());
-                Movement movement = new Movement(m.getType(), m.getFrom(), m.getTo(), me);
-                resList.add(movement);
+            if (m.getTo().getCol() == Col.A) {
+                Movement disabled = disableCastling(CastlingType.QUEEN_SIDE, m, board);
+                resList.add(disabled);
+                continue;
+            } else if (m.getTo().getCol() == Col.H) {
+                Movement disabled = disableCastling(CastlingType.KING_SIDE, m, board);
+                resList.add(disabled);
+                continue;
+            } else {
+                resList.add(m);
                 continue;
             }
         }
         return resList;
     }
 
+    private Movement disableCastling(CastlingType ct, Movement m, Board board) {
+        Figure captured = board.get(m.getTo());
+        if (board.getCastlingRights().isCastlingEnabled(captured.getPlayer(), ct)) {
+            MovementEffect me = m.getMovementEffect().disableCastlingIfAllowed(board, ct, captured.getPlayer());
+            Movement movement = new Movement(m.getType(), m.getFrom(), m.getTo(), me);
+            return movement;
+        } else {
+            return m;
+        }
+    }
+
     private boolean isRookCaptureInStartingLocation(Board board, Movement m) {
-        if (m.getType() != MovementType.CAPTURE || m.getType() != MovementType.PROMOTION_CAPTURE) {
+        if (m.getType() != MovementType.CAPTURE && m.getType() != MovementType.PROMOTION_CAPTURE) {
             return false;
         }
-        Figure f = board.get(m.getTo());
-        if (f.getPiece() != Piece.ROOK) {
+        Figure capturedFigure = board.get(m.getTo());
+        if (capturedFigure.getPiece() != Piece.ROOK) {
             return false;
         } else {
             if (m.getMovementEffect().getCaptured() != Piece.ROOK) {
                 throw new IllegalStateException("wtf");
             }
-            return m.getFrom().getRow() == f.getPlayer().getStartingRow();
+            return m.getTo().getRow() == capturedFigure.getPlayer().getStartingRow();
         }
-    }
-
-    private boolean isRookCapture(Movement m) {
-        return m.getMovementEffect().getCaptured() == Piece.ROOK;
     }
 
     public List<Movement> getMoves(Board board) {
@@ -113,14 +127,7 @@ public class MovementFactory {
             remove |= shouldRemoveIllegalCastling(m, enemyPossibleMoves);
             if (remove) {
                 it.remove();
-            } else {
-                try {
-                    nextBoard.checkSanity();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                }
             }
-
         }
         return list;
     }
@@ -130,7 +137,7 @@ public class MovementFactory {
         if (m.getType() != MovementType.CASTLING) {
             return false;
         }
-        CastlingType ct = m.getTo().getCol() == Col.G ? CastlingType.KING_SIDE : CastlingType.QUEEN_SIDE;
+        CastlingType ct = CastlingType.fromKingDestCol(m.getTo().getCol());
         List<Coord> mustNotBeEndangered = Lists.newArrayList();
         // all empty fields must not be in check
         ct.getEmptyCols().forEach((c) -> mustNotBeEndangered.add(Coord.get(c, player.getStartingRow())));
