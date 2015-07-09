@@ -44,12 +44,7 @@ public class CastlingMovements implements MovementProducer {
         if (!board.getCastlingRights().isCastlingEnabled(player, castlingType)) {
             return false;
         }
-        // check if all required fields are empty
-        List<Coord> toBeEmpty = Lists.newArrayList(castlingType.getKingDestinationCoord(player), castlingType.getRookDestinationCoord(player));
-        for (Col c : castlingType.getEmptyCols()) {
-            toBeEmpty.add(Coord.get(c, player.getStartingRow()));
-        }
-        if (Iterables.any(toBeEmpty, (coord) -> board.get(coord) != Figure.NONE)) {
+        if (Iterables.any(castlingType.requiredEmpty(player), (coord) -> board.get(coord) != Figure.NONE)) {
             return false;
         }
         return true;

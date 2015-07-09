@@ -138,14 +138,7 @@ public class MovementFactory {
             return false;
         }
         CastlingType ct = CastlingType.fromKingDestCol(m.getTo().getCol());
-        List<Coord> mustNotBeEndangered = Lists.newArrayList();
-        // all empty fields must not be in check
-        ct.getEmptyCols().forEach((c) -> mustNotBeEndangered.add(Coord.get(c, player.getStartingRow())));
-        // original king field must not be in check
-        mustNotBeEndangered.add(Coord.get(Col.E, player.getStartingRow()));
-        // ending king field must not be in check
-        mustNotBeEndangered.add(ct.getKingDestinationCoord(player));
-        if (Iterables.any(mustNotBeEndangered, (c) -> isEndangered(c, enemyPossibleMoves))) {
+        if (Iterables.any(ct.requiredNotEndangered(player), (c) -> isEndangered(c, enemyPossibleMoves))) {
             return true;
         }
         return false;
