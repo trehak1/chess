@@ -8,7 +8,7 @@ import chess.enums.Player;
 import java.util.List;
 
 public interface Board {
-    Player getOnTurn();
+    Player getPlayerOnTurn();
 
     Board allowEnPassant(Coord coord);
 

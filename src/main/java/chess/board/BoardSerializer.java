@@ -82,7 +82,7 @@ public class BoardSerializer {
     }
 
     private void writeOnTurn(Board board, StringBuilder sb) {
-        sb.append("on turn: " + board.getOnTurn().name());
+        sb.append("on turn: " + board.getPlayerOnTurn().name());
         sb.append("\n");
     }
 

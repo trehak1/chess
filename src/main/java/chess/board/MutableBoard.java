@@ -28,7 +28,7 @@ public class MutableBoard implements Board {
     }
 
     @Override
-    public Player getOnTurn() {
+    public Player getPlayerOnTurn() {
         return onTurn;
     }
 
@@ -152,7 +152,7 @@ public class MutableBoard implements Board {
     }
 
     public static Board from(Board board) {
-        MutableBoard mb = new MutableBoard(board.getCastlingRights(), board.getBitBoard(), board.getEnPassantAllowed(), board.getOnTurn());
+        MutableBoard mb = new MutableBoard(board.getCastlingRights(), board.getBitBoard(), board.getEnPassantAllowed(), board.getPlayerOnTurn());
         return mb;
     }
 }

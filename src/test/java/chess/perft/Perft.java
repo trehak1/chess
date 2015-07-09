@@ -1,8 +1,6 @@
 package chess.perft;
 
 import chess.board.Board;
-import chess.board.BoardFactory;
-import chess.board.BoardSerializer;
 import chess.enums.Player;
 import chess.movements.Movement;
 import chess.movements.MovementExecutor;
@@ -68,7 +66,7 @@ public class Perft {
 
     public boolean validate(PerftResult perftResult) {
         boolean res = true;
-        res &= compare(perftResult.getCaptures(depth - 1), MovementType.CAPTURE, MovementType.EN_PASSANT);
+        res &= compare(perftResult.getCaptures(depth - 1), MovementType.CAPTURE, MovementType.EN_PASSANT, MovementType.PROMOTION_CAPTURE);
         res &= compare(perftResult.getCastlings(depth - 1), MovementType.CASTLING);
         res &= compare(perftResult.getEnPassants(depth - 1), MovementType.EN_PASSANT);
         res &= compareSum(perftResult.getNodes(depth - 1));

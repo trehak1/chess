@@ -47,7 +47,7 @@ public class PerftTest {
     @Test
     public void perftPosition4Test() {
         Board board = new BoardSerializer().readFromFEN("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
-        Perft perft = new Perft(board, board.getOnTurn());
+        Perft perft = new Perft(board, board.getPlayerOnTurn());
         perft.perft(2);
         perft.validate(PerftResults.POSITION_4);
     }
@@ -91,7 +91,7 @@ public class PerftTest {
             String fen = vals.get(0);
             List<String> expected = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(vals.get(1));
             Board b = new BoardSerializer().readFromFEN(fen);
-            Perft perft = new Perft(b, b.getOnTurn());
+            Perft perft = new Perft(b, b.getPlayerOnTurn());
             for (String ex : expected) {
                 List<String> spl = Splitter.on('=').trimResults().splitToList(ex);
                 perft.perft(Integer.parseInt(spl.get(0)));

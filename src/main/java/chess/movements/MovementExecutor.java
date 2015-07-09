@@ -19,7 +19,7 @@ public class MovementExecutor {
 
     public Board doMove(Movement movement) {
         Preconditions.checkNotNull(movement, "Movement must not be null");
-        Preconditions.checkArgument(board.get(movement.getFrom()).getPlayer() == board.getOnTurn(), "Trying to move enemy figure");
+        Preconditions.checkArgument(board.get(movement.getFrom()).getPlayer() == board.getPlayerOnTurn(), "Trying to move enemy figure");
 
         Board mutated;
 
@@ -63,7 +63,7 @@ public class MovementExecutor {
             }
         }
         // set next player
-        mutated = mutated.setOnTurn(mutated.getOnTurn().enemy());
+        mutated = mutated.setOnTurn(mutated.getPlayerOnTurn().enemy());
 
         mutated.checkSanity();
         return mutated;
@@ -75,7 +75,7 @@ public class MovementExecutor {
         // remove figure in destination
         mutated = mutated.remove(movement.getTo());
         // set pawn to new destination as promoted piece
-        mutated = mutated.set(movement.getTo(), Figure.get(board.getOnTurn(), movement.getMovementEffect().getPromotedTo()));
+        mutated = mutated.set(movement.getTo(), Figure.get(board.getPlayerOnTurn(), movement.getMovementEffect().getPromotedTo()));
         return mutated;
     }
 
@@ -83,7 +83,7 @@ public class MovementExecutor {
         // remove pawn
         Board mutated = board.remove(movement.getFrom());
         // set it to new destination as promoted piece
-        mutated = mutated.set(movement.getTo(), Figure.get(board.getOnTurn(), movement.getMovementEffect().getPromotedTo()));
+        mutated = mutated.set(movement.getTo(), Figure.get(board.getPlayerOnTurn(), movement.getMovementEffect().getPromotedTo()));
         return mutated;
     }
 
@@ -123,7 +123,7 @@ public class MovementExecutor {
 
     public Board undoMove(Movement movement) {
         Preconditions.checkNotNull(movement, "Movement must not be null");
-        Player boardTurn = board.getOnTurn();
+        Player boardTurn = board.getPlayerOnTurn();
         Player toUndo = board.get(movement.getTo()).getPlayer();
         Preconditions.checkArgument(boardTurn == toUndo.enemy(), "Trying to undo enemy move");
 

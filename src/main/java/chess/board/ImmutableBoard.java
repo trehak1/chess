@@ -33,7 +33,7 @@ public class ImmutableBoard implements Board {
     }
 
     @Override
-    public Player getOnTurn() {
+    public Player getPlayerOnTurn() {
         return onTurn;
     }
 
