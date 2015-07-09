@@ -161,6 +161,29 @@ public class ImmutableBoard implements Board {
         // check single king
         Preconditions.checkArgument(locateAll(Figure.WHITE_KING).size() == 1,"Multiple white kings");
         Preconditions.checkArgument(locateAll(Figure.BLACK_KING).size() == 1,"Multiple black kings");
+        // check castlings
+        List<Coord> whiteRooks = locateAll(Figure.WHITE_ROOK);
+        if(!whiteRooks.contains(Coord.A1)) {
+            if(castlingRights.isCastlingEnabled(Player.WHITE,CastlingType.QUEEN_SIDE)) {
+                throw new IllegalStateException("wtf");
+            }
+        }
+        if(!whiteRooks.contains(Coord.H1)) {
+            if(castlingRights.isCastlingEnabled(Player.WHITE,CastlingType.KING_SIDE)) {
+                throw new IllegalStateException("wtf");
+            }
+        }
+        List<Coord> blackRooks = locateAll(Figure.BLACK_ROOK);
+        if(!blackRooks.contains(Coord.A8)) {
+            if(castlingRights.isCastlingEnabled(Player.BLACK,CastlingType.QUEEN_SIDE)) {
+                throw new IllegalStateException("wtf");
+            }
+        }
+        if(!blackRooks.contains(Coord.H8)) {
+            if(castlingRights.isCastlingEnabled(Player.BLACK,CastlingType.KING_SIDE)) {
+                throw new IllegalStateException("wtf");
+            }
+        }
     }
 
 }

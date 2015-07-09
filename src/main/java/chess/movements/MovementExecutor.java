@@ -64,8 +64,7 @@ public class MovementExecutor {
         }
         // set next player
         mutated = mutated.setOnTurn(mutated.getPlayerOnTurn().enemy());
-
-        mutated.checkSanity();
+      
         return mutated;
     }
 

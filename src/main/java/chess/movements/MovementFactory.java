@@ -55,31 +55,43 @@ public class MovementFactory {
         return list;
     }
 
-    private List<Movement> disableCastlingOnRookCaptures(Board prevBoard, List<Movement> movements) {
+    private List<Movement> disableCastlingOnRookCaptures(Board board, List<Movement> movements) {
         List<Movement> resList = new ArrayList<>();
         for (Movement m : movements) {
-            Coord target = m.getTo();
-            Figure f = prevBoard.get(target);
-            // target square is rook
-            if (f.getPiece() == Piece.ROOK) {
-                // in it's starting row
-                if (target.getRow() == f.getPlayer().getStartingRow()) {
-                    // if castling was allowed
-                    if (m.getType() != MovementType.CAPTURE && m.getType() != MovementType.PROMOTION_CAPTURE) {
-                        throw new IllegalStateException("wtf");
-                    }
-                    CastlingType ct = target.getCol() == Col.A ? CastlingType.QUEEN_SIDE : CastlingType.KING_SIDE;
-                    if (prevBoard.getCastlingRights().isCastlingEnabled(f.getPlayer(), ct)) {
-                        MovementEffect me = m.getMovementEffect().disableCastlingIfAllowed(prevBoard, ct, f.getPlayer());
-                        Movement movement = new Movement(m.getType(), m.getFrom(), target, me);
-                        resList.add(movement);
-                        continue;
-                    }
-                }
+            // must be a rook capture from it's starting location
+            if (!isRookCaptureInStartingLocation(board, m)) {
+                resList.add(m);
+                continue;
             }
-            resList.add(m);
+            Figure captured = board.get(m.getTo());
+            CastlingType ct = CastlingType.fromKingDestCol(m.getTo().getCol());
+            if (board.getCastlingRights().isCastlingEnabled(captured.getPlayer(), ct)) {
+                MovementEffect me = m.getMovementEffect().disableCastlingIfAllowed(board, ct, captured.getPlayer());
+                Movement movement = new Movement(m.getType(), m.getFrom(), m.getTo(), me);
+                resList.add(movement);
+                continue;
+            }
         }
         return resList;
+    }
+
+    private boolean isRookCaptureInStartingLocation(Board board, Movement m) {
+        if (m.getType() != MovementType.CAPTURE || m.getType() != MovementType.PROMOTION_CAPTURE) {
+            return false;
+        }
+        Figure f = board.get(m.getTo());
+        if (f.getPiece() != Piece.ROOK) {
+            return false;
+        } else {
+            if (m.getMovementEffect().getCaptured() != Piece.ROOK) {
+                throw new IllegalStateException("wtf");
+            }
+            return m.getFrom().getRow() == f.getPlayer().getStartingRow();
+        }
+    }
+
+    private boolean isRookCapture(Movement m) {
+        return m.getMovementEffect().getCaptured() == Piece.ROOK;
     }
 
     public List<Movement> getMoves(Board board) {
@@ -101,6 +113,12 @@ public class MovementFactory {
             remove |= shouldRemoveIllegalCastling(m, enemyPossibleMoves);
             if (remove) {
                 it.remove();
+            } else {
+                try {
+                    nextBoard.checkSanity();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
