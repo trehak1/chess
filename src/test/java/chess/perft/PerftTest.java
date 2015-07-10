@@ -6,6 +6,7 @@ import chess.enums.Piece;
 import chess.enums.Player;
 import chess.movements.*;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.AtomicLongMap;
 import org.junit.Assert;
@@ -31,32 +32,23 @@ public class PerftTest {
     }
 
     @Test
+    public void testCastlingPawnEndangers() {
+        Board board = new BoardSerializer().readFromFEN("r3k2r/4P3/8/8/8/8/8/4K3 b kq - 0 1");
+        MovementFactory f = MovementFactory.getFor(board.getPlayerOnTurn());
+        List<Movement> moves = f.getMoves(board);
+        Assert.assertFalse(Iterables.any(moves,(m)->m.getType()==MovementType.CASTLING));
+    }
+
+    @Test
     public void perftPosition2Test() {
         Board board = new BoardSerializer().readFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-        // d5e6 differs at perft depth 4
-        board = new MovementExecutor(board).doMove(new Movement(MovementType.CAPTURE, Coord.D5, Coord.E6, new MovementEffect().captured(Piece.PAWN)));
-        // next board should be r3k2r/p1ppqpb1/bn2Pnp1/4N3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1
-
-
-        MovementFactory fac = MovementFactory.getFor(board.getPlayerOnTurn());
-        List<Movement> moves = fac.getMoves(board);
-
         Perft perft = new Perft(board, board.getPlayerOnTurn());
-        perft.perft(3);
+        perft.perft(4);
         AtomicLongMap<String> vals = perft.getBreakdown();
         for(Map.Entry<String, Long> e : vals.asMap().entrySet()) {
             System.out.println(e.getKey()+" "+e.getValue());
         }
-//        perft.validate(PerftResults.POSITION_2);
-
-//        Board board = new BoardSerializer().readFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-//        Perft perft = new Perft(board, board.getPlayerOnTurn());
-//        perft.perft(4);
-//        AtomicLongMap<String> vals = perft.getBreakdown();
-//        for(Map.Entry<String, Long> e : vals.asMap().entrySet()) {
-//            System.out.println(e.getKey()+" "+e.getValue());
-//        }
-//        perft.validate(PerftResults.POSITION_2);
+        perft.validate(PerftResults.POSITION_2);
     }
 
     @Test

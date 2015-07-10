@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 public class MovementFactory {
 
@@ -122,7 +123,7 @@ public class MovementFactory {
 
             // is this illegal castling out of check?
             if(m.getType() == MovementType.CASTLING) {
-                if (shouldRemoveIllegalCastling(m, enemyFactory.getPseudoLegalMoves(board))) {
+                if (shouldRemoveIllegalCastling(board, m, enemyFactory.getPseudoLegalMoves(board))) {
                     it.remove();
                     continue;
                 }
@@ -139,13 +140,35 @@ public class MovementFactory {
         return list;
     }
 
-    private boolean shouldRemoveIllegalCastling(Movement m, List<Movement> enemyPossibleMoves) {
+    private boolean shouldRemoveIllegalCastling(Board board, Movement m, List<Movement> enemyPossibleMoves) {
         Preconditions.checkNotNull(m);
         if (m.getType() != MovementType.CASTLING) {
             return false;
         }
         CastlingType ct = CastlingType.fromKingDestCol(m.getTo().getCol());
         if (Iterables.any(ct.requiredNotEndangered(player), (c) -> isEndangered(c, enemyPossibleMoves))) {
+            return true;
+        }
+        // here is a bugfix for castling I think
+        // pawn actually endangers not the field of it's movement BUT the fields to the east and west in front of him
+        // lets do the check
+        // 1) locate enemy pawns
+        List<Coord> enemyPawns = board.locateAll(Figure.get(player.enemy(), Piece.PAWN));
+        // 2) get coords endagered by them (empty and in front and to the east and west)
+        Function<Coord, Coord> moveFc = player.enemy() == Player.WHITE ? Coord.NORTH : Coord.SOUTH;
+        List<Coord> endangerd = Lists.newArrayList();
+        enemyPawns.forEach((pawnCoord) -> {
+            Coord eW = pawnCoord.west().apply(moveFc);
+            Coord eE = pawnCoord.east().apply(moveFc);
+            if(eW.isValid()) {
+                endangerd.add(eW);
+            }
+            if(eE.isValid()) {
+                endangerd.add(eE);
+            }
+        });
+        // 3) check if required not endangered fields are not under attack
+        if(Iterables.any(ct.requiredNotEndangered(player),(c)->endangerd.contains(c))) {
             return true;
         }
         return false;

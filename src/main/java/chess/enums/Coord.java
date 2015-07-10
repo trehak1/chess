@@ -22,7 +22,15 @@ public enum Coord {
 
     public static final EnumSet<Coord> VALID_VALUES = EnumSet.complementOf(EnumSet.of(INVALID));
     private static final Coord[] vals = Coord.values();
-    
+    public static final Function<Coord, Coord> NORTH = (c) -> c.north();
+    public static final Function<Coord, Coord> NORTH_WEST = (c) -> c.northWest();
+    public static final Function<Coord, Coord> NORTH_EAST = (c) -> c.northEast();
+    public static final Function<Coord, Coord> SOUTH = (c) -> c.south();
+    public static final Function<Coord, Coord> SOUTH_EAST = (c) -> c.southEast();
+    public static final Function<Coord, Coord> SOUTH_WEST = (c) -> c.southWest();
+    public static final Function<Coord, Coord> EAST = (c) -> c.east();
+    public static final Function<Coord, Coord> WEST = (c) -> c.west();
+
     private final Col col;
     private final Row row;
 
