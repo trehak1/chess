@@ -25,30 +25,35 @@ public class Perft {
         this.player = player;
     }
 
-    private void perft(Board board, Player player, int depth) {
+    private void perft(Board board, Player player, int depth, Movement rootMove) {
         if (depth == 0) {
             return;
         }
         List<Movement> moves = MovementFactory.getFor(player).getMoves(board);
         if (depth == 1) {
+            final Movement finalRootMove = rootMove;
             moves.forEach((m) -> {
                 types.incrementAndGet(m.getType());
-//                String val = board.get(m.getFrom()) + "" + m.getFrom() + "-" + m.getTo();
-//                breakdown.incrementAndGet(val);
+                Movement cm = finalRootMove != null ? finalRootMove : m;
+                String val = (cm.getFrom() + "" + cm.getTo()).toLowerCase();
+                breakdown.incrementAndGet(val);
             });
         }
         for (int i = 0; i < moves.size(); i++) {
             Movement m = moves.get(i);
             Board nb = new MovementExecutor(board).doMove(m);
-            perft(nb, player.enemy(), depth - 1);
-//            nb = new MovementExecutor(board).undoMove(m);
+            if (depth == this.depth) {
+                rootMove = m;
+            }
+            perft(nb, player.enemy(), depth - 1, rootMove);
         }
     }
 
     public void perft(int depth) {
         this.depth = depth;
         types.clear();
-        perft(board, player, depth);
+        breakdown.clear();
+        perft(board, player, depth, null);
     }
 
     public AtomicLongMap<String> getBreakdown() {

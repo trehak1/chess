@@ -118,14 +118,20 @@ public class MovementFactory {
         Iterator<Movement> it = list.iterator();
         while (it.hasNext()) {
             Movement m = it.next();
-            Board nextBoard = new MovementExecutor(board).doMove(m);
-
             MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
+
+            // is this illegal castling out of check?
+            if(m.getType() == MovementType.CASTLING) {
+                if (shouldRemoveIllegalCastling(m, enemyFactory.getPseudoLegalMoves(board))) {
+                    it.remove();
+                    continue;
+                }
+            }
+
+            Board nextBoard = new MovementExecutor(board).doMove(m);
             List<Movement> enemyPossibleMoves = enemyFactory.getPseudoLegalMoves(nextBoard);
 
-            boolean remove = shouldRemoveMoveToCheck(nextBoard, enemyPossibleMoves);
-            remove |= shouldRemoveIllegalCastling(m, enemyPossibleMoves);
-            if (remove) {
+            if(shouldRemoveMoveToCheck(nextBoard, enemyPossibleMoves)) {
                 it.remove();
             }
 //            nextBoard = new MovementExecutor(nextBoard).undoMove(m);
