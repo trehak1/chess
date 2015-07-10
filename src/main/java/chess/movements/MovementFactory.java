@@ -128,6 +128,7 @@ public class MovementFactory {
             if (remove) {
                 it.remove();
             }
+//            nextBoard = new MovementExecutor(nextBoard).undoMove(m);
         }
         return list;
     }

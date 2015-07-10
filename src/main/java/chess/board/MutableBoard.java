@@ -92,7 +92,7 @@ public class MutableBoard implements Board {
     public Board setOnTurn(Player player) {
         Preconditions.checkNotNull(player);
         this.onTurn = player;
-        return null;
+        return this;
     }
 
     @Override
