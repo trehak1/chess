@@ -43,7 +43,7 @@ public class PerftTest {
     public void perftPosition2Test() {
         Board board = new BoardSerializer().readFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
         Perft perft = new Perft(board, board.getPlayerOnTurn());
-        perft.perft(4);
+        perft.perft(5);
         AtomicLongMap<String> vals = perft.getBreakdown();
         for(Map.Entry<String, Long> e : vals.asMap().entrySet()) {
             System.out.println(e.getKey()+" "+e.getValue());
@@ -55,7 +55,7 @@ public class PerftTest {
     public void perftPosition3Test() {
         Board board = new BoardLoader().loadBoard("perft/perftPosition3.txt");
         Perft perft = new Perft(board, Player.WHITE);
-        perft.perft(5);
+        perft.perft(6);
         perft.validate(PerftResults.POSITION_3);
     }
 
@@ -63,7 +63,7 @@ public class PerftTest {
     public void perftPosition4Test() {
         Board board = new BoardSerializer().readFromFEN("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
         Perft perft = new Perft(board, board.getPlayerOnTurn());
-        perft.perft(5);
+        perft.perft(6);
         perft.validate(PerftResults.POSITION_4);
     }
 
@@ -87,7 +87,7 @@ public class PerftTest {
     public void perftPromotionTest() {
         Board board = new BoardLoader().loadBoard("perft/perftPromotion.txt");
         Perft perft = new Perft(board, Player.WHITE);
-        perft.perft(5);
+        perft.perft(6);
         perft.validate(PerftResults.PROMOTION);
     }
 
