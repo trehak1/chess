@@ -1,10 +1,7 @@
 package chess.movements.figures;
 
 import chess.board.Board;
-import chess.enums.Col;
-import chess.enums.Piece;
-import chess.enums.Player;
-import chess.enums.Row;
+import chess.enums.*;
 import chess.movements.Movement;
 import chess.movements.MovementProducer;
 
@@ -21,15 +18,16 @@ public class QueenMovements extends RayMovements implements MovementProducer {
     @Override
     protected Collection<Movement> createMoves(Board board, Col c, Row r) {
         MoveUtils moveUtils = new MoveUtils(board, c, r);
+        Coord myCoord = Coord.get(c, r);
         List<Movement> l = new ArrayList<>();
-        processRayList(l, moveUtils.getRayNorth(), moveUtils, board);
-        processRayList(l, moveUtils.getRayWest(), moveUtils, board);
-        processRayList(l, moveUtils.getRayEast(), moveUtils, board);
-        processRayList(l, moveUtils.getRaySouth(), moveUtils, board);
-        processRayList(l, moveUtils.getRayNorthEast(), moveUtils, board);
-        processRayList(l, moveUtils.getRayNorthWest(), moveUtils, board);
-        processRayList(l, moveUtils.getRaySouthEast(), moveUtils, board);
-        processRayList(l, moveUtils.getRaySouthWest(), moveUtils, board);
+        processRayList(l, moveUtils.getRayNorth(), myCoord, board);
+        processRayList(l, moveUtils.getRayWest(), myCoord, board);
+        processRayList(l, moveUtils.getRayEast(), myCoord, board);
+        processRayList(l, moveUtils.getRaySouth(), myCoord, board);
+        processRayList(l, moveUtils.getRayNorthEast(), myCoord, board);
+        processRayList(l, moveUtils.getRayNorthWest(), myCoord, board);
+        processRayList(l, moveUtils.getRaySouthEast(), myCoord, board);
+        processRayList(l, moveUtils.getRaySouthWest(), myCoord, board);
         return l;
     }
 

@@ -27,7 +27,6 @@ class PawnMovement {
     private final Coord myCoord;
     private final Board board;
     private final Player player;
-    private final MoveUtils moveUtils;
 
     public static PawnMovement getFor(Board board, Coord coord) {
         Player player = board.get(coord).getPlayer();
@@ -46,17 +45,15 @@ class PawnMovement {
         this.myCoord = myCoord;
         this.player = board.get(myCoord).getPlayer();
         this.directionMove = directionMove;
-        this.moveUtils = new MoveUtils(board, myCoord);
     }
 
     public Movement forwardByOne() {
         if (myCoord.apply(directionMove).getRow() == player.enemy().getStartingRow()) {
             return null;
         }
-        Coord from = moveUtils.myCoords();
         Coord target = myCoord.apply(directionMove);
         if (board.isEmpty(target)) {
-            return new Movement(MovementType.MOVE, from, target, new MovementEffect().disableEnPassantIfAllowed(board));
+            return new Movement(MovementType.MOVE, myCoord, target, new MovementEffect().disableEnPassantIfAllowed(board));
         }
         return null;
     }
@@ -67,13 +64,12 @@ class PawnMovement {
         if (myCoord != startingCoord) {
             return null;
         }
-
-        Coord from = moveUtils.myCoords();
+        
         Coord intermediate = myCoord.apply(directionMove);
         Coord target = intermediate.apply(directionMove);
         if (board.isEmpty(intermediate)) {
             if (board.isEmpty(target)) {
-                return new Movement(MovementType.MOVE, from, target, new MovementEffect().allowEnPassant(target).disableEnPassantIfAllowed(board));
+                return new Movement(MovementType.MOVE, myCoord, target, new MovementEffect().allowEnPassant(target).disableEnPassantIfAllowed(board));
             }
         }
         return null;
@@ -98,7 +94,7 @@ class PawnMovement {
         if (!target.isValid()) {
             return Lists.newArrayList();
         }
-        if (moveUtils.isEnemy(target)) {
+        if (board.isPlayers(target, player.enemy())) {
             Piece enemyPiece = board.get(target).getPiece();
             if (myCoord.apply(directionMove).getRow() == player.enemy().getStartingRow()) {
                 List<Movement> res = Lists.newArrayList();
@@ -133,7 +129,7 @@ class PawnMovement {
             return null;
         }
         Coord enemyCoord = Coord.get(target.getCol(), myCoord.getRow());
-        if (moveUtils.isEnemy(enemyCoord) && board.getEnPassantAllowed() == enemyCoord) {
+        if (board.isPlayers(enemyCoord, player.enemy()) && board.getEnPassantAllowed() == enemyCoord) {
             return new Movement(MovementType.EN_PASSANT, myCoord, target, new MovementEffect().captured(Piece.PAWN).disableEnPassantIfAllowed(board));
         } else {
             return null;

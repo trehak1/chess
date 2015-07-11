@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class MoveUtils {
@@ -14,11 +15,7 @@ public class MoveUtils {
     private final Col col;
     private final Row row;
     private final Player player;
-
-    public MoveUtils(Board board, Coord coord) {
-        this(board, coord.getCol(), coord.getRow());
-    }
-
+    
     public MoveUtils(Board board, Col col, Row row) {
         this.board = board;
         this.col = col;
@@ -26,21 +23,13 @@ public class MoveUtils {
         this.player = board.get(Coord.get(col, row)).getPlayer();
     }
 
-    public Coord myCoords() {
-        return Coord.get(col, row);
-    }
-    
-    public boolean isEnemy(Coord coord) {
-        return isEnemy(coord.getCol(), coord.getRow());
-    }
-    
-    public boolean isEnemy(Col col, Row row) {
+    private boolean isEnemy(Col col, Row row) {
         Preconditions.checkArgument(col.isValid());
         Preconditions.checkArgument(row.isValid());
         return board.get(Coord.get(col, row)) != Figure.NONE && board.get(Coord.get(col, row)).getPlayer() != player;
     }
     
-    public boolean isMine(Col col, Row row) {
+    private boolean isMine(Col col, Row row) {
         Preconditions.checkArgument(col.isValid());
         Preconditions.checkArgument(row.isValid());
         return board.get(Coord.get(col, row)) != Figure.NONE && board.get(Coord.get(col, row)).getPlayer() == player;
@@ -106,9 +95,11 @@ public class MoveUtils {
     public static Coord locateKing(Player player, Board board) {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(board);
-        List<Coord> coords = board.locateAll(Figure.get(player, Piece.KING));
-        Preconditions.checkArgument(coords.size()==1);
-        return coords.get(0);
+        Set<Coord> coords = board.locateAll(Figure.get(player, Piece.KING));
+        if(coords.size()!=1) {
+            throw new IllegalStateException("wtf");
+        }
+        return coords.iterator().next();
     }
 
 }

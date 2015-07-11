@@ -21,11 +21,12 @@ public class RookMovements extends RayMovements implements MovementProducer {
     @Override
     protected Collection<Movement> createMoves(Board board, Col c, Row r) {
         MoveUtils moveUtils = new MoveUtils(board, c, r);
+        Coord myCoord = Coord.get(c,r);
         List<Movement> l = new ArrayList<>();
-        processRayList(l, moveUtils.getRayNorth(), moveUtils, board);
-        processRayList(l, moveUtils.getRayWest(), moveUtils, board);
-        processRayList(l, moveUtils.getRayEast(), moveUtils, board);
-        processRayList(l, moveUtils.getRaySouth(), moveUtils, board);
+        processRayList(l, moveUtils.getRayNorth(), myCoord, board);
+        processRayList(l, moveUtils.getRayWest(), myCoord, board);
+        processRayList(l, moveUtils.getRayEast(), myCoord, board);
+        processRayList(l, moveUtils.getRaySouth(), myCoord, board);
         return addCastlingChangeInformation(board, l);
     }
 

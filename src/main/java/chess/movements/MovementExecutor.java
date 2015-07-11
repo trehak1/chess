@@ -2,8 +2,12 @@ package chess.movements;
 
 import chess.board.Board;
 import chess.board.CastlingRights;
+import chess.board.ImmutableBoard;
 import chess.enums.*;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * Created by Tom on 3.7.2015.
@@ -11,10 +15,25 @@ import com.google.common.base.Preconditions;
 public class MovementExecutor {
 
     private final Board board;
+    private final List<Movement> moves = Lists.newArrayList();
 
     public MovementExecutor(Board currentBoard) {
         Preconditions.checkNotNull(currentBoard);
         this.board = currentBoard;
+    }
+
+    public boolean canUndo() {
+        return moves.size() > 0;
+    }
+
+    public Board undo() {
+        if (!canUndo()) {
+            throw new IllegalStateException("wtf");
+        }
+        int lastIndex = moves.size() - 1;
+        Board undone = undoMove(moves.get(lastIndex));
+        moves.remove(lastIndex);
+        return undone;
     }
 
     public Board doMove(Movement movement) {
@@ -64,7 +83,9 @@ public class MovementExecutor {
         }
         // set next player
         mutated = mutated.setOnTurn(mutated.getPlayerOnTurn().enemy());
-      
+
+        moves.add(movement);
+
         return mutated;
     }
 
@@ -120,7 +141,7 @@ public class MovementExecutor {
         return mutated;
     }
 
-    public Board undoMove(Movement movement) {
+    private Board undoMove(Movement movement) {
         Preconditions.checkNotNull(movement, "Movement must not be null");
         Player boardTurn = board.getPlayerOnTurn();
         Player toUndo = board.get(movement.getTo()).getPlayer();
@@ -228,7 +249,7 @@ public class MovementExecutor {
     private Board rollbackCapture(Movement movement) {
         Board mutated = moveFigure(board, movement.getTo(), movement.getFrom());
         // put back captured figure
-        mutated = mutated.set(movement.getTo(), Figure.get(getPlayer(board, movement.getTo()).enemy(), movement.getMovementEffect().getCaptured()));
+        mutated = mutated.set(movement.getTo(), Figure.get(getPlayer(board, movement.getFrom()).enemy(), movement.getMovementEffect().getCaptured()));
         return mutated;
     }
 

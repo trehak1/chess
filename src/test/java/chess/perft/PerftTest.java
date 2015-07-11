@@ -1,14 +1,16 @@
 package chess.perft;
 
-import chess.board.*;
-import chess.enums.Coord;
-import chess.enums.Piece;
+import chess.board.Board;
+import chess.board.BoardFactory;
+import chess.board.BoardLoader;
+import chess.board.BoardSerializer;
 import chess.enums.Player;
-import chess.movements.*;
+import chess.movements.Movement;
+import chess.movements.MovementFactory;
+import chess.movements.MovementType;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteStreams;
-import com.google.common.util.concurrent.AtomicLongMap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Tom on 1.7.2015.
@@ -36,18 +37,17 @@ public class PerftTest {
         Board board = new BoardSerializer().readFromFEN("r3k2r/4P3/8/8/8/8/8/4K3 b kq - 0 1");
         MovementFactory f = MovementFactory.getFor(board.getPlayerOnTurn());
         List<Movement> moves = f.getMoves(board);
-        Assert.assertFalse(Iterables.any(moves,(m)->m.getType()==MovementType.CASTLING));
+        Assert.assertFalse(Iterables.any(moves, (m) -> m.getType() == MovementType.CASTLING));
     }
 
     @Test
     public void perftPosition2Test() {
         Board board = new BoardSerializer().readFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+//        MutableBoard mutableBoard = MutableBoard.from(board);
+//        Perft perft = new Perft(mutableBoard, mutableBoard.getPlayerOnTurn());
         Perft perft = new Perft(board, board.getPlayerOnTurn());
-        perft.perft(5);
-        AtomicLongMap<String> vals = perft.getBreakdown();
-        for(Map.Entry<String, Long> e : vals.asMap().entrySet()) {
-            System.out.println(e.getKey()+" "+e.getValue());
-        }
+        perft.perft(4);
+        perft.printDivide();
         perft.validate(PerftResults.POSITION_2);
     }
 
@@ -93,17 +93,17 @@ public class PerftTest {
 
     @Test
     public void fensTestSuite() throws IOException {
-        fensTest("/perft/testsuite.txt",4);
+        fensTest("/perft/testsuite.txt", 4);
     }
 
     @Test
     public void fensTest() throws IOException {
-       fensTest("/perft/fens.txt",9);
+        fensTest("/perft/fens.txt", 9);
     }
 
     @Test
     public void castlingFens() throws IOException {
-        fensTest("/perft/castlingFens.txt",9);
+        fensTest("/perft/castlingFens.txt", 9);
     }
 
     private void fensTest(String filename, int maxDepth) throws IOException {
@@ -123,8 +123,8 @@ public class PerftTest {
             for (String ex : expected) {
                 List<String> spl = Splitter.on('=').trimResults().splitToList(ex);
                 int depth = Integer.parseInt(spl.get(0));
-                if(depth > maxDepth) {
-                    System.out.println("skipping perft depth "+depth);
+                if (depth > maxDepth) {
+                    System.out.println("skipping perft depth " + depth);
                     continue;
                 }
                 perft.perft(depth);
