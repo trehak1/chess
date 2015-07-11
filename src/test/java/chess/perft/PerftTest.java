@@ -27,7 +27,7 @@ public class PerftTest {
     @Test
     public void perftTest() {
         Perft perft = new Perft(new BoardFactory().newGameBoard(), Player.WHITE);
-        perft.perft(5);
+        perft.perft(4);
         perft.validate(PerftResults.POSITION_1);
     }
 
@@ -55,7 +55,7 @@ public class PerftTest {
     public void perftPosition3Test() {
         Board board = new BoardLoader().loadBoard("perft/perftPosition3.txt");
         Perft perft = new Perft(board, Player.WHITE);
-        perft.perft(6);
+        perft.perft(4);
         perft.validate(PerftResults.POSITION_3);
     }
 
@@ -63,7 +63,7 @@ public class PerftTest {
     public void perftPosition4Test() {
         Board board = new BoardSerializer().readFromFEN("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
         Perft perft = new Perft(board, board.getPlayerOnTurn());
-        perft.perft(6);
+        perft.perft(4);
         perft.validate(PerftResults.POSITION_4);
     }
 
@@ -79,7 +79,7 @@ public class PerftTest {
     public void perftPosition6Test() {
         Board board = new BoardLoader().loadBoard("perft/perftPosition6.txt");
         Perft perft = new Perft(board, Player.WHITE);
-        perft.perft(5);
+        perft.perft(4);
         perft.validate(PerftResults.POSITION_6);
     }
 
@@ -87,7 +87,7 @@ public class PerftTest {
     public void perftPromotionTest() {
         Board board = new BoardLoader().loadBoard("perft/perftPromotion.txt");
         Perft perft = new Perft(board, Player.WHITE);
-        perft.perft(6);
+        perft.perft(5);
         perft.validate(PerftResults.PROMOTION);
     }
 
@@ -98,12 +98,12 @@ public class PerftTest {
 
     @Test
     public void fensTest() throws IOException {
-       fensTest("/perft/fens.txt",9);
+       fensTest("/perft/fens.txt",4);
     }
 
     @Test
     public void castlingFens() throws IOException {
-        fensTest("/perft/castlingFens.txt",9);
+        fensTest("/perft/castlingFens.txt",4);
     }
 
     private void fensTest(String filename, int maxDepth) throws IOException {

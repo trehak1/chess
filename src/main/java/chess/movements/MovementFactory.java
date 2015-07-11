@@ -114,7 +114,6 @@ public class MovementFactory {
         Set<Coord> attackMapBefore = getAttackMap(board, player.enemy());
         while (it.hasNext()) {
             Movement m = it.next();
-            MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
 
             // is this illegal castling out of check?
             if (m.getType() == MovementType.CASTLING) {
@@ -126,7 +125,6 @@ public class MovementFactory {
 
             Board nextBoard = new MovementExecutor(board).doMove(m);
             Set<Coord> attackMapAfterMove = getAttackMap(nextBoard, player.enemy());
-
             if (shouldRemoveMoveToCheck(nextBoard, attackMapAfterMove)) {
                 it.remove();
             }
