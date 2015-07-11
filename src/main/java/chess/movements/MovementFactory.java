@@ -5,12 +5,8 @@ import chess.enums.*;
 import chess.movements.figures.*;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class MovementFactory {
@@ -60,9 +56,6 @@ public class MovementFactory {
     private List<Movement> disableCastlingOnRookCaptures(Board board, List<Movement> movements) {
         List<Movement> resList = new ArrayList<>();
         for (Movement m : movements) {
-//            if (m.getFrom() == Coord.A1 && m.getTo() == Coord.A8 && m.getType() == MovementType.CAPTURE) {
-//                System.out.println("fsd");
-//            }
             // must be a rook capture from it's starting location
             if (!isRookCaptureInStartingLocation(board, m)) {
                 resList.add(m);
@@ -118,22 +111,23 @@ public class MovementFactory {
     // TODO CHECK FOR CHECK WITHOUT CREATING NEW BOARD (expensive)
     public List<Movement> filterOutIllegalMoves(Board board, List<Movement> list) {
         Iterator<Movement> it = list.iterator();
+        Set<Coord> attackMapBefore = getAttackMap(board, player.enemy());
         while (it.hasNext()) {
             Movement m = it.next();
             MovementFactory enemyFactory = MovementFactory.getFor(player.enemy());
 
             // is this illegal castling out of check?
-            if(m.getType() == MovementType.CASTLING) {
-                if (shouldRemoveIllegalCastling(board, m, enemyFactory.getPseudoLegalMoves(board))) {
+            if (m.getType() == MovementType.CASTLING) {
+                if (shouldRemoveIllegalCastling(m, attackMapBefore)) {
                     it.remove();
                     continue;
                 }
             }
 
             Board nextBoard = new MovementExecutor(board).doMove(m);
-            List<Movement> enemyPossibleMoves = enemyFactory.getPseudoLegalMoves(nextBoard);
+            Set<Coord> attackMapAfterMove = getAttackMap(nextBoard, player.enemy());
 
-            if(shouldRemoveMoveToCheck(nextBoard, enemyPossibleMoves)) {
+            if (shouldRemoveMoveToCheck(nextBoard, attackMapAfterMove)) {
                 it.remove();
             }
 //            nextBoard = new MovementExecutor(nextBoard).undoMove(m);
@@ -141,52 +135,50 @@ public class MovementFactory {
         return list;
     }
 
-    private boolean shouldRemoveIllegalCastling(Board board, Movement m, List<Movement> enemyPossibleMoves) {
-        Preconditions.checkNotNull(m);
-        if (m.getType() != MovementType.CASTLING) {
-            return false;
-        }
+    private boolean shouldRemoveIllegalCastling(Movement m, Set<Coord> attackMapBefore) {
         CastlingType ct = CastlingType.fromKingDestCol(m.getTo().getCol());
-        if (Iterables.any(ct.requiredNotEndangered(player), (c) -> isEndangered(c, enemyPossibleMoves))) {
-            return true;
-        }
-        // here is a bugfix for castling I think
-        // pawn actually endangers not the field of it's movement BUT the fields to the east and west in front of him
-        // lets do the check
-        // 1) locate enemy pawns
-        Set<Coord> enemyPawns = board.locateAll(Figure.get(player.enemy(), Piece.PAWN));
-        // 2) get coords endagered by them (empty and in front and to the east and west)
-        Function<Coord, Coord> moveFc = player.enemy() == Player.WHITE ? Coord.NORTH : Coord.SOUTH;
-        List<Coord> endangerd = Lists.newArrayList();
-        enemyPawns.forEach((pawnCoord) -> {
-            Coord eW = pawnCoord.west().apply(moveFc);
-            Coord eE = pawnCoord.east().apply(moveFc);
-            if(eW.isValid()) {
-                endangerd.add(eW);
-            }
-            if(eE.isValid()) {
-                endangerd.add(eE);
-            }
-        });
-        // 3) check if required not endangered fields are not under attack
-        if(Iterables.any(ct.requiredNotEndangered(player),(c)->endangerd.contains(c))) {
+        if (Iterables.any(ct.requiredNotEndangered(player), (c) -> attackMapBefore.contains(c))) {
             return true;
         }
         return false;
     }
 
-    private boolean shouldRemoveMoveToCheck(Board board, List<Movement> enemyPossibleMoves) {
+    private boolean shouldRemoveMoveToCheck(Board board, Set<Coord> attackMapAfterMove) {
         Coord kingCoord = MoveUtils.locateKing(player, board);
-        if (isEndangered(kingCoord, enemyPossibleMoves)) {
-            return true;
+        return attackMapAfterMove.contains(kingCoord);
+    }
+
+    // build attack map
+    private Set<Coord> getAttackMap(Board board, Player player) {
+        Set<Coord> attackMap = EnumSet.noneOf(Coord.class);
+
+        // factory for player, generate pseudo legal moves
+        MovementFactory f = getFor(player);
+        List<Movement> pseudoLegalMoves = f.getPseudoLegalMoves(board);
+
+        // locate all pawn, find their move function
+        Set<Coord> pawns = board.locateAll(Figure.get(player, Piece.PAWN));
+        Function<Coord, Coord> moveFc = player == Player.WHITE ? Coord.NORTH : Coord.SOUTH;
+        // for each pseudo legal moves, which is not a pawn (pawns endangers W and E squares in direction of their movements)
+        Iterator<Movement> it = pseudoLegalMoves.iterator();
+        while (it.hasNext()) {
+            Movement m = it.next();
+            if (!pawns.contains(m.getFrom())) {
+                attackMap.add(m.getTo());
+            }
         }
-        return false;
+        for (Coord pawnCoord : pawns) {
+            // pawns are special...
+            Coord eW = pawnCoord.west().apply(moveFc);
+            if (eW.isValid()) {
+                attackMap.add(eW);
+            }
+            Coord eE = pawnCoord.east().apply(moveFc);
+            if (eE.isValid()) {
+                attackMap.add(eE);
+            }
+        }
+        return attackMap;
     }
-
-    // check if field is endangered
-    private boolean isEndangered(Coord coordsToCheck, List<Movement> enemyPossibleMoves) {
-        return Iterables.any(enemyPossibleMoves, (m) -> m.getTo() == coordsToCheck);
-    }
-
 
 }

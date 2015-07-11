@@ -43,7 +43,7 @@ public class PerftTest {
     public void perftPosition2Test() {
         Board board = new BoardSerializer().readFromFEN("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
         Perft perft = new Perft(board, board.getPlayerOnTurn());
-        perft.perft(5);
+        perft.perft(4);
         AtomicLongMap<String> vals = perft.getBreakdown();
         for(Map.Entry<String, Long> e : vals.asMap().entrySet()) {
             System.out.println(e.getKey()+" "+e.getValue());
