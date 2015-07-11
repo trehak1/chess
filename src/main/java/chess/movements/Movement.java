@@ -1,6 +1,7 @@
 package chess.movements;
 
 import chess.enums.Coord;
+import chess.enums.Piece;
 import com.google.common.base.Preconditions;
 
 /**
@@ -18,13 +19,13 @@ public class Movement {
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
         Preconditions.checkNotNull(movementEffect);
-        if(movementType == MovementType.PROMOTION || movementType == MovementType.PROMOTION_CAPTURE) {
-            if(movementEffect.getPromotedTo() == null) {
+        if (movementType == MovementType.PROMOTION || movementType == MovementType.PROMOTION_CAPTURE) {
+            if (movementEffect.getPromotedTo() == null) {
                 throw new IllegalStateException("Movement type promotion or promotion capture and no promotion result set!");
             }
         }
-        if(movementType == MovementType.CAPTURE || movementType == MovementType.PROMOTION_CAPTURE) {
-            if(movementEffect.getCaptured() == null) {
+        if (movementType == MovementType.CAPTURE || movementType == MovementType.PROMOTION_CAPTURE) {
+            if (movementEffect.getCaptured() == null) {
                 throw new IllegalStateException("Movement type capture or promotion capture and no capture piece set!");
             }
         }
@@ -32,6 +33,10 @@ public class Movement {
         this.from = from;
         this.to = to;
         this.movementEffect = movementEffect;
+    }
+
+    public boolean isCheck() {
+        return movementEffect.getCaptured() == Piece.KING;
     }
 
     public MovementType getType() {

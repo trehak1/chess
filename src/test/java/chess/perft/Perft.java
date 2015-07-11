@@ -6,11 +6,13 @@ import chess.movements.Movement;
 import chess.movements.MovementExecutor;
 import chess.movements.MovementFactory;
 import chess.movements.MovementType;
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AtomicLongMap;
 import org.junit.Assert;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class Perft {
 
@@ -41,11 +43,16 @@ public class Perft {
         }
         for (int i = 0; i < moves.size(); i++) {
             Movement m = moves.get(i);
-            Board nb = new MovementExecutor(board).doMove(m);
+            MovementExecutor movementExecutor = new MovementExecutor(board);
+            Board nb = movementExecutor.doMove(m);
             if (depth == this.depth) {
                 rootMove = m;
             }
             perft(nb, player.enemy(), depth - 1, rootMove);
+//            Board undone = movementExecutor.undo();
+//            if(!nb.equals(undone)) {
+//                throw new IllegalArgumentException("wtf");
+//            }
         }
     }
 
@@ -106,4 +113,10 @@ public class Perft {
         return true;
     }
 
+    public void printDivide() {
+        AtomicLongMap<String> vals = getBreakdown();
+        for(Map.Entry<String, Long> e : vals.asMap().entrySet()) {
+            System.out.println(e.getKey()+" "+e.getValue());
+        }
+    }
 }
