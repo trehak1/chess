@@ -3,7 +3,9 @@ package chess.board;
 import chess.enums.*;
 import com.google.common.base.Preconditions;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Tom on 26.6.2015.
@@ -137,7 +139,7 @@ public class MutableBoard implements Board {
     }
 
     @Override
-    public List<Coord> locateAll(Figure figure) {
+    public Set<Coord> locateAll(Figure figure) {
         return bitBoard.getAll(figure);
     }
 
@@ -148,10 +150,18 @@ public class MutableBoard implements Board {
 
     @Override
     public void checkSanity() {
-
+        BoardSanityChecker.check(this);
     }
 
-    public static Board from(Board board) {
+    @Override
+    public boolean isPlayers(Coord coord, Player myPlayer) {
+        Preconditions.checkNotNull(coord);
+        Preconditions.checkNotNull(myPlayer);
+        Preconditions.checkArgument(coord.isValid());
+        return get(coord).getPlayer() == myPlayer;
+    }
+
+    public static MutableBoard from(Board board) {
         MutableBoard mb = new MutableBoard(board.getCastlingRights(), board.getBitBoard(), board.getEnPassantAllowed(), board.getPlayerOnTurn());
         return mb;
     }

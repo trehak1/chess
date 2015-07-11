@@ -8,7 +8,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import java.util.BitSet;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Faster representation of 8x8 figure board
@@ -101,9 +103,9 @@ public class BitBoard {
         return pageStart;
     }
 
-    public List<Coord> getAll(Figure figure) {
+    public Set<Coord> getAll(Figure figure) {
         int pageStart = getPageStart(figure);
-        List<Coord> res = Lists.newArrayList();
+        Set<Coord> res = EnumSet.noneOf(Coord.class);
         for (int i = 0; i < Coord.VALID_VALUES.size(); i++) {
             if (board.get(pageStart + i)) {
                 res.add(Coord.get(i));

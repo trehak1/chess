@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Tom on 26.6.2015.
@@ -142,7 +143,7 @@ public class ImmutableBoard implements Board {
     }
 
     @Override
-    public List<Coord> locateAll(Figure figure) {
+    public Set<Coord> locateAll(Figure figure) {
         return bitBoard.getAll(figure);
     }
 
@@ -152,38 +153,16 @@ public class ImmutableBoard implements Board {
     }
 
     @Override
+    public boolean isPlayers(Coord coord, Player myPlayer) {
+        Preconditions.checkNotNull(coord);
+        Preconditions.checkNotNull(myPlayer);
+        Preconditions.checkArgument(coord.isValid());
+        return get(coord).getPlayer() == myPlayer;
+    }
+    
+    @Override
     public void checkSanity() {
-        // check number of pieces
-        for(Figure f: EnumSet.complementOf(EnumSet.of(Figure.NONE))) {
-            List<Coord> coords = locateAll(f);
-            Preconditions.checkArgument(coords.size() <= 32,"too many pieces!");
-        }
-        // check single king
-        Preconditions.checkArgument(locateAll(Figure.WHITE_KING).size() == 1,"Multiple white kings");
-        Preconditions.checkArgument(locateAll(Figure.BLACK_KING).size() == 1,"Multiple black kings");
-        // check castlings
-        List<Coord> whiteRooks = locateAll(Figure.WHITE_ROOK);
-        if(!whiteRooks.contains(Coord.A1)) {
-            if(castlingRights.isCastlingEnabled(Player.WHITE,CastlingType.QUEEN_SIDE)) {
-                throw new IllegalStateException("wtf");
-            }
-        }
-        if(!whiteRooks.contains(Coord.H1)) {
-            if(castlingRights.isCastlingEnabled(Player.WHITE,CastlingType.KING_SIDE)) {
-                throw new IllegalStateException("wtf");
-            }
-        }
-        List<Coord> blackRooks = locateAll(Figure.BLACK_ROOK);
-        if(!blackRooks.contains(Coord.A8)) {
-            if(castlingRights.isCastlingEnabled(Player.BLACK,CastlingType.QUEEN_SIDE)) {
-                throw new IllegalStateException("wtf");
-            }
-        }
-        if(!blackRooks.contains(Coord.H8)) {
-            if(castlingRights.isCastlingEnabled(Player.BLACK,CastlingType.KING_SIDE)) {
-                throw new IllegalStateException("wtf");
-            }
-        }
+        BoardSanityChecker.check(this);
     }
 
 }

@@ -6,6 +6,7 @@ import chess.enums.Figure;
 import chess.enums.Player;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Board {
     Player getPlayerOnTurn();
@@ -32,9 +33,12 @@ public interface Board {
 
     Board enableCastling(Player player, CastlingType castlingType);
 
-    List<Coord> locateAll(Figure figure);
+    Set<Coord> locateAll(Figure figure);
 
     BitBoard getBitBoard();
 
     void checkSanity();
+
+    boolean isPlayers(Coord coord, Player myPlayer);
+    
 }
