@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class MoveUtils {
@@ -106,9 +107,9 @@ public class MoveUtils {
     public static Coord locateKing(Player player, Board board) {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(board);
-        List<Coord> coords = board.locateAll(Figure.get(player, Piece.KING));
+        Set<Coord> coords = board.locateAll(Figure.get(player, Piece.KING));
         Preconditions.checkArgument(coords.size()==1);
-        return coords.get(0);
+        return coords.iterator().next();
     }
 
 }

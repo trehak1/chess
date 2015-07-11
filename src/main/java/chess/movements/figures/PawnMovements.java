@@ -12,6 +12,7 @@ import com.google.common.base.Supplier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Tom on 27.6.2015.
@@ -27,7 +28,7 @@ public class PawnMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> movements = new ArrayList<>();
-        List<Coord> pawnCoords = board.locateAll(Figure.get(player, Piece.PAWN));
+        Set<Coord> pawnCoords = board.locateAll(Figure.get(player, Piece.PAWN));
         for (Coord c : pawnCoords) {
             movements.addAll(movesFor(c, board));
         }

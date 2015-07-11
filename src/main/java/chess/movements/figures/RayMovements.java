@@ -10,6 +10,7 @@ import chess.movements.MovementType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public abstract class RayMovements implements MovementProducer {
 
@@ -24,7 +25,7 @@ public abstract class RayMovements implements MovementProducer {
     @Override
     public List<Movement> getMovements(Board board) {
         List<Movement> moves = new ArrayList<>();
-        List<Coord> coords = board.locateAll(Figure.get(player, piece));
+        Set<Coord> coords = board.locateAll(Figure.get(player, piece));
         for (Coord c : coords) {
             moves.addAll(createMoves(board, c.getCol(), c.getRow()));
         }
