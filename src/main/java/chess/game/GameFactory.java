@@ -8,6 +8,7 @@ import chess.movements.Movement;
 import chess.movements.MovementExecutor;
 import chess.movements.MovementFactory;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -32,6 +33,9 @@ public class GameFactory {
     }
 
     public boolean isValid(MoveCommand moveCommand, List<Movement> movements) {
+        if(game.getGameState()!=GameState.IN_PROGRESS) {
+            return false;
+        }
         return findCommand(moveCommand, movements) != null;
     }
 
@@ -42,14 +46,9 @@ public class GameFactory {
         }
         // generate possible moves
         List<Movement> possibleMoves = getPossibleMoves();
-        // no more legal moves! - checkmate or stalemate
+        // no more legal moves - should never happen
         if (possibleMoves.isEmpty()) {
-            if (!isCheckMate()) {
-                return new Game(game.getCurrentBoard(), game.getRule50MovesCounter(), GameState.DRAW, null, game.getMovements().toArray(new Movement[0]));
-            } else {
-                GameState state = game.getCurrentBoard().getPlayerOnTurn() == Player.WHITE ? GameState.BLACK_WON : GameState.WHITE_WON;
-                return new Game(game.getCurrentBoard(), game.getRule50MovesCounter(), state, null, game.getMovements().toArray(new Movement[0]));
-            }
+            throw new IllegalStateException("wtf");
         }
         // is this command valid ?
         if (!isValid(moveCommand, possibleMoves)) {
@@ -60,17 +59,29 @@ public class GameFactory {
         // do move
         // 1. mutated board
         Board mutatedBoard = MovementExecutor.move(game.getCurrentBoard(), movement);
+        GameState state = checkEnding();
         // 2. put move to movement history
         List<Movement> moves = Lists.newArrayList(game.getMovements());
         moves.add(movement);
         // 3. check and modify 50 movement rule
         int rule50 = evaluateRule50(game.getRule50MovesCounter(), movement);
-        return new Game(mutatedBoard, rule50, game.getGameState(), null, moves.toArray(new Movement[0]));
+        return new Game(mutatedBoard, rule50, state, null, moves.toArray(new Movement[0]));
     }
 
-    // TODO
-    private boolean isCheckMate() {
-        return false;
+    private GameState checkEnding() {
+        Player enemy = game.getCurrentBoard().getPlayerOnTurn().enemy();
+        List<Movement> moves = MovementFactory.getFor(enemy).getMoves(game.getCurrentBoard());
+        if(!moves.isEmpty()) {
+            return game.getGameState();
+        } else {
+            MovementFactory forPlayer = MovementFactory.getFor(game.getCurrentBoard().getPlayerOnTurn());
+            List<Movement> pseudoLegalMoves = forPlayer.getPseudoLegalMoves(game.getCurrentBoard());
+            if(Iterables.any(pseudoLegalMoves, (m)->m.getMovementEffect().getCaptured()==Piece.KING)) {
+                return game.getCurrentBoard().getPlayerOnTurn() == Player.WHITE ? GameState.WHITE_WON : GameState.BLACK_WON;
+            } else {
+                return GameState.DRAW;
+            }
+        }
     }
 
     private Game specialCommand(MoveCommand moveCommand) throws InvalidMoveException {
