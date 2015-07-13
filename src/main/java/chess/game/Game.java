@@ -3,80 +3,49 @@ package chess.game;
 import chess.board.Board;
 import chess.enums.Player;
 import chess.movements.Movement;
+import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class Game {
-
-    public enum GameState {
-        IN_PROGRESS, DRAW, WHITE_WON, BLACK_WON
-    }
-
-    private final String id;
+    
+    private final Board currentBoard;
     private final List<Movement> movements = new ArrayList<>();
-    private int movesWithoutCaptureOrAdvance = 0;
+    private final int rule50MovesCounter;
+    private final MoveCommand.SpecialCommand endingCommand;
     private GameState gameState;
-
-    public static final String randomId() {
-        Random r = new Random();
-        byte[] bytes = new byte[16];
-        r.nextBytes(bytes);
-        return BaseEncoding.base16().lowerCase().encode(bytes);
+    
+    Game(Board board, int rule50MovesCounter, GameState gameState, MoveCommand.SpecialCommand endingCommand, Movement... moves) {
+        Preconditions.checkNotNull(board);
+        Preconditions.checkArgument(rule50MovesCounter > -1);
+        Preconditions.checkNotNull(gameState);
+        this.endingCommand = endingCommand;
+        this.currentBoard = board;
+        this.rule50MovesCounter = rule50MovesCounter;
+        this.gameState = gameState;
+        for(Movement m : moves) {
+            Preconditions.checkNotNull(m);
+            movements.add(m);
+        }
     }
-
-    public Game(String id) {
-        this.id = id;
-        this.gameState = GameState.IN_PROGRESS;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public int getMovesWithoutCaptureOrPawnAdvanceInRow() {
-        return movesWithoutCaptureOrAdvance;
+    
+    public int getRule50MovesCounter() {
+        return rule50MovesCounter;
     }
 
     public Board getCurrentBoard() {
-//        if (movements.isEmpty()) {
-//            return new BoardFactory().newGameBoard();
-//        } else {
-//            return movements.get(movements.size() - 1).getResultingBoard();
-//        }
-        throw new UnsupportedOperationException("Not yet implemented");
+        return currentBoard;
     }
 
-    public Player getPlayerOnTurn() {
-        if (movements.isEmpty()) {
-            return Player.WHITE;
-        } else {
-            return movements.size() % 2 == 0 ? Player.WHITE : Player.BLACK;
-        }
+    public List<Movement> getMovements() {
+        return Collections.unmodifiableList(movements);
     }
 
-    public void addMovement(Movement movement) {
-        checkRule50(movement);
-        this.movements.add(movement);
+    public GameState getGameState() {
+        return gameState;
     }
-
-    private void checkRule50(Movement movement) {
-//        if (movement instanceof Capture || isPawnMove(movement)) {
-//            movesWithoutCaptureOrAdvance = 0;
-//        }
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    private boolean isPawnMove(Movement movement) {
-//        // first move in game
-//        if (movements.isEmpty()) {
-//            return movement.getResultingBoard().get(movement.getFrom()).getPiece() == Piece.PAWN;
-//        }
-//        // was there pawn ?
-//        return movements.get(movements.size() - 1).getResultingBoard().get(movement.getFrom()).getPiece() == Piece.PAWN;
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
 }

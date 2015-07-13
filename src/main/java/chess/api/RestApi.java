@@ -1,6 +1,7 @@
-package chess.game;
+package chess.api;
 
 import chess.enums.Coord;
+import chess.game.Game;
 import chess.movements.Movement;
 import chess.movements.MovementFactory;
 import chess.movements.transformers.CoordinateNotationTransformer;
