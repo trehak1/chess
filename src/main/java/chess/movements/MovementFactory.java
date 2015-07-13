@@ -123,12 +123,12 @@ public class MovementFactory {
                 }
             }
 
-            Board nextBoard = new MovementExecutor(board).doMove(m);
+            Board nextBoard = MovementExecutor.move(board, m);
             Set<Coord> attackMapAfterMove = getAttackMap(nextBoard, player.enemy());
             if (shouldRemoveMoveToCheck(nextBoard, attackMapAfterMove)) {
                 it.remove();
             }
-//            nextBoard = new MovementExecutor(nextBoard).undoMove(m);
+            MovementExecutor.rollback(nextBoard, m);
         }
         return list;
     }

@@ -60,6 +60,7 @@ public class BoardFactory {
         board = board.set(Coord.E8, Figure.black(Piece.KING));
         // queen
         board = board.set(Coord.D8, Figure.black(Piece.QUEEN));
+        board = board.setOnTurn(Player.WHITE);
 
         return board;
     }

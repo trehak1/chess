@@ -2,41 +2,20 @@ package chess.movements;
 
 import chess.board.Board;
 import chess.board.CastlingRights;
-import chess.board.ImmutableBoard;
 import chess.enums.*;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-
-import java.util.List;
 
 /**
  * Created by Tom on 3.7.2015.
  */
 public class MovementExecutor {
 
-    private final Board board;
-    private final List<Movement> moves = Lists.newArrayList();
 
-    public MovementExecutor(Board currentBoard) {
-        Preconditions.checkNotNull(currentBoard);
-        this.board = currentBoard;
+    private MovementExecutor() {
+
     }
 
-    public boolean canUndo() {
-        return moves.size() > 0;
-    }
-
-    public Board undo() {
-        if (!canUndo()) {
-            throw new IllegalStateException("wtf");
-        }
-        int lastIndex = moves.size() - 1;
-        Board undone = undoMove(moves.get(lastIndex));
-        moves.remove(lastIndex);
-        return undone;
-    }
-
-    public Board doMove(Movement movement) {
+    public static Board move(Board board, Movement movement) {
         Preconditions.checkNotNull(movement, "Movement must not be null");
         Preconditions.checkArgument(board.get(movement.getFrom()).getPlayer() == board.getPlayerOnTurn(), "Trying to move enemy figure");
 
@@ -44,22 +23,22 @@ public class MovementExecutor {
 
         switch (movement.getType()) {
             case MOVE:
-                mutated = executeMove(movement);
+                mutated = executeMove(board, movement);
                 break;
             case CAPTURE:
-                mutated = executeCapture(movement);
+                mutated = executeCapture(board, movement);
                 break;
             case CASTLING:
-                mutated = executeCastling(movement);
+                mutated = executeCastling(board, movement);
                 break;
             case EN_PASSANT:
-                mutated = executeEnPassant(movement);
+                mutated = executeEnPassant(board, movement);
                 break;
             case PROMOTION:
-                mutated = executePromotion(movement);
+                mutated = executePromotion(board, movement);
                 break;
             case PROMOTION_CAPTURE:
-                mutated = executePromotionCapture(movement);
+                mutated = executePromotionCapture(board, movement);
                 break;
             default:
                 throw new IllegalStateException("wtf");
@@ -84,12 +63,10 @@ public class MovementExecutor {
         // set next player
         mutated = mutated.setOnTurn(mutated.getPlayerOnTurn().enemy());
 
-        moves.add(movement);
-
         return mutated;
     }
 
-    private Board executePromotionCapture(Movement movement) {
+    private static Board executePromotionCapture(Board board, Movement movement) {
         // remove pawn
         Board mutated = board.remove(movement.getFrom());
         // remove figure in destination
@@ -99,7 +76,7 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board executePromotion(Movement movement) {
+    private static Board executePromotion(Board board, Movement movement) {
         // remove pawn
         Board mutated = board.remove(movement.getFrom());
         // set it to new destination as promoted piece
@@ -107,7 +84,7 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board executeEnPassant(Movement movement) {
+    private static Board executeEnPassant(Board board, Movement movement) {
         // move pawn
         Board mutated = moveFigure(board, movement.getFrom(), movement.getTo());
         // remove captured en passant
@@ -116,7 +93,7 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board executeCastling(Movement movement) {
+    private static Board executeCastling(Board board, Movement movement) {
         CastlingType ct = CastlingType.fromKingDestCol(movement.getTo().getCol());
         Row castlingRow = board.get(movement.getFrom()).getPlayer().getStartingRow();
         Coord rookDestCoord = Coord.get(ct.getRookDestinationCol(), castlingRow);
@@ -129,19 +106,19 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board executeCapture(Movement movement) {
+    private static Board executeCapture(Board board, Movement movement) {
         // remove target figure
         Board mutated = board.remove(movement.getTo());
         mutated = moveFigure(mutated, movement.getFrom(), movement.getTo());
         return mutated;
     }
 
-    private Board executeMove(Movement movement) {
+    private static Board executeMove(Board board, Movement movement) {
         Board mutated = moveFigure(board, movement.getFrom(), movement.getTo());
         return mutated;
     }
 
-    private Board undoMove(Movement movement) {
+    public static Board rollback(Board board, Movement movement) {
         Preconditions.checkNotNull(movement, "Movement must not be null");
         Player boardTurn = board.getPlayerOnTurn();
         Player toUndo = board.get(movement.getTo()).getPlayer();
@@ -151,22 +128,22 @@ public class MovementExecutor {
 
         switch (movement.getType()) {
             case MOVE:
-                mutated = rollbackMove(movement);
+                mutated = rollbackMove(board, movement);
                 break;
             case CAPTURE:
-                mutated = rollbackCapture(movement);
+                mutated = rollbackCapture(board, movement);
                 break;
             case CASTLING:
-                mutated = rollbackCastling(movement);
+                mutated = rollbackCastling(board, movement);
                 break;
             case EN_PASSANT:
-                mutated = rollbackEnPassant(movement);
+                mutated = rollbackEnPassant(board, movement);
                 break;
             case PROMOTION:
-                mutated = rollbackPromotion(movement);
+                mutated = rollbackPromotion(board, movement);
                 break;
             case PROMOTION_CAPTURE:
-                mutated = rollbackPromotionCapture(movement);
+                mutated = rollbackPromotionCapture(board, movement);
                 break;
             default:
                 throw new IllegalStateException("wtf");
@@ -198,7 +175,7 @@ public class MovementExecutor {
 
     }
 
-    private Board rollbackPromotionCapture(Movement movement) {
+    private static Board rollbackPromotionCapture(Board board, Movement movement) {
         // get promoted piece
         Figure promoted = board.get(movement.getTo());
         // remove it
@@ -210,7 +187,7 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board rollbackPromotion(Movement movement) {
+    private static Board rollbackPromotion(Board board, Movement movement) {
         // get promoted piece
         Figure promoted = board.get(movement.getTo());
         // remove it
@@ -220,7 +197,7 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board rollbackEnPassant(Movement movement) {
+    private static Board rollbackEnPassant(Board board, Movement movement) {
         // get pawn
         Figure pawn = board.get(movement.getTo());
         // move it back
@@ -233,7 +210,7 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board rollbackCastling(Movement movement) {
+    private static Board rollbackCastling(Board board, Movement movement) {
         CastlingType ct = CastlingType.fromKingDestCol(movement.getTo().getCol());
         // get player row
         Row castlingRow = board.get(movement.getTo()).getPlayer().getStartingRow();
@@ -246,30 +223,31 @@ public class MovementExecutor {
         return mutated;
     }
 
-    private Board rollbackCapture(Movement movement) {
+    private static Board rollbackCapture(Board board, Movement movement) {
         Board mutated = moveFigure(board, movement.getTo(), movement.getFrom());
+        Player capturedPieceOwner = mutated.get(movement.getFrom()).getPlayer().enemy();
         // put back captured figure
-        mutated = mutated.set(movement.getTo(), Figure.get(getPlayer(board, movement.getFrom()).enemy(), movement.getMovementEffect().getCaptured()));
+        mutated = mutated.set(movement.getTo(), Figure.get(capturedPieceOwner, movement.getMovementEffect().getCaptured()));
         return mutated;
     }
 
-    private Board rollbackMove(Movement movement) {
+    private static Board rollbackMove(Board board, Movement movement) {
         Board mutated = moveFigure(board, movement.getTo(), movement.getFrom());
         return mutated;
     }
 
-    private Coord getEnPassantCaptured(Movement m) {
+    private static Coord getEnPassantCaptured(Movement m) {
         if (m.getType() != MovementType.EN_PASSANT) {
             throw new IllegalArgumentException("wtf");
         }
         return Coord.get(m.getTo().getCol(), m.getFrom().getRow());
     }
 
-    private Player getPlayer(Board board, Coord figureCoord) {
+    private static Player getPlayer(Board board, Coord figureCoord) {
         return board.get(figureCoord).getPlayer();
     }
 
-    private Board moveFigure(Board board, Coord from, Coord to) {
+    private static Board moveFigure(Board board, Coord from, Coord to) {
         // get moved figure
         Figure moved = board.get(from);
         // remove it
