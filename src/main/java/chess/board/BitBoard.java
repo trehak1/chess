@@ -1,15 +1,10 @@
 package chess.board;
 
-import chess.enums.Coord;
-import chess.enums.Figure;
-import chess.enums.Piece;
-import chess.enums.Player;
+import chess.enums.*;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import java.util.BitSet;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,6 +30,17 @@ public class BitBoard {
 
     public BitBoard(BitSet board) {
         this.board = board;
+    }
+
+    public Figure[][] getBoard() {
+        Figure[][] ff = new Figure[8][];
+        for (Col c : Col.validValues()) {
+            ff[c.ordinal()] = new Figure[8];
+            for (Row r : Row.validValues()) {
+                ff[c.ordinal()][r.ordinal()] = get(Coord.get(c, r));
+            }
+        }
+        return ff;
     }
 
     public void set(Coord coord, Figure figure) {

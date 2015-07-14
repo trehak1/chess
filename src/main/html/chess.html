@@ -14,16 +14,16 @@ Game ID : <span id="game-id"></span><br/>
 
 <br/>
 
-<canvas id="checkerboard" width="400" height="400" style="border: 1px solid black">
+<canvas id="checkerboard" width="400" height="400" style="border: 1px solid black" />
 
     <script>
         $(document).ready(function () {
             checkboard.canvas = document.getElementById("checkerboard");
             checkboard.context2D = checkboard.canvas.getContext("2d");
             $("#new-game").click(function () {
-                $.get("http://localhost:3333/chess/game/new", function (data) {
-                    $("#game-id").html(data.id);
-                    checkboard.board = data.currentBoard.board;
+                $.get("http://localhost:3333/chess/game/new", function (session) {
+                    $("#game-id").html(session.id);
+                    checkboard.board = session.game.currentBoard.bitBoard.board;
                     checkboard.possibleMoves = null;
                     checkboard.drawCanvas();
                 });

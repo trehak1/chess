@@ -23,6 +23,10 @@ public class CastlingRights {
         this(new boolean[]{true, true, true, true});
     }
 
+    public boolean[] getCastlings() {
+        return Arrays.copyOf(castlings, castlings.length);
+    }
+
     public boolean isCastlingEnabled(Player player, CastlingType castlingType) {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(castlingType);

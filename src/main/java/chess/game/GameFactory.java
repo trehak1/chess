@@ -33,7 +33,7 @@ public class GameFactory {
     }
 
     public boolean isValid(MoveCommand moveCommand, List<Movement> movements) {
-        if(game.getGameState()!=GameState.IN_PROGRESS) {
+        if (game.getGameState() != GameState.IN_PROGRESS) {
             return false;
         }
         return findCommand(moveCommand, movements) != null;
@@ -59,7 +59,7 @@ public class GameFactory {
         // do move
         // 1. mutated board
         Board mutatedBoard = MovementExecutor.move(game.getCurrentBoard(), movement);
-        GameState state = checkEnding();
+        GameState state = checkEnding(mutatedBoard, possibleMoves);
         // 2. put move to movement history
         List<Movement> moves = Lists.newArrayList(game.getMovements());
         moves.add(movement);
@@ -68,15 +68,13 @@ public class GameFactory {
         return new Game(mutatedBoard, rule50, state, null, moves.toArray(new Movement[0]));
     }
 
-    private GameState checkEnding() {
+    private GameState checkEnding(Board mutated, List<Movement> playerMoves) {
         Player enemy = game.getCurrentBoard().getPlayerOnTurn().enemy();
-        List<Movement> moves = MovementFactory.getFor(enemy).getMoves(game.getCurrentBoard());
-        if(!moves.isEmpty()) {
+        List<Movement> moves = MovementFactory.getFor(enemy).getMoves(mutated);
+        if (!moves.isEmpty()) {
             return game.getGameState();
         } else {
-            MovementFactory forPlayer = MovementFactory.getFor(game.getCurrentBoard().getPlayerOnTurn());
-            List<Movement> pseudoLegalMoves = forPlayer.getPseudoLegalMoves(game.getCurrentBoard());
-            if(Iterables.any(pseudoLegalMoves, (m)->m.getMovementEffect().getCaptured()==Piece.KING)) {
+            if (Iterables.any(playerMoves, (m) -> m.getMovementEffect().getCaptured() == Piece.KING)) {
                 return game.getCurrentBoard().getPlayerOnTurn() == Player.WHITE ? GameState.WHITE_WON : GameState.BLACK_WON;
             } else {
                 return GameState.DRAW;

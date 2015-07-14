@@ -72,7 +72,7 @@ var checkboard = {
                 }
                 if (checkboard.possibleMoves != null) {
                     for (var i = 0; i < checkboard.possibleMoves.length; i++) {
-                        if (coordTranslator.translateRowCol(row, column) == checkboard.possibleMoves[i]) {
+                        if (coordTranslator.translateRowCol(row, column) == checkboard.possibleMoves[i].to) {
                             fill = "red";
                             break;
                         }

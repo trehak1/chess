@@ -5,7 +5,6 @@ import chess.game.Game;
 import chess.game.GameFactory;
 import chess.game.InvalidMoveException;
 import chess.game.MoveCommand;
-import com.google.common.io.BaseEncoding;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tom on 1.7.2015.
@@ -29,7 +29,7 @@ public class RestApi {
 
     private static final URI BASE_URI = URI.create("http://localhost:3333/");
     public static final String ROOT_PATH = "chess";
-    private static final Map<String, Game> games = new ConcurrentHashMap<>();
+    private static final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         try {
@@ -55,53 +55,49 @@ public class RestApi {
     @GET
     @Path("game/get/{id}")
     @Produces("application/json")
-    public Game getGame(@PathParam("id") String id) {
-        Game game = games.get(id);
-        return game;
+    public Session getGame(@PathParam("id") String id) {
+        Session session = sessions.get(id);
+        return session;
     }
 
     @GET
     @Path("game/new")
     @Produces("application/json")
-    public Game newGame() {
-        byte[] id = new byte[8];
-        new Random().nextBytes(id);
-        String gameId = BaseEncoding.base16().encode(id);
-        Game game = GameFactory.newGame();
-        games.put(gameId, game);
-        return game;
+    public Session newGame() {
+        Session session = Session.createNew();
+        sessions.put(session.getId(), session);
+        return session;
     }
 
     @GET
     @Path("game/move/{id}/{move}")
     @Produces("application/json")
-    public Game moveCoordinate(@PathParam("id") String id, @PathParam("move") String move) throws InvalidMoveException {
-        Game game = games.get(id);
-        if (game == null) {
+    public Session moveCoordinate(@PathParam("id") String id, @PathParam("move") String move) throws InvalidMoveException {
+        Session session = sessions.get(id);
+        if (session == null) {
             return null;
         }
-        move = move.toUpperCase();
-        String[] coords = move.split("-");
+        String[] coords = move.toUpperCase().trim().split("-");
         Coord from = Coord.valueOf(coords[0]);
         Coord to = Coord.valueOf(coords[1]);
-        Game ng = new GameFactory(game).move(new MoveCommand(from, to));
-        games.put(id, ng);
-        return ng;
+        Game ng = new GameFactory(session.getGame()).move(new MoveCommand(from, to));
+        session.setGame(ng);
+        sessions.put(id, session);
+        return session;
     }
 
     @GET
     @Path("game/moves/{id}/{coord}")
     @Produces("application/json")
-    public List<String> getMoves(@PathParam("id") String id, @PathParam("coord") String coordString) {
-        Game game = games.get(id);
-        if (game == null) {
+    public List<MoveCommand> getMoves(@PathParam("id") String id, @PathParam("coord") String coordString) {
+        Session session = sessions.get(id);
+        if (session == null) {
             return Collections.emptyList();
         }
-        GameFactory gameFactory = new GameFactory(game);
+        GameFactory gameFactory = new GameFactory(session.getGame());
         List<MoveCommand> mc = gameFactory.getPossibleMoveCommands();
-        List<String> moves = new ArrayList<>();
-        mc.forEach(command -> moves.add(command.getFrom() + "-" + command.getTo()));
-        return moves;
+        Coord c = Coord.valueOf(coordString.trim().toUpperCase());
+        return mc.stream().filter((comm)->comm.getFrom() == c).collect(Collectors.toList());
     }
 
 }
