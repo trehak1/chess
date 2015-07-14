@@ -6,6 +6,10 @@ var move = {
         move.to = null;
     },
     addCoord: function(coord) {
+        if(move.from != null && coord == move.from) {
+            move.clear();
+            return;
+        }
         if (move.from == null) {
             move.from = coord;
         } else if (move.to == null) {
@@ -26,8 +30,8 @@ function processCoord(coord) {
     if (move.isFull()) {
         var movement = move.from + "-" + move.to;
 
-        $.get("http://localhost:3333/chess/game/move/" + gameId + "/" + movement, function (data) {
-            checkboard.board = data.currentBoard.board;
+        $.get("http://localhost:3333/chess/game/move/" + gameId + "/" + movement, function (session) {
+            checkboard.board = session.game.currentBoard.bitBoard.board;
             checkboard.possibleMoves = null;
             checkboard.drawCanvas();
         });

@@ -17,7 +17,7 @@ public class Game {
     private final List<Movement> movements = new ArrayList<>();
     private final int rule50MovesCounter;
     private final MoveCommand.SpecialCommand endingCommand;
-    private GameState gameState;
+    private final GameState gameState;
     
     Game(Board board, int rule50MovesCounter, GameState gameState, MoveCommand.SpecialCommand endingCommand, Movement... moves) {
         Preconditions.checkNotNull(board);

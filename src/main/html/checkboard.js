@@ -1,10 +1,11 @@
 var checkboard = {
     canvasSize: 400,
-    fieldSize: 50,//checkboard.canvasSize / 8,
+    fieldSize: 50,
     canvas: null,
     context2D: null,
     board: null,
-    possibleMoves: null,
+    white: "F7EBC3",
+    black: "#9E7900",
 
     translatePixels: function(x) {
         return Math.floor(x / checkboard.fieldSize);
@@ -70,15 +71,6 @@ var checkboard = {
                         fill = "black";
                     }
                 }
-                if (checkboard.possibleMoves != null) {
-                    for (var i = 0; i < checkboard.possibleMoves.length; i++) {
-                        if (coordTranslator.translateRowCol(row, column) == checkboard.possibleMoves[i]) {
-                            fill = "red";
-                            break;
-                        }
-                    };
-                }
-                
                 checkboard.context2D.fillStyle = fill;
                 checkboard.context2D.fillRect(x, y, 50, 50);
             }

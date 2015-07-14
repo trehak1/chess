@@ -16,6 +16,8 @@ public class MoveCommand {
     public MoveCommand(Coord from, Coord to) {
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
+        Preconditions.checkArgument(from.isValid());
+        Preconditions.checkArgument(to.isValid());
         this.from = from;
         this.to = to;
         specialCommand = null;
@@ -34,8 +36,17 @@ public class MoveCommand {
     public Coord getFrom() {
         return from;
     }
-
+    
     public Coord getTo() {
         return to;
+    }
+
+    @Override
+    public String toString() {
+        return "MoveCommand{" +
+                "from=" + from +
+                ", to=" + to +
+                ", specialCommand=" + specialCommand +
+                '}';
     }
 }
