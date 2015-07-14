@@ -1,7 +1,6 @@
 package chess.api;
 
 import chess.enums.Coord;
-import chess.game.Game;
 import chess.game.GameFactory;
 import chess.game.InvalidMoveException;
 import chess.game.MoveCommand;
@@ -17,7 +16,8 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -55,49 +55,70 @@ public class RestApi {
     @GET
     @Path("game/get/{id}")
     @Produces("application/json")
-    public Session getGame(@PathParam("id") String id) {
+    public Response getGame(@PathParam("id") String id) {
         Session session = sessions.get(id);
-        return session;
+        if (session == null) {
+            return Response.gameNotFound();
+        }
+        return Response.ok(session);
     }
 
     @GET
     @Path("game/new")
     @Produces("application/json")
-    public Session newGame() {
-        Session session = Session.createNew();
+    public Response newGame() {
+        Session session = Session.createNew(false);
         sessions.put(session.getId(), session);
-        return session;
+        return Response.ok(session);
     }
 
     @GET
-    @Path("game/move/{id}/{move}")
+    @Path("game/newSecured")
     @Produces("application/json")
-    public Session moveCoordinate(@PathParam("id") String id, @PathParam("move") String move) throws InvalidMoveException {
+    public Response newSecuredGame() {
+        Session session = Session.createNew(true);
+        sessions.put(session.getId(), session);
+        return Response.ok(session);
+    }
+
+    @GET
+    @Path("game/move/{id}/{key}/{from}/{to}")
+    @Produces("application/json")
+    public Response moveCoordinate(@PathParam("id") String id, @PathParam("from") Coord from, @PathParam("to") Coord to, @PathParam("key") String key) {
         Session session = sessions.get(id);
         if (session == null) {
-            return null;
+            return Response.gameNotFound();
         }
-        String[] coords = move.toUpperCase().trim().split("-");
-        Coord from = Coord.valueOf(coords[0]);
-        Coord to = Coord.valueOf(coords[1]);
-        Game ng = new GameFactory(session.getGame()).move(new MoveCommand(from, to));
-        session.setGame(ng);
-        sessions.put(id, session);
-        return session;
+        MoveCommand moveCommand = new MoveCommand(from, to);
+        Session.MoveCommandEvaluation moveEvaluation = session.evaluateMoveCommand(moveCommand, key);
+        if (!moveEvaluation.isValid()) {
+            return Response.error("Invalid move command " + moveCommand);
+        }
+        if (!moveEvaluation.isAuthorized()) {
+            return Response.error("Unathorized move command " + moveCommand);
+        }
+        try {
+            session.executeMoveCommand(moveCommand);
+        } catch (InvalidMoveException e) {
+            return Response.error("Invalid move command exception!" + e.getMoveCommand());
+        }
+        return Response.ok(session);
     }
 
     @GET
     @Path("game/moves/{id}/{coord}")
     @Produces("application/json")
-    public List<MoveCommand> getMoves(@PathParam("id") String id, @PathParam("coord") String coordString) {
+    public Response getMoves(@PathParam("id") String id, @PathParam("coord") String coordString) {
         Session session = sessions.get(id);
         if (session == null) {
-            return Collections.emptyList();
+            return Response.gameNotFound();
         }
         GameFactory gameFactory = new GameFactory(session.getGame());
         List<MoveCommand> mc = gameFactory.getPossibleMoveCommands();
         Coord c = Coord.valueOf(coordString.trim().toUpperCase());
-        return mc.stream().filter((comm)->comm.getFrom() == c).collect(Collectors.toList());
+        List<MoveCommand> availableCommands = mc.stream().filter((comm) -> comm.getFrom() == c).collect(Collectors.toList());
+        return Response.availableCommands(availableCommands);
     }
+
 
 }

@@ -32,7 +32,14 @@ public class GameFactory {
         return new Game(new BoardFactory().newGameBoard(), 0, GameState.IN_PROGRESS, null);
     }
 
-    public boolean isValid(MoveCommand moveCommand, List<Movement> movements) {
+    public boolean isValid(MoveCommand moveCommand) {
+        if (game.getGameState() != GameState.IN_PROGRESS) {
+            return false;
+        }
+        return findCommand(moveCommand, getPossibleMoves()) != null;
+    }
+    
+    private boolean isValid(MoveCommand moveCommand, List<Movement> movements) {
         if (game.getGameState() != GameState.IN_PROGRESS) {
             return false;
         }
