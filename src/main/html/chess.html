@@ -11,8 +11,9 @@
 </head>
 <body>
 
-Game ID : <span id="game-id"></span><br/>
-<a href="#" id="new-game">new game</a>
+Game ID : <input type="text" id="game-id" /><br/>
+<a href="#" id="new-game">New game</a>
+<a href="#" id="load-game">Load game</a>
 
 <br/>
 
@@ -24,14 +25,16 @@ Game ID : <span id="game-id"></span><br/>
             var checkboard = new Checkboard("checkerboard");
             checkboard.drawBoard();
             
-            var game = new Game(checkboard);
+            var game = new Game(checkboard, "game-id");
             
-//            $("#checkerboard").click(function (e) { //Relative ( to its parent) mouse position 
-//                var posX = e.pageX - $(this).position().left;
-//                var posY = e.pageY - $(this).position().top;
-//                var coord = coordTranslator.translateRowCol(checkboard.translatePixels(posY), checkboard.translatePixels(posX));
-//                processCoord(coord);
-//            });
+            
+            $("#new-game").click(function (e) { //Relative ( to its parent) mouse position 
+                game.newGame();
+            });
+
+            $("#load-game").click(function (e) { //Relative ( to its parent) mouse position 
+                game.getGame();
+            });
 
         });
 

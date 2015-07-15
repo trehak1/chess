@@ -48,7 +48,7 @@ Checkboard.prototype.highlight = function(coord) {
     row = this.coordTranslator.rowToIndex(row);
     var x = col * this.fieldSize;
     var y = row * this.fieldSize;
-    this.canvas2D.strokeStyle = "green";
+    this.canvas2D.strokeStyle = "red";
     this.canvas2D.strokeRect(x,y,this.fieldSize,this.fieldSize);
 }
 
@@ -71,7 +71,7 @@ Checkboard.prototype.drawFigures = function(board) {
             
             var stroke = cnt%2==0 ? this.white : this.black;
 
-            this.canvas2D.font = "50px Arial";
+            this.canvas2D.font = this.fieldSize+"px Arial";
             this.canvas2D.strokeStyle = stroke;
             this.canvas2D.strokeText(this.getFigureChar(board[x][y]), tx, ty);
 
@@ -96,7 +96,7 @@ Checkboard.prototype.drawBoard = function() {
             var fill = cnt%2==0 ? this.white : this.black;
             cnt++;
             this.canvas2D.fillStyle = fill;
-            this.canvas2D.fillRect(x, y, 50, 50);
+            this.canvas2D.fillRect(x, y, this.fieldSize, this.fieldSize);
         }
     }
 }
