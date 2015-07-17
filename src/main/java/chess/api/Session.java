@@ -12,7 +12,8 @@ import java.util.Random;
 
 public class Session {
 
-    private static final int RANDOM_ID_LENGTH = 32;
+    private static final int RANDOM_ID_LENGTH = 16;
+    private static final int KEY_LENGTH = 16;
     private final String id;
     private final String whiteKey;
     private final String blackKey;
@@ -85,14 +86,14 @@ public class Session {
 
 
     public static Session createNew(boolean isSecured) {
-        Session session = new Session(randomId(), randomId(), randomId(), isSecured);
+        Session session = new Session(randomId(RANDOM_ID_LENGTH), randomId(KEY_LENGTH), randomId(KEY_LENGTH), isSecured);
         return session;
     }
 
-    private static String randomId() {
-        byte[] data = new byte[RANDOM_ID_LENGTH];
+    private static String randomId(int length) {
+        byte[] data = new byte[length];
         new Random().nextBytes(data);
-        return BaseEncoding.base64Url().omitPadding().encode(data);
+        return BaseEncoding.base16().lowerCase().encode(data);
     }
 
     public String getId() {

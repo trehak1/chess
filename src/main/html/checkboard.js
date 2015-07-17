@@ -8,6 +8,12 @@ function Checkboard(canvasElementId) {
     this.coordTranslator = new CoordTranslator(this);
 }
 
+Checkboard.prototype.getFigureOn = function(coords) {
+    var col = this.coordTranslator.colToIndex(coords[0]);
+    var row = this.coordTranslator.rowToIndex(coords[1]);
+    return this.board[col][row];
+}
+
 Checkboard.prototype.getFigureChar = function(figureName) {
     switch (figureName) {
         case "WHITE_PAWN":
@@ -46,6 +52,7 @@ Checkboard.prototype.highlight = function(coord) {
     var row = coord[1];
     col = this.coordTranslator.colToIndex(col);
     row = this.coordTranslator.rowToIndex(row);
+    row = 7 - row;
     var x = col * this.fieldSize;
     var y = row * this.fieldSize;
     this.canvas2D.strokeStyle = "red";

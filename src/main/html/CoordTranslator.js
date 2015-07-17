@@ -17,7 +17,7 @@ CoordTranslator.prototype.clickToCoords = function(x,y) {
 }
 
 CoordTranslator.prototype.rowToIndex = function(row) {
-    return 8 - row;
+    return row-1;
 }
 
 CoordTranslator.prototype.colToIndex = function(col) {
