@@ -12,8 +12,7 @@ import java.util.Random;
 
 public class Session {
 
-    private static final int RANDOM_ID_LENGTH = 16;
-    private static final int KEY_LENGTH = 16;
+    private static final int RANDOM_ID_LENGTH = 32;
     private final String id;
     private final String whiteKey;
     private final String blackKey;
@@ -86,7 +85,7 @@ public class Session {
 
 
     public static Session createNew(boolean isSecured) {
-        Session session = new Session(randomId(RANDOM_ID_LENGTH), randomId(KEY_LENGTH), randomId(KEY_LENGTH), isSecured);
+        Session session = new Session(randomId(RANDOM_ID_LENGTH), randomId(RANDOM_ID_LENGTH), randomId(RANDOM_ID_LENGTH), isSecured);
         return session;
     }
 
